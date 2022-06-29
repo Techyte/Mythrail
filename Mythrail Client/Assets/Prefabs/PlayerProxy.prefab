@@ -282,7 +282,7 @@ GameObject:
   - component: {fileID: 3544126110685234267}
   - component: {fileID: -6351624515557737800}
   m_Layer: 0
-  m_Name: Player
+  m_Name: PlayerProxy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

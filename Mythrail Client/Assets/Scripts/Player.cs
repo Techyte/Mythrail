@@ -26,7 +26,7 @@ namespace Mythrail
 
         public int currentHealth;
         public int maxHealth;
-        public bool isRunning;
+        public PlayerController controller;
 
         private string username;
 
@@ -39,9 +39,17 @@ namespace Mythrail
         private void Update()
         {
             if (!IsLocal) return;
-            playerCam.fieldOfView = isRunning
-                ? Mathf.Lerp(playerCam.fieldOfView, runningFOV, Time.deltaTime * 8f)
-                : Mathf.Lerp(playerCam.fieldOfView, regularFOV, Time.deltaTime * 8f);
+            Debug.Log(controller.MovementInputs[5]);
+
+            if (controller.MovementInputs[5])
+            {
+                playerCam.fieldOfView = runningFOV;
+            }
+            else
+            {
+                playerCam.fieldOfView = regularFOV;
+            }
+            //WHY R U NOT WORKING WHYYYYYYYYYYY
         }
 
         private void OnDestroy()
@@ -98,12 +106,6 @@ namespace Mythrail
             {
                 player.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;
             }
-        }
-
-        private void FixedUpdate()
-        {
-            if (!IsLocal)
-                return;
         }
 
         [MessageHandler((ushort)ServerToClientId.playerSpawned)]

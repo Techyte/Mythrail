@@ -6,19 +6,13 @@ namespace Mythrail
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private Transform camTransform;
-        [SerializeField] private Player player;
 
-        private bool[] movementInputs;
+        [SerializeField] private bool[] movementInputs;
+        public bool[] MovementInputs => movementInputs;
 
         private void Start()
         {
             movementInputs = new bool[6];
-        }
-
-        private void OnValidate()
-        {
-            if (player == null)
-                player = GetComponent<Player>();
         }
 
         private void Update()
@@ -34,10 +28,7 @@ namespace Mythrail
             if (Input.GetKey(KeyCode.Space))
                 movementInputs[4] = true;
             if (Input.GetKey(KeyCode.LeftShift))
-            {
                 movementInputs[5] = true;
-                player.isRunning = true;
-            }
         }
 
         private void FixedUpdate()
@@ -46,7 +37,6 @@ namespace Mythrail
 
             for (int i = 0; i < movementInputs.Length; i++)
                 movementInputs[i] = false;
-            player.isRunning = false;
         }
 
         private void SendMovementInput()
