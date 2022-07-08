@@ -20,3 +20,5 @@ MonoBehaviour:
   reloadRate: 1
   swapInRate: 0.6
   bloom: 3
+  recoil: 6
+  kickBack: 0.1

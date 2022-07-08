@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Mythrail
+namespace MythrailEngine
 {
     public class PlayerAnimationManager : MonoBehaviour
     {

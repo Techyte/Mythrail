@@ -1,14 +1,13 @@
 using RiptideNetworking;
 using UnityEngine;
 
-namespace Mythrail
+namespace MythrailEngine
 {
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private Transform camTransform;
 
         [SerializeField] private bool[] movementInputs;
-        public bool[] MovementInputs => movementInputs;
 
         private void Start()
         {
@@ -18,7 +17,11 @@ namespace Mythrail
         private void Update()
         {
             if (Input.GetKey(KeyCode.W))
+            {
                 movementInputs[0] = true;
+                if (Input.GetKey(KeyCode.LeftShift))
+                    movementInputs[5] = true;
+            }
             if (Input.GetKey(KeyCode.S))
                 movementInputs[1] = true;
             if (Input.GetKey(KeyCode.A))
@@ -27,8 +30,6 @@ namespace Mythrail
                 movementInputs[3] = true;
             if (Input.GetKey(KeyCode.Space))
                 movementInputs[4] = true;
-            if (Input.GetKey(KeyCode.LeftShift))
-                movementInputs[5] = true;
         }
 
         private void FixedUpdate()

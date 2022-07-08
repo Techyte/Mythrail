@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-namespace Mythrail
+namespace MythrailEngine
 {
     public class Player : MonoBehaviour
     {
@@ -24,32 +24,46 @@ namespace Mythrail
         [SerializeField] private float runningFOV;
         [SerializeField] private float regularFOV;
 
+        [SerializeField] private GameObject gunModelHolder;
+        private float movementCounter;
+        private float idleCounter;
+
+        private GunManager _gunManager;
+
         public int currentHealth;
         public int maxHealth;
-        public PlayerController controller;
 
         private string username;
 
+
+        private Vector3 NewPosition;
         private void Start()
         {
             if (!IsLocal) return;
-            runningFOV = playerCam.fieldOfView;
+            gunManager = GetComponent<GunManager>();
+            regularFOV = playerCam.fieldOfView;
         }
 
         private void Update()
         {
             if (!IsLocal) return;
-            Debug.Log(controller.MovementInputs[5]);
 
-            if (controller.MovementInputs[5])
+            bool canRun = Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.W);
+
+            playerCam.fieldOfView = canRun
+                ? Mathf.Lerp(playerCam.fieldOfView, runningFOV, .03f)
+                : Mathf.Lerp(playerCam.fieldOfView, regularFOV, .03f);
+            
+            if (NewPosition == Vector3.zero)
             {
-                playerCam.fieldOfView = runningFOV;
+                HeadBob(idleCounter, 0.025f, 0.025f);
+                idleCounter += Time.deltaTime;
             }
             else
             {
-                playerCam.fieldOfView = regularFOV;
+                HeadBob(movementCounter, 0.05f, 0.05f);
+                movementCounter += Time.deltaTime;
             }
-            //WHY R U NOT WORKING WHYYYYYYYYYYY
         }
 
         private void OnDestroy()
@@ -62,9 +76,9 @@ namespace Mythrail
             interpolator.NewUpdate(tick, didTeleport, newPosition);
 
             if (!IsLocal)
-            {
                 camTransform.forward = forward;
-            }
+
+            NewPosition = newPosition;
         }
 
         private void NewHealth(int newHealth, int newMaxHealth)
@@ -98,14 +112,15 @@ namespace Mythrail
             player.usernameText.GetComponent<ObjectLookAt>().target = player.camTransform;
 
             foreach (Player gotPlayer in list.Values)
-            {
                 gotPlayer.usernameText.text = gotPlayer.username;
-            }
 
             if (!player.IsLocal)
-            {
                 player.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;
-            }
+        }
+        
+        void HeadBob(float z, float xIntensity, float yIntensity)
+        {
+            gunModelHolder.transform.localPosition = gunManager.weaponModels[gunManager.currentWeaponIndex].transform.localPosition + new Vector3 (Mathf.Cos(z) * xIntensity, Mathf.Sin(z * 2) * yIntensity, 0);
         }
 
         [MessageHandler((ushort)ServerToClientId.playerSpawned)]

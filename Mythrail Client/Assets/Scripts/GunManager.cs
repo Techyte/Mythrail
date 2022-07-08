@@ -1,8 +1,9 @@
 using UnityEngine;
 using RiptideNetworking;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace Mythrail
+namespace MythrailEngine
 {
     public class GunManager : MonoBehaviour
     {
@@ -12,23 +13,17 @@ namespace Mythrail
         [SerializeField] private GameObject gunModelHolder;
         [SerializeField] private GameObject currentGunModel;
 
-        [SerializeField] int currentWeaponIndex;
+        public int[] loadoutIndex = new int[2];
 
-        [SerializeField] List<GameObject> weaponModels = new List<GameObject>();
-        private Dictionary<int, GameObject> weaponIdTable = new Dictionary<int, GameObject>();
+        public int currentWeaponIndex;
+        
+        public List<GameObject> weaponModels = new List<GameObject>();
 
-        private void Start()
+        public static bool isAiming;
+
+        private void Awake()
         {
             weaponInputs = new bool[2];
-            InitilizeWeaponModels();
-        }
-
-        private void InitilizeWeaponModels()
-        {
-            for(int i = 0; i < weaponModels.Count; i++)
-            {
-                weaponIdTable.Add(i, weaponModels[i]);
-            }
         }
 
         private void Update()
@@ -39,12 +34,16 @@ namespace Mythrail
                 weaponInputs[0] = true;
             if (Input.GetMouseButton(1))
                 weaponInputs[1] = true;
+            
+            currentGunModel.transform.localRotation = Quaternion.Lerp(currentGunModel.transform.localRotation, Quaternion.Euler(0, 0, 0), Time.deltaTime * 4f);
+            currentGunModel.transform.localPosition = Vector3.Lerp(currentGunModel.transform.localPosition, weaponModels[currentWeaponIndex].transform.localPosition, Time.deltaTime * 4f);
         }
 
         private void FixedUpdate()
         {
             if (!player.IsLocal)
                 return;
+            
             SendWeaponInputs();
 
             for (int i = 0; i < weaponInputs.Length; i++)
@@ -55,7 +54,7 @@ namespace Mythrail
         private static void PlayerShot(Message message)
         {
             if (Player.list.TryGetValue(message.GetUShort(), out Player player))
-                player.gunManager.Shot();
+                player.gunManager.Shot(message.GetFloat(), message.GetFloat());
         }
 
         [MessageHandler((ushort)ServerToClientId.swapWeapon)]
@@ -66,9 +65,29 @@ namespace Mythrail
                 player.gunManager.SwapWeapon(playerId, message.GetInt());
         }
 
-        private void Shot()
+        [MessageHandler((ushort)ServerToClientId.loadoutInfo)]
+        private static void LoadoutInfo(Message message)
+        {
+            ushort playerId = message.GetUShort();
+        
+            int id0 = message.GetUShort();
+            int id1 = message.GetUShort();
+            
+            Debug.Log(id0);
+            Debug.Log(id1);
+            
+            if (Player.list.TryGetValue(playerId, out Player player))
+                player.gunManager.AssignLoadout(id0, id1);
+            
+            Debug.Log("Recived Message");
+        }
+
+        private void Shot(float recoil, float kickBack)
         {
             Debug.Log("Shot");
+            currentGunModel.transform.localRotation = Quaternion.Euler(-recoil, 0, 0);
+            currentGunModel.transform.localPosition -= currentGunModel.transform.worldToLocalMatrix.MultiplyVector(currentGunModel.transform.forward).normalized * kickBack;
+            //Recoil goes here
         }
 
         private void SendWeaponInputs()
@@ -82,23 +101,34 @@ namespace Mythrail
         private void SwapWeapon(ushort playerId, int newWeaponIndex)
         {
             currentWeaponIndex = newWeaponIndex;
-            if (weaponIdTable.TryGetValue(newWeaponIndex, out GameObject model))
-            {
-                if(Player.list.TryGetValue(playerId, out Player player))
+            if (weaponModels[newWeaponIndex])
+                if (Player.list.TryGetValue(playerId, out Player player))
                 {
-                    player.gunManager.ChangePlayerGunModel((int)playerId, model);
+                    Debug.Log(loadoutIndex[newWeaponIndex]);
+                    
+                    player.gunManager.ChangePlayerGunModel(playerId, weaponModels[loadoutIndex[newWeaponIndex]]);   
                 }
-            }
         }
 
-        public void ChangePlayerGunModel(int playerId, GameObject gunModel)
+        private void AssignLoadout(int id0, int id1)
+        {
+            loadoutIndex[0] = id0;
+            loadoutIndex[1] = id1;
+            
+            Debug.Log("Assigning loadout");
+        }
+
+        private void ChangePlayerGunModel(int playerId, GameObject gunModel)
         {
             if (Player.list.TryGetValue((ushort)playerId, out Player player))
             {
                 if (currentGunModel)
                     Destroy(currentGunModel);
-                currentGunModel = Instantiate(gunModel, gunModelHolder.transform.position, Quaternion.identity);
+                currentGunModel = Instantiate(gunModel);
                 currentGunModel.transform.parent = gunModelHolder.transform;
+                currentGunModel.transform.localPosition = gunModel.transform.localPosition;
+                currentGunModel.transform.localScale = gunModel.transform.localScale;
+                currentGunModel.transform.localRotation = gunModel.transform.localRotation;
             }
         }
     }

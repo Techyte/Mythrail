@@ -1,20 +1,19 @@
 using RiptideNetworking;
 using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GunManager : MonoBehaviour
 {
     [SerializeField] private Player player;
 
-    [SerializeField] private Transform weaponSpawnPos;
-
-    [SerializeField] private Weapon[] defaultWeapons = new Weapon[2];
-
     private bool[] inputs;
     private float scrollInput;
     [SerializeField] private int currentWeaponIndex;
 
-    private Weapon[] loadout;
+    [SerializeField] private Weapon[] guns;
+
+    [SerializeField] private ushort[] loadout;
 
     private bool canSwapIn;
     private bool canShoot;
@@ -32,9 +31,20 @@ public class GunManager : MonoBehaviour
         canShoot = true;
         canSwapIn = true;
 
-        loadout = defaultWeapons;
+        SendLoadoutInfo();
     }
 
+    private void SendLoadoutInfo()
+    {
+        Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.loadoutInfo);
+        
+        message.AddUShort(player.Id);
+        message.AddUShort(loadout[0]);
+        message.AddUShort(loadout[1]);
+        
+        NetworkManager.Singleton.Server.Send(message, player.Id);
+    }
+    
     public void SetInputs(bool[] inputs, float scrollInput)
     {
         this.inputs = inputs;
@@ -64,17 +74,19 @@ public class GunManager : MonoBehaviour
 
             Transform spawn = transform.Find("CamProxy");
             RaycastHit hit;
-            if(Physics.Raycast(spawn.position, bloomDirection, out hit, loadout[currentWeaponIndex].distance))
+            if(Physics.Raycast(spawn.position, bloomDirection, out hit, guns[loadout[currentWeaponIndex]].distance))
             {
                 SendHitInformation(hit.point, hit.normal);
                 
                 if(hit.transform.gameObject.tag == "Player")
                 {
-                    hit.transform.gameObject.GetComponent<Player>().TakeDamage(loadout[currentWeaponIndex].damage);
+                    hit.transform.gameObject.GetComponent<Player>().TakeDamage(guns[loadout[currentWeaponIndex]].damage);
                 }
             }
             Debug.DrawLine(spawn.position, spawn.forward, Color.red, 10);
 
+            message.AddFloat(guns[loadout[currentWeaponIndex]].recoil);
+            message.AddFloat(guns[loadout[currentWeaponIndex]].kickBack);
             NetworkManager.Singleton.Server.SendToAll(message);
         }
     }
@@ -84,8 +96,8 @@ public class GunManager : MonoBehaviour
         Transform spawn = transform.Find("CamProxy");
         Vector3 bloom = spawn.position + spawn.forward * 1000f;
 
-        bloom += Random.Range(-loadout[currentWeaponIndex].bloom, loadout[currentWeaponIndex].bloom) * spawn.up;
-        bloom += Random.Range(-loadout[currentWeaponIndex].bloom, loadout[currentWeaponIndex].bloom) * spawn.right;
+        bloom += Random.Range(-guns[loadout[currentWeaponIndex]].bloom, guns[loadout[currentWeaponIndex]].bloom) * spawn.up;
+        bloom += Random.Range(-guns[loadout[currentWeaponIndex]].bloom, guns[loadout[currentWeaponIndex]].bloom) * spawn.right;
         bloom -= spawn.position;
         bloom.Normalize();
 
@@ -106,27 +118,31 @@ public class GunManager : MonoBehaviour
     }
 
     private void SwitchWeapon()
-    {
+    {   
+        SendLoadoutInfo();
+        
         StartCoroutine(SwapInTimer());
-        currentWeaponIndex = (currentWeaponIndex == 0) ? 1 : 0;
+        currentWeaponIndex = currentWeaponIndex == 0 ? 1 : 0;
 
         Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.swapWeapon);
         message.AddUShort(player.Id);
         message.AddInt(currentWeaponIndex);
         NetworkManager.Singleton.Server.SendToAll(message);
+        
+        SendLoadoutInfo();
     }
 
     private IEnumerator SwapInTimer()
     {
         canSwapIn = false;
-        yield return new WaitForSeconds(loadout[currentWeaponIndex].swapInRate);
+        yield return new WaitForSeconds(guns[loadout[currentWeaponIndex]].swapInRate);
         canSwapIn = true;
     }
 
     private IEnumerator ShootTimer()
     {
         canShoot = false;
-        yield return new WaitForSeconds(loadout[currentWeaponIndex].fireRate);
+        yield return new WaitForSeconds(guns[loadout[currentWeaponIndex]].fireRate);
         canShoot = true;
     }
 }

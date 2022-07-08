@@ -10,15 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 376252c55fba3d04b953a073be898584, type: 3}
-  m_Name: Rifel
+  m_Name: Sniper
   m_EditorClassIdentifier: 
-  name: Rifel
-  model: {fileID: 0}
-  damage: 15
+  name: Sniper
+  damage: 25
   distance: 100
-  fireRate: 0.5
-  reloadRate: 0.9
+  fireRate: 5
+  reloadRate: 1.2
   swapInRate: 0.9
-  bloom: 2
+  bloom: 1
   recoil: 6
   kickBack: 0.1

@@ -3,7 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-namespace Mythrail
+namespace MythrailEngine
 {
     public class UIManager : MonoBehaviour
     {
@@ -66,17 +66,10 @@ namespace Mythrail
 
         void RefreshHealthBar()
         {
-            float healthRatio = (float)Player.LocalPlayer.currentHealth / (float)Player.LocalPlayer.maxHealth;
+            float healthRatio = (float)Player.LocalPlayer.currentHealth / Player.LocalPlayer.maxHealth;
             UIHealthBar.localScale = Vector3.Lerp(UIHealthBar.localScale, new Vector3(healthRatio, 1, 1), Time.deltaTime * 8f);
 
-            if (Player.LocalPlayer.currentHealth <= 10)
-            {
-                UIHealthBar.GetComponent<Image>().color = Color.red;
-            }
-            else
-            {
-                UIHealthBar.GetComponent<Image>().color = Color.green;
-            }
+            UIHealthBar.GetComponent<Image>().color = Player.LocalPlayer.currentHealth <= 10 ? Color.red : Color.green;
         }
     }
 

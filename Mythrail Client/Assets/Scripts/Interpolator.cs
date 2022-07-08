@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mythrail
+namespace MythrailEngine
 {
     public class Interpolator : MonoBehaviour
     {

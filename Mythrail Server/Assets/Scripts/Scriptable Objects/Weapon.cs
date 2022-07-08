@@ -4,11 +4,12 @@ using UnityEngine;
 public class Weapon : ScriptableObject
 {
     public new string name;
-    public GameObject model;
     public int damage;
     public float distance;
     public float fireRate;
     public float reloadRate;
     public float swapInRate;
     public float bloom;
+    public float recoil;
+    public float kickBack;
 }

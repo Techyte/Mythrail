@@ -3,7 +3,7 @@ using RiptideNetworking;
 using RiptideNetworking.Utils;
 using System;
 
-namespace Mythrail
+namespace MythrailEngine
 {
     public enum ServerToClientId : ushort
     {
@@ -15,6 +15,7 @@ namespace Mythrail
         playerTookDamage,
         playerDied,
         bulletHole,
+        loadoutInfo,
     }
 
     public enum ClientToServerId : ushort

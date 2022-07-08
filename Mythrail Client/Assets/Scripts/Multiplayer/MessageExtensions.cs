@@ -1,7 +1,7 @@
 using RiptideNetworking;
 using UnityEngine;
 
-namespace Mythrail
+namespace MythrailEngine
 {
     public static class MessageExtensions
     {

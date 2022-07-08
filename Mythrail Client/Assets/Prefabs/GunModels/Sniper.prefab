@@ -26,8 +26,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3672178788035881300}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.127, z: -4.11}
-  m_LocalScale: {x: 1.15148, y: 2.6556582, z: 1.15148}
+  m_LocalPosition: {x: 0, y: -1.6, z: -4.11}
+  m_LocalScale: {x: 0.9600629, y: 2.7260332, z: 0.923362}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1482400325114277971}
@@ -93,7 +93,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1482400325114277971}
   m_Layer: 0
-  m_Name: Rifel
+  m_Name: Sniper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -143,7 +143,7 @@ Transform:
   m_GameObject: {fileID: 6880361925085713638}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.7, y: 1.7, z: 13.173269}
+  m_LocalScale: {x: 0.905658, y: 0.775914, z: 10.556794}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1482400325114277971}
