@@ -23,7 +23,7 @@ namespace MythrailEngine
 
         private void Awake()
         {
-            weaponInputs = new bool[2];
+            weaponInputs = new bool[3];
         }
 
         private void Update()
@@ -34,6 +34,8 @@ namespace MythrailEngine
                 weaponInputs[0] = true;
             if (Input.GetMouseButton(1))
                 weaponInputs[1] = true;
+            if (Input.GetAxis("Mouse ScrollWheel") > 0)
+                weaponInputs[2] = true;
             
             currentGunModel.transform.localRotation = Quaternion.Lerp(currentGunModel.transform.localRotation, Quaternion.Euler(0, 0, 0), Time.deltaTime * 4f);
             currentGunModel.transform.localPosition = Vector3.Lerp(currentGunModel.transform.localPosition, weaponModels[currentWeaponIndex].transform.localPosition, Time.deltaTime * 4f);
@@ -94,7 +96,6 @@ namespace MythrailEngine
         {
             Message message = Message.Create(MessageSendMode.unreliable, ClientToServerId.weaponInput);
             message.AddBools(weaponInputs, false);
-            message.AddFloat(Input.GetAxis("Mouse ScrollWheel"));
             NetworkManager.Singleton.Client.Send(message);
         }
 

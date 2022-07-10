@@ -8,7 +8,6 @@ public class GunManager : MonoBehaviour
     [SerializeField] private Player player;
 
     private bool[] inputs;
-    private float scrollInput;
     [SerializeField] private int currentWeaponIndex;
 
     [SerializeField] private Weapon[] guns;
@@ -26,7 +25,7 @@ public class GunManager : MonoBehaviour
 
     private void Start()
     {
-        inputs = new bool[2];
+        inputs = new bool[3];
 
         canShoot = true;
         canSwapIn = true;
@@ -45,10 +44,9 @@ public class GunManager : MonoBehaviour
         NetworkManager.Singleton.Server.Send(message, player.Id);
     }
     
-    public void SetInputs(bool[] inputs, float scrollInput)
+    public void SetInputs(bool[] inputs)
     {
         this.inputs = inputs;
-        this.scrollInput = scrollInput;
     }
 
     private void FixedUpdate()
@@ -57,11 +55,8 @@ public class GunManager : MonoBehaviour
             Shoot(GeneratrBloom());
         if (inputs[1])
             Aim();
-
-        if(scrollInput!=0 && canSwapIn)
-        {
+        if(inputs[2] && canSwapIn)
             SwitchWeapon();
-        }
     }
 
     private void Shoot(Vector3 bloomDirection)
@@ -80,7 +75,7 @@ public class GunManager : MonoBehaviour
                 
                 if(hit.transform.gameObject.tag == "Player")
                 {
-                    hit.transform.gameObject.GetComponent<Player>().TakeDamage(guns[loadout[currentWeaponIndex]].damage);
+                    hit.transform.gameObject.GetComponent<Player>().TakeDamage(guns[loadout[currentWeaponIndex]].damage, player.Id);
                 }
             }
             Debug.DrawLine(spawn.position, spawn.forward, Color.red, 10);

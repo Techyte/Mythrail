@@ -16,6 +16,7 @@ namespace MythrailEngine
         playerDied,
         bulletHole,
         loadoutInfo,
+        playerKilled,
     }
 
     public enum ClientToServerId : ushort

@@ -61,7 +61,7 @@ public class Player : MonoBehaviour
         return message;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, ushort playerShotId)
     {
         currentHealth -= damage;
         Debug.Log(currentHealth);
@@ -74,24 +74,34 @@ public class Player : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            PlayerDied();
+            PlayerDied(playerShotId, Id);
         }
     }
 
-    private IEnumerator Respawn()
+    private IEnumerator RespawnTimer()
     {
         movement.camMove = false;
         yield return new WaitForSeconds(respawnDelay);
         Debug.Log("Respawned");
     }
 
-    private void PlayerDied()
+    private void PlayerDied(ushort playerShotId, ushort killedPlayerId)
     {
         Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.playerDied);
         message.AddUShort(Id);
         
         NetworkManager.Singleton.Server.SendToAll(message);
-        StartCoroutine(Respawn());
+        SendKilled(playerShotId, killedPlayerId);
+        StartCoroutine(RespawnTimer());
+    }
+
+    private void SendKilled(ushort playerShotId, ushort killedPlayerId)
+    {
+        Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.playerKilled);
+        message.AddUShort(playerShotId);
+        message.AddUShort(killedPlayerId);
+        
+        NetworkManager.Singleton.Server.SendToAll(message);
     }
 
     [MessageHandler((ushort)ClientToServerId.name)]
@@ -114,7 +124,7 @@ public class Player : MonoBehaviour
     {
         if (list.TryGetValue(fromClientId, out Player player))
         {
-            player.GunManager.SetInputs(message.GetBools(2), message.GetFloat());
+            player.GunManager.SetInputs(message.GetBools(3));
         }
     }
 }

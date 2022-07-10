@@ -35,6 +35,8 @@ namespace MythrailEngine
 
         private string username;
 
+        private int kills;
+        private int deaths;
 
         private Vector3 NewPosition;
         private void Start()
@@ -117,6 +119,12 @@ namespace MythrailEngine
             if (!player.IsLocal)
                 player.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;
         }
+
+        private void Killed(ushort killedPlayerId)
+        {
+            kills++;
+            Debug.Log($"{name} killed {list[killedPlayerId].name}");
+        }
         
         void HeadBob(float z, float xIntensity, float yIntensity)
         {
@@ -154,6 +162,13 @@ namespace MythrailEngine
             GameObject newHole = Instantiate(GameLogic.Singleton.BulletHolePrefab, point + normal * 0.001f, Quaternion.identity);
             newHole.transform.LookAt(point + normal);
             Destroy(newHole, 5);
+        }
+
+        [MessageHandler((ushort)ServerToClientId.playerKilled)]
+        private static void PlayerKilled(Message message)
+        {
+            if (list.TryGetValue(message.GetUShort(), out Player player))
+                player.Killed(message.GetUShort());
         }
     }
 }

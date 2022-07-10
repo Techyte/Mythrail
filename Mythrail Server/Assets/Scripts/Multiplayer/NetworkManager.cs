@@ -16,6 +16,7 @@ public enum ServerToClientId : ushort
     playerDied,
     bulletHole,
     loadoutInfo,
+    playerKilled,
 }
 
 public enum ClientToServerId : ushort
