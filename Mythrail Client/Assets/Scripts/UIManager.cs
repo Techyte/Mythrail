@@ -1,3 +1,4 @@
+using System;
 using RiptideNetworking;
 using UnityEngine;
 using TMPro;
@@ -24,44 +25,24 @@ namespace MythrailEngine
         }
 
         [Header("Connect")]
-        [SerializeField] private GameObject connectUI;
-        [SerializeField] private GameObject gameUI;
-        [SerializeField] private TMP_InputField usernameField;
-        public TMP_InputField port;
         [SerializeField] private Transform UIHealthBar;
+
+        [SerializeField] private TextMeshProUGUI username;
 
         private void Awake()
         {
             Singleton = this;
         }
 
+        public void UpdateUsername()
+        {
+            username.text = Player.LocalPlayer.Username;
+        }
+
         private void Update()
         {
             if (Player.LocalPlayer==null) return;
             RefreshHealthBar();
-        }
-
-        public void ConnectClicked()
-        {
-            usernameField.interactable = false;
-            connectUI.SetActive(false);
-            gameUI.SetActive(true);
-
-            NetworkManager.Singleton.Connect();
-        }
-
-        public void BackToMain()
-        {
-            usernameField.interactable = true;
-            connectUI.SetActive(true);
-            gameUI.SetActive(false);
-        }
-
-        public void SendName()
-        {
-            Message message = Message.Create(MessageSendMode.unreliable, ClientToServerId.name);
-            message.AddString(usernameField.text);
-            NetworkManager.Singleton.Client.Send(message);
         }
 
         void RefreshHealthBar()

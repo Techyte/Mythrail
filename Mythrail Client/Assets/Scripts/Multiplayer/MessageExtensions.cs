@@ -76,6 +76,40 @@ namespace MythrailEngine
             return new Quaternion(message.GetFloat(), message.GetFloat(), message.GetFloat(), message.GetFloat());
         }
         #endregion
+
+        #region MatchInfo
+
+        public static MatchInfo[] GetMatchInfos(this Message message)
+        {
+            string[] matchNames = message.GetStrings();
+            string[] matchCreatorNames = message.GetStrings();
+            ushort[] matchPorts = message.GetUShorts();
+            
+            MatchInfo[] infos = new MatchInfo[matchNames.Length];
+
+            for (int i = 0; i < matchNames.Length; i++)
+            {
+                infos[i] = new MatchInfo(matchNames[i], matchCreatorNames[i], matchPorts[i]);
+            }
+
+            return infos;
+        }
+
+        #endregion
+    }
+    
+    public class MatchInfo
+    {
+        public string name;
+        public string creatorName;
+        public ushort port;
+
+        public MatchInfo(string name, string creatorName, ushort port)
+        {
+            this.name = name;
+            this.creatorName = creatorName;
+            this.port = port;
+        }
     }
 
 }

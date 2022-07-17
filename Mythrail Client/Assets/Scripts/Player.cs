@@ -34,6 +34,7 @@ namespace MythrailEngine
         public int maxHealth;
 
         private string username;
+        public string Username => username;
 
         private int kills;
         private int deaths;
@@ -118,6 +119,8 @@ namespace MythrailEngine
 
             if (!player.IsLocal)
                 player.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;
+            if(player.IsLocal)
+                NetworkManager.Singleton.uiManager.UpdateUsername();
         }
 
         private void Killed(ushort killedPlayerId)

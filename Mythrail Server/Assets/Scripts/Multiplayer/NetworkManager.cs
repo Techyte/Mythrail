@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using RiptideNetworking;
 using RiptideNetworking.Utils;
@@ -55,15 +56,35 @@ public class NetworkManager : MonoBehaviour
     private void Awake()
     {
         Singleton = this;
-    }
+        
+        string[] args = Environment.GetCommandLineArgs();
 
-    private void Start()
-    {
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i].StartsWith("port"))
+            {
+                string[] splitArg = args[i].Split(":");
+                foreach (var VARIABLE in splitArg)
+                {
+                    Debug.Log(VARIABLE);
+                }
+                port = ushort.Parse(splitArg[1]);
+            }else if (args[i].StartsWith("maxPlayers"))
+            {
+                string[] splitArg = args[i].Split(":");
+                foreach (var VARIABLE in splitArg)
+                {
+                    Debug.Log(VARIABLE);
+                }
+                maxClientCount = ushort.Parse(splitArg[1]);
+            }
+        }
+
         Application.targetFrameRate = 60;
 
         RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 
-        port = (ushort)FreeTcpPort();
+        if (port == 0) port = (ushort)FreeTcpPort();
 
         Server = new Server();
         Server.Start(port, maxClientCount);

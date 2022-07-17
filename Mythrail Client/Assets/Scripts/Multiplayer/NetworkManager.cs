@@ -2,6 +2,7 @@ using UnityEngine;
 using RiptideNetworking;
 using RiptideNetworking.Utils;
 using System;
+using UnityEngine.SceneManagement;
 
 namespace MythrailEngine
 {
@@ -70,8 +71,13 @@ namespace MythrailEngine
 
         [SerializeField] private string ip;
         [SerializeField] private ushort port;
+        [SerializeField] private string username;
         [Space(10)]
         [SerializeField] private uint TickDivergenceTolerance = 1;
+        [Space(10)]
+        [SerializeField] private GameObject LoadingScreen;
+
+        public UIManager uiManager;
 
         private void Awake()
         {
@@ -89,6 +95,8 @@ namespace MythrailEngine
             Client.Disconnected += DidDisconnect;
 
             ServerTick = 2;
+            
+            Connect();
         }
 
         private void FixedUpdate()
@@ -102,20 +110,39 @@ namespace MythrailEngine
             Client.Disconnect();
         }
 
-        public void Connect()
+        private void FailedToConnect(object sender, EventArgs e)
         {
-            port = (ushort)int.Parse(UIManager.Singleton.port.text);
+            SceneManager.LoadScene(0);
+        }
+
+        private void Connect()
+        {
+            if (JoinMatchInfo.port != 0)
+            {
+                port = JoinMatchInfo.port;
+            }
             Client.Connect($"{ip}:{port}");
         }
 
         private void DidConnect(object sender, EventArgs e)
         {
-            UIManager.Singleton.SendName();
+            SendName();
+            LoadingScreen.SetActive(false);
         }
 
-        private void FailedToConnect(object sender, EventArgs e)
+        private void SendName()
         {
-            UIManager.Singleton.BackToMain();
+            Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.name);
+            if (JoinMatchInfo.username != "")
+            {
+                message.Add(JoinMatchInfo.username);
+            }
+            else
+            {
+                message.Add(username);
+            }
+            
+            Singleton.Client.Send(message);
         }
 
         private void PlayerLeft(object sender, ClientDisconnectedEventArgs e)
@@ -126,9 +153,10 @@ namespace MythrailEngine
 
         private void DidDisconnect(object sender, EventArgs e)
         {
-            UIManager.Singleton.BackToMain();
             foreach (Player player in Player.list.Values)
                 Destroy(player.gameObject);
+            
+            SceneManager.LoadScene(0);
         }
 
         private void SetTick(ushort serverTick)
