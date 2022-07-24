@@ -1,5 +1,3 @@
-using System;
-using RiptideNetworking;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;

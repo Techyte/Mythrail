@@ -23,11 +23,16 @@ namespace MythrailEngine
         public GameObject PlayerPrefab => playerPrefab;
         public GameObject LocalPlayerPrefab => localPlayerPrefab;
         public GameObject BulletHolePrefab => bulletHolePrefab;
+        public GameObject LobbyPlayerPrefab => lobbyPlayerPrefab;
+        public GameObject LobbyLocalPlayerPrefab => lobbyLocalPlayerPrefab;
 
         [Header("Prefabs")]
         [SerializeField] private GameObject localPlayerPrefab;
         [SerializeField] private GameObject playerPrefab;
         [SerializeField] private GameObject bulletHolePrefab;
+
+        [SerializeField] private GameObject lobbyPlayerPrefab;
+        [SerializeField] private GameObject lobbyLocalPlayerPrefab;
 
         private void Awake()
         {

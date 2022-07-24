@@ -1,5 +1,6 @@
 using RiptideNetworking;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MythrailEngine
 {
@@ -42,11 +43,20 @@ namespace MythrailEngine
 
         private void SendMovementInput()
         {
-            Message message = Message.Create(MessageSendMode.unreliable, ClientToServerId.movementInput);
-            message.AddBools(movementInputs, false);
-            message.AddVector3(camTransform.forward);
-            NetworkManager.Singleton.Client.Send(message);
+            if (SceneManager.GetActiveScene().buildIndex != 1)
+            {
+                Message message = Message.Create(MessageSendMode.unreliable, ClientToServerId.movementInput);
+                message.AddBools(movementInputs, false);
+                message.AddVector3(camTransform.forward);
+                NetworkManager.Singleton.Client.Send(message);   
+            }
+            else
+            {
+                Message message = Message.Create(MessageSendMode.unreliable, ClientToLobbyServer.movementInput);
+                message.AddBools(movementInputs, false);
+                message.AddVector3(camTransform.forward);
+                LobbyNetworkManager.Singleton.Client.Send(message);
+            }
         }
     }
-
 }

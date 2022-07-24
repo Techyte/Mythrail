@@ -1,5 +1,6 @@
 using RiptideNetworking;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
@@ -73,8 +74,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (transform.position.y <= -15)
         {
-            rb.velocity = Vector3.zero;
-            transform.position = new Vector3(0, 10, 0);
+            player.Died();
         }
         
         rb.velocity-= new Vector3(rb.velocity.x * HorizontalDrag, 0, rb.velocity.z * HorizontalDrag);
@@ -97,14 +97,29 @@ public class PlayerMovement : MonoBehaviour
 
     private void SendMovement()
     {
-        Message message = Message.Create(MessageSendMode.unreliable, ServerToClientId.playerMovement);
-        message.AddUShort(player.Id);
-        message.AddUInt(NetworkManager.Singleton.CurrentTick);
-        message.AddBool(didTeleport);
-        message.AddVector3(transform.position);
-        message.AddVector3(camProxy.forward);
-        NetworkManager.Singleton.Server.SendToAll(message);
+        if (SceneManager.GetActiveScene().buildIndex != 0)
+        {
+            Message message = Message.Create(MessageSendMode.unreliable, ServerToClientId.playerMovement);
+            message.AddUShort(player.Id);
+            message.AddUInt(NetworkManager.Singleton.CurrentTick);
+            message.AddBool(didTeleport);
+            message.AddVector3(transform.position);
+            message.AddVector3(camProxy.forward);
+            NetworkManager.Singleton.Server.SendToAll(message);
 
-        didTeleport = false;
+            didTeleport = false;   
+        }
+        else
+        {
+            Message message = Message.Create(MessageSendMode.unreliable, LobbyServerToClient.playerMovement);
+            message.AddUShort(player.Id);
+            message.AddUInt(NetworkManager.Singleton.CurrentTick);
+            message.AddBool(didTeleport);
+            message.AddVector3(transform.position);
+            message.AddVector3(camProxy.forward);
+            NetworkManager.Singleton.Server.SendToAll(message);
+
+            didTeleport = false;
+        }
     }
 }

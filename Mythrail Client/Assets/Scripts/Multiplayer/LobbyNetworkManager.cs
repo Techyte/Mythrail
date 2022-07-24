@@ -2,37 +2,27 @@ using UnityEngine;
 using RiptideNetworking;
 using RiptideNetworking.Utils;
 using System;
-using TMPro;
 using UnityEngine.SceneManagement;
 
 namespace MythrailEngine
 {
-    public enum ServerToClientId : ushort
+    public enum ClientToLobbyServer : ushort
     {
-        sync = 1,
+        movementInput = 100,
+    }
+
+    public enum LobbyServerToClient : ushort
+    {
+        sync = 200,
+        ready,
         playerSpawned,
         playerMovement,
-        playerShot,
-        swapWeapon,
-        playerTookDamage,
-        playerDied,
-        bulletHole,
-        loadoutInfo,
-        playerKilled,
-        playerHealth,
     }
-
-    public enum ClientToServerId : ushort
+    
+    public class LobbyNetworkManager : MonoBehaviour
     {
-        name = 1,
-        movementInput,
-        weaponInput,
-    }
-
-    public class NetworkManager : MonoBehaviour
-    {
-        private static NetworkManager _singleton;
-        public static NetworkManager Singleton
+        private static LobbyNetworkManager _singleton;
+        public static LobbyNetworkManager Singleton
         {
             get => _singleton;
             private set
@@ -41,7 +31,7 @@ namespace MythrailEngine
                     _singleton = value;
                 else if (_singleton != value)
                 {
-                    Debug.Log($"{nameof(NetworkManager)} instance already exists, destroying duplicate!");
+                    Debug.Log($"{nameof(LobbyNetworkManager)} instance already exists, destroying duplicate!");
                     Destroy(value);
                 }
             }
@@ -78,14 +68,7 @@ namespace MythrailEngine
         [SerializeField] private uint TickDivergenceTolerance = 1;
         [Space(10)]
         [SerializeField] private GameObject LoadingScreen;
-
-        [SerializeField] private TextMeshProUGUI deathsText;
-        [SerializeField] private TextMeshProUGUI killsText;
-
-        public static TextMeshProUGUI KillsText;
-        public static TextMeshProUGUI DeathsText;
-
-        public UIManager uiManager;
+        
 
         private void Awake()
         {
@@ -94,9 +77,6 @@ namespace MythrailEngine
 
         private void Start()
         {
-            KillsText = killsText;
-            DeathsText = deathsText;
-            
             RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 
             Client = new Client();
@@ -180,10 +160,18 @@ namespace MythrailEngine
             }
         }
 
-        [MessageHandler((ushort)ServerToClientId.sync)]
-        public static void Sync(Message message)
+        [MessageHandler((ushort)LobbyServerToClient.sync)]
+        public static void LobbySync(Message message)
         {
             Singleton.SetTick(message.GetUShort());
+        }
+
+        [MessageHandler((ushort)LobbyServerToClient.ready)]
+        private static void LobbyReady(Message message)
+        {
+            JoinMatchInfo.port = Singleton.port;
+            JoinMatchInfo.username = Singleton.username;
+            SceneManager.LoadScene(2);
         }
     }
 

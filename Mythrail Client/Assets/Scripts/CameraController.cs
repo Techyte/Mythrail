@@ -4,18 +4,12 @@ namespace MythrailEngine
 {
     public class CameraController : MonoBehaviour
     {
-        [SerializeField] private Player player;
+        [SerializeField] private Transform player;
         [SerializeField] private float sensitivity = 100f;
         [SerializeField] private float clampAngle = 85f;
 
         private float verticalRotation;
         private float horizontalRotation;
-
-        private void OnValidate()
-        {
-            if (player == null)
-                player = GetComponentInParent<Player>();
-        }
 
         private void Start()
         {
@@ -45,7 +39,7 @@ namespace MythrailEngine
             verticalRotation = Mathf.Clamp(verticalRotation, -clampAngle, clampAngle);
 
             transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-            player.transform.rotation = Quaternion.Euler(0f, horizontalRotation, 0f);
+            player.rotation = Quaternion.Euler(0f, horizontalRotation, 0f);
         }
 
         private void ToggleCursorMode()

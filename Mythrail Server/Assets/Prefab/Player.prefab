@@ -84,6 +84,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movement: {fileID: 616399214172069263}
   gunManager: {fileID: 2109152724045779268}
+  rb: {fileID: 2152747189613872484}
   currentHealth: 0
   maxHealth: 50
   respawnDelay: 5

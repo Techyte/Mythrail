@@ -1,4 +1,3 @@
-using System;
 using RiptideNetworking;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,8 +26,6 @@ namespace MythrailEngine
         [SerializeField] private GameObject gunModelHolder;
         private float movementCounter;
         private float idleCounter;
-
-        private GunManager _gunManager;
 
         public int currentHealth;
         public int maxHealth;
@@ -87,7 +84,7 @@ namespace MythrailEngine
         private void NewHealth(int newHealth, int newMaxHealth)
         {
             currentHealth = newHealth;
-            this.maxHealth = newMaxHealth;
+            maxHealth = newMaxHealth;
             Debug.Log("Health changed");
         }
 
@@ -127,11 +124,30 @@ namespace MythrailEngine
         {
             kills++;
             Debug.Log($"{name} killed {list[killedPlayerId].name}");
+            UpdateKillsAndDeaths();
+        }
+
+        private void Died()
+        {
+            deaths++;
+            if (this != LocalPlayer) return;
+            UpdateKillsAndDeaths();
+        }
+
+        private void UpdateKillsAndDeaths()
+        {
+            NetworkManager.DeathsText.text = deaths.ToString();
+            NetworkManager.KillsText.text = kills.ToString();
         }
         
-        void HeadBob(float z, float xIntensity, float yIntensity)
+        private void HeadBob(float z, float xIntensity, float yIntensity)
         {
             gunModelHolder.transform.localPosition = gunManager.weaponModels[gunManager.currentWeaponIndex].transform.localPosition + new Vector3 (Mathf.Cos(z) * xIntensity, Mathf.Sin(z * 2) * yIntensity, 0);
+        }
+
+        private void TookDamage()
+        {
+            Debug.Log($"{username} took damage");
         }
 
         [MessageHandler((ushort)ServerToClientId.playerSpawned)]
@@ -148,11 +164,11 @@ namespace MythrailEngine
         }
 
         [MessageHandler((ushort)ServerToClientId.playerTookDamage)]
-        private static void PlayerTookDamage(Message message)
+        private static void PlayerTookDamageHandler(Message message)
         {
             if (list.TryGetValue(message.GetUShort(), out Player player))
             {
-                player.NewHealth(message.GetInt(), message.GetInt());
+                player.TookDamage();
             }
         }
 
@@ -172,6 +188,20 @@ namespace MythrailEngine
         {
             if (list.TryGetValue(message.GetUShort(), out Player player))
                 player.Killed(message.GetUShort());
+        }
+
+        [MessageHandler((ushort)ServerToClientId.playerDied)]
+        private static void PlayerDied(Message message)
+        {
+            if(list.TryGetValue(message.GetUShort(), out Player player))
+                player.Died();
+        }
+
+        [MessageHandler((ushort)ServerToClientId.playerHealth)]
+        private static void PlayerHealth(Message message)
+        {
+            if (list.TryGetValue(message.GetUShort(), out Player player))
+                player.NewHealth(message.GetUShort(), message.GetUShort());
         }
     }
 }

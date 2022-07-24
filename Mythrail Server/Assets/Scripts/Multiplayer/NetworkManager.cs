@@ -1,10 +1,12 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using RiptideNetworking;
 using RiptideNetworking.Utils;
 using System.Net;
 using System.Net.Sockets;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public enum ServerToClientId : ushort
 {
@@ -18,6 +20,7 @@ public enum ServerToClientId : ushort
     bulletHole,
     loadoutInfo,
     playerKilled,
+    playerHealth,
 }
 
 public enum ClientToServerId : ushort
@@ -26,6 +29,20 @@ public enum ClientToServerId : ushort
     movementInput,
     weaponInput,
 }
+
+public enum LobbyServerToClient : ushort
+{
+    sync = 200,
+    ready,
+    playerSpawned,
+    playerMovement,
+}
+
+public enum ClientToLobbyServer : ushort
+{
+    movementInput = 100,
+}
+
 
 public class NetworkManager : MonoBehaviour
 {
@@ -50,12 +67,22 @@ public class NetworkManager : MonoBehaviour
 
     [SerializeField] private ushort port;
     [SerializeField] private ushort maxClientCount;
+    [SerializeField] private ushort minPlayerCount;
 
     [SerializeField] private TextMeshProUGUI portText;
+    [Space]
+    [SerializeField] private float readyCountdown;
+    [SerializeField] private float fullReadyCountdown;
 
+    private bool lobbyHasStartedCounting = false;
+    private bool lobbyHasStartedCountingQuickly = false;
     private void Awake()
     {
+        Debug.Log("Started again");
+    
         Singleton = this;
+        
+        DontDestroyOnLoad(gameObject);
         
         string[] args = Environment.GetCommandLineArgs();
 
@@ -64,19 +91,15 @@ public class NetworkManager : MonoBehaviour
             if (args[i].StartsWith("port"))
             {
                 string[] splitArg = args[i].Split(":");
-                foreach (var VARIABLE in splitArg)
-                {
-                    Debug.Log(VARIABLE);
-                }
                 port = ushort.Parse(splitArg[1]);
             }else if (args[i].StartsWith("maxPlayers"))
             {
                 string[] splitArg = args[i].Split(":");
-                foreach (var VARIABLE in splitArg)
-                {
-                    Debug.Log(VARIABLE);
-                }
                 maxClientCount = ushort.Parse(splitArg[1]);
+            }else if (args[i].StartsWith("minPlayers"))
+            {
+                string[] splitArg = args[i].Split(":");
+                minPlayerCount = ushort.Parse(splitArg[1]);
             }
         }
 
@@ -89,7 +112,7 @@ public class NetworkManager : MonoBehaviour
         Server = new Server();
         Server.Start(port, maxClientCount);
         Server.ClientDisconnected += PlayerLeft;
-        portText.text = port.ToString();
+        if(portText) portText.text = port.ToString();
     }
 
     static int FreeTcpPort()
@@ -106,9 +129,54 @@ public class NetworkManager : MonoBehaviour
         Server.Tick();
 
         if (CurrentTick % 200 == 0)
-            SendSync();
+            if(SceneManager.GetActiveScene().buildIndex != 0)
+            {
+                SendSync();
+            }
+            else
+            {
+                SendLobbySync();
+            }
 
         CurrentTick++;
+        
+        if(SceneManager.GetActiveScene().buildIndex == 0) UpdateLobbyStatus();
+    }
+
+    private void UpdateLobbyStatus()
+    {
+        if (Server.ClientCount >= minPlayerCount && minPlayerCount != maxClientCount && !lobbyHasStartedCounting)
+        {
+            StartCoroutine(StartGameCountdown());
+        }
+
+        if (minPlayerCount == maxClientCount && !lobbyHasStartedCountingQuickly)
+        {
+            StartCoroutine(StartQuickGameCountdown());
+        }
+    }
+
+    private IEnumerator StartGameCountdown()
+    {
+        Debug.Log("Starting lobby countdown");
+        lobbyHasStartedCounting = true;
+        yield return new WaitForSeconds(readyCountdown);
+        SendLobbyReady();
+    }
+
+    private IEnumerator StartQuickGameCountdown()
+    {
+        Debug.Log("Quickly starting lobby countdown");
+        lobbyHasStartedCountingQuickly = true;
+        yield return new WaitForSeconds(fullReadyCountdown);
+        SendLobbyReady();
+    }
+
+    private void SendLobbyReady()
+    {
+        Message message = Message.Create(MessageSendMode.reliable, LobbyServerToClient.ready);
+        Singleton.Server.SendToAll(message);
+        SceneManager.LoadScene(1);
     }
 
     private void OnApplicationQuit()
@@ -125,6 +193,14 @@ public class NetworkManager : MonoBehaviour
     private void SendSync()
     {
         Message message = Message.Create(MessageSendMode.unreliable, ServerToClientId.sync);
+        message.AddUInt(CurrentTick);
+
+        Server.SendToAll(message);
+    }
+
+    private void SendLobbySync()
+    {
+        Message message = Message.Create(MessageSendMode.unreliable, LobbyServerToClient.sync);
         message.AddUInt(CurrentTick);
 
         Server.SendToAll(message);

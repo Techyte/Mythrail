@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 using RiptideNetworking;
 using RiptideNetworking.Utils;
@@ -81,6 +80,7 @@ namespace MythrailEngine
         [SerializeField] private GameObject MainScreen;
 
         [SerializeField] private Slider maxPlayerCountSlider;
+        [SerializeField] private Slider minPlayerCountSlider;
         [SerializeField] private TMP_InputField matchName;
 
         public void OpenCreateScreen()
@@ -219,6 +219,8 @@ namespace MythrailEngine
             Message message = Message.Create(MessageSendMode.reliable, ClientToGameServerId.createMatch);
             message.AddString(matchName.text);
             message.AddUShort((ushort)maxPlayerCountSlider.value);
+            message.AddUShort((ushort)minPlayerCountSlider.value);
+            Debug.Log(minPlayerCountSlider.value);
             Singleton.Client.Send(message);
         }
     }

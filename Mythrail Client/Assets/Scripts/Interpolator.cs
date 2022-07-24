@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MythrailEngine
 {
@@ -18,35 +19,74 @@ namespace MythrailEngine
         private void Start()
         {
             squareMovementThreshold = movementThreshold * movementThreshold;
-            to = new TransformUpdate(NetworkManager.Singleton.ServerTick, false, transform.position);
-            from = new TransformUpdate(NetworkManager.Singleton.ServerTick, false, transform.position);
-            previous = new TransformUpdate(NetworkManager.Singleton.ServerTick, false, transform.position);
+            if (SceneManager.GetActiveScene().buildIndex != 1)
+            {
+                to = new TransformUpdate(NetworkManager.Singleton.ServerTick, false, transform.position);
+                from = new TransformUpdate(NetworkManager.Singleton.ServerTick, false, transform.position);
+                previous = new TransformUpdate(NetworkManager.Singleton.ServerTick, false, transform.position);   
+            }
+            else
+            {
+                to = new TransformUpdate(LobbyNetworkManager.Singleton.ServerTick, false, transform.position);
+                from = new TransformUpdate(LobbyNetworkManager.Singleton.ServerTick, false, transform.position);
+                previous = new TransformUpdate(LobbyNetworkManager.Singleton.ServerTick, false, transform.position);
+            }
         }
 
         private void Update()
         {
-            for (int i = 0; i < futureTransformUpdates.Count; i++)
+            if (SceneManager.GetActiveScene().buildIndex != 1)
             {
-                if (NetworkManager.Singleton.ServerTick >= futureTransformUpdates[i].Tick)
+                for (int i = 0; i < futureTransformUpdates.Count; i++)
                 {
-                    if (futureTransformUpdates[i].IsTeliport)
+                    if (NetworkManager.Singleton.ServerTick >= futureTransformUpdates[i].Tick)
                     {
-                        to = futureTransformUpdates[i];
-                        from = to;
-                        previous = to;
-                        transform.position = to.Position;
-                    }
-                    else
-                    {
-                        previous = to;
-                        to = futureTransformUpdates[i];
-                        from = new TransformUpdate(NetworkManager.Singleton.InterpolationTick, false, transform.position);
-                    }
+                        if (futureTransformUpdates[i].IsTeliport)
+                        {
+                            to = futureTransformUpdates[i];
+                            from = to;
+                            previous = to;
+                            transform.position = to.Position;
+                        }
+                        else
+                        {
+                            previous = to;
+                            to = futureTransformUpdates[i];
+                            from = new TransformUpdate(NetworkManager.Singleton.InterpolationTick, false, transform.position);
+                        }
 
-                    futureTransformUpdates.RemoveAt(i);
-                    i--;
-                    timeElapsed = 0f;
-                    timeToReachTarget = (to.Tick - from.Tick) * Time.fixedDeltaTime;
+                        futureTransformUpdates.RemoveAt(i);
+                        i--;
+                        timeElapsed = 0f;
+                        timeToReachTarget = (to.Tick - from.Tick) * Time.fixedDeltaTime;
+                    }
+                }   
+            }
+            else
+            {
+                for (int i = 0; i < futureTransformUpdates.Count; i++)
+                {
+                    if (LobbyNetworkManager.Singleton.ServerTick >= futureTransformUpdates[i].Tick)
+                    {
+                        if (futureTransformUpdates[i].IsTeliport)
+                        {
+                            to = futureTransformUpdates[i];
+                            from = to;
+                            previous = to;
+                            transform.position = to.Position;
+                        }
+                        else
+                        {
+                            previous = to;
+                            to = futureTransformUpdates[i];
+                            from = new TransformUpdate(LobbyNetworkManager.Singleton.InterpolationTick, false, transform.position);
+                        }
+
+                        futureTransformUpdates.RemoveAt(i);
+                        i--;
+                        timeElapsed = 0f;
+                        timeToReachTarget = (to.Tick - from.Tick) * Time.fixedDeltaTime;
+                    }
                 }
             }
 
@@ -69,8 +109,16 @@ namespace MythrailEngine
 
         public void NewUpdate(uint tick, bool isTeliport, Vector3 position)
         {
-            if (tick <= NetworkManager.Singleton.InterpolationTick)
-                return;
+            if (SceneManager.GetActiveScene().buildIndex != 1)
+            {
+                if (tick <= NetworkManager.Singleton.InterpolationTick)
+                    return;   
+            }
+            else
+            {
+                if (tick <= LobbyNetworkManager.Singleton.InterpolationTick)
+                    return;
+            }
 
             for (int i = 0; i < futureTransformUpdates.Count; i++)
             {

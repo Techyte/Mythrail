@@ -1,6 +1,7 @@
 using RiptideNetworking;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public class GunManager : MonoBehaviour
@@ -25,6 +26,8 @@ public class GunManager : MonoBehaviour
 
     private void Start()
     {
+        if(SceneManager.GetActiveScene().buildIndex != 0) return;
+        
         inputs = new bool[3];
 
         canShoot = true;
@@ -51,6 +54,8 @@ public class GunManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if(SceneManager.GetActiveScene().buildIndex != 0) return;
+        
         if (inputs[0] && canShoot)
             Shoot(GeneratrBloom());
         if (inputs[1])

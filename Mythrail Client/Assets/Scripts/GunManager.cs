@@ -34,7 +34,7 @@ namespace MythrailEngine
                 weaponInputs[0] = true;
             if (Input.GetMouseButton(1))
                 weaponInputs[1] = true;
-            if (Input.GetAxis("Mouse ScrollWheel") > 0)
+            if (Input.GetAxis("Mouse ScrollWheel") != 0)
                 weaponInputs[2] = true;
             
             currentGunModel.transform.localRotation = Quaternion.Lerp(currentGunModel.transform.localRotation, Quaternion.Euler(0, 0, 0), Time.deltaTime * 4f);

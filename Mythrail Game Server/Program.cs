@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using RiptideNetworking;
+using RiptideNetworking.Utils;
 
 namespace Mythrail_Game_Server
 {
@@ -45,7 +46,9 @@ namespace Mythrail_Game_Server
         {
             AppDomain.CurrentDomain.ProcessExit += StopServer;
             
-            port = (ushort)FreeTcpPort();
+            RiptideLogger.Initialize(Console.Write, Console.Write, Console.Write, Console.Write, false);
+            
+            port = FreeTcpPort();
             
             Console.WriteLine(port);
 
@@ -98,11 +101,11 @@ namespace Mythrail_Game_Server
             Server.SendToAll(message);
         }
         
-        static int FreeTcpPort()
+        static ushort FreeTcpPort()
         {
             TcpListener l = new TcpListener(IPAddress.Loopback, 0);
             l.Start();
-            int port = ((IPEndPoint)l.LocalEndpoint).Port;
+            ushort port = (ushort)((IPEndPoint)l.LocalEndpoint).Port;
             l.Stop();
             return port;
         }
@@ -124,9 +127,11 @@ namespace Mythrail_Game_Server
                 matchProcess.EnableRaisingEvents = true;
                 matchProcess.StartInfo.FileName = @"C:\Users\Mr. Monster\Documents\Coding\Match\Mythrail Server.exe";
             
-                ushort port = (ushort)FreeTcpPort();
+                ushort port = FreeTcpPort();
                 ushort maxPlayers = message.GetUShort();
-                matchProcess.StartInfo.Arguments = $"port:{port.ToString()} maxPlayers:{maxPlayers.ToString()}";
+                ushort minPlayers = message.GetUShort();
+                Console.WriteLine(minPlayers);
+                matchProcess.StartInfo.Arguments = $"port:{port.ToString()} maxPlayers:{maxPlayers.ToString()} minPlayers:{minPlayers.ToString()}";
 
                 matchProcess.Start();
             
@@ -141,15 +146,21 @@ namespace Mythrail_Game_Server
             
                 program.SendMatches(fromClientId);
                 
-                Message conformationMessage = Message.Create(MessageSendMode.reliable, GameServerToClientId.createMatchSuccess);
-                conformationMessage.AddUShort(port);
-                Server.Send(conformationMessage, fromClientId);
+                program.SendMatchCreationConformation(fromClientId);
+                
                 SendMatchesToAll();
             }
             catch(Exception e)
             {
                 Console.WriteLine("Match Creation Failure: " + e);
             }
+        }
+
+        private void SendMatchCreationConformation(ushort fromClientId)
+        {
+            Message conformationMessage = Message.Create(MessageSendMode.reliable, GameServerToClientId.createMatchSuccess);
+            conformationMessage.AddUShort(port);
+            Server.Send(conformationMessage, fromClientId);
         }
 
         private static void MatchEnded(MatchInfo match)

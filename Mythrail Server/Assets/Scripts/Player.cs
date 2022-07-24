@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using RiptideNetworking;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -15,6 +17,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] private PlayerMovement movement;
     [SerializeField] private GunManager gunManager;
+    [SerializeField] private Rigidbody rb;
 
     public int currentHealth;
     public int maxHealth;
@@ -26,6 +29,11 @@ public class Player : MonoBehaviour
         list.Remove(Id);
     }
 
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
+
     public static void Spawn(ushort id, string username)
     {
         Player player = Instantiate(GameLogic.Singleton.PlayerPrefab, new Vector3(0f, 10f, 0f), Quaternion.identity).GetComponent<Player>();
@@ -35,10 +43,25 @@ public class Player : MonoBehaviour
 
         player.currentHealth = player.maxHealth;
 
-        player.SendSpawned();
+        if (SceneManager.GetActiveScene().buildIndex == 0)
+        {
+            player.SendLobbySpawned();
+        }
+        else
+        {
+            player.SendSpawned();
+        }
 
-        foreach (Player otherPlayer in list.Values)
-            otherPlayer.SendSpawned(id);
+        if (SceneManager.GetActiveScene().buildIndex == 0)
+        {
+            foreach (Player otherPlayer in list.Values)
+                otherPlayer.SendLobbySpawned(id);
+        }
+        else
+        {
+            foreach (Player otherPlayer in list.Values)
+                otherPlayer.SendSpawned(id);
+        }
 
         list.Add(id, player);
     }
@@ -51,6 +74,16 @@ public class Player : MonoBehaviour
     private void SendSpawned(ushort toClientId)
     {
         NetworkManager.Singleton.Server.Send(AddSpawnData(Message.Create(MessageSendMode.reliable, ServerToClientId.playerSpawned)), toClientId);
+    }
+
+    private void SendLobbySpawned()
+    {
+        NetworkManager.Singleton.Server.SendToAll(AddSpawnData(Message.Create(MessageSendMode.reliable, LobbyServerToClient.playerSpawned)));
+    }
+
+    private void SendLobbySpawned(ushort toClientId)
+    {
+        NetworkManager.Singleton.Server.Send(AddSpawnData(Message.Create(MessageSendMode.reliable, LobbyServerToClient.playerSpawned)), toClientId);
     }
 
     private Message AddSpawnData(Message message)
@@ -68,14 +101,23 @@ public class Player : MonoBehaviour
 
         Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.playerTookDamage);
         message.AddInt(Id);
-        message.AddInt(currentHealth);
-        message.AddInt(maxHealth);
         NetworkManager.Singleton.Server.SendToAll(message);
+        
+        SendHealth(playerShotId);
 
         if (currentHealth <= 0)
         {
             PlayerDied(playerShotId, Id);
         }
+    }
+
+    private void SendHealth(ushort playerId)
+    {
+        Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.playerHealth);
+        message.AddUShort(playerId);
+        message.AddUShort((ushort)currentHealth);
+        message.AddUShort((ushort)maxHealth);
+        NetworkManager.Singleton.Server.SendToAll(message);
     }
 
     private IEnumerator RespawnTimer()
@@ -87,12 +129,21 @@ public class Player : MonoBehaviour
 
     private void PlayerDied(ushort playerShotId, ushort killedPlayerId)
     {
-        Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.playerDied);
-        message.AddUShort(Id);
-        
-        NetworkManager.Singleton.Server.SendToAll(message);
         SendKilled(playerShotId, killedPlayerId);
         StartCoroutine(RespawnTimer());
+        Died();
+    }
+
+    public void Died()
+    {   
+        rb.velocity = Vector3.zero;
+        transform.position = new Vector3(0, 10, 0);
+        currentHealth = maxHealth;
+        
+        Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.playerDied);
+        message.AddUShort(Id);
+        NetworkManager.Singleton.Server.SendToAll(message);
+        SendHealth(Id);
     }
 
     private void SendKilled(ushort playerShotId, ushort killedPlayerId)
@@ -112,6 +163,15 @@ public class Player : MonoBehaviour
 
     [MessageHandler((ushort)ClientToServerId.movementInput)]
     private static void MovementInput(ushort fromClientId, Message message)
+    {
+        if (list.TryGetValue(fromClientId, out Player player))
+        {
+            player.Movement.SetInputs(message.GetBools(6), message.GetVector3());
+        }
+    }
+
+    [MessageHandler((ushort)ClientToLobbyServer.movementInput)]
+    private static void LobbyMovementInput(ushort fromClientId, Message message)
     {
         if (list.TryGetValue(fromClientId, out Player player))
         {
