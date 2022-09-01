@@ -100,8 +100,6 @@ public class NetworkManager : MonoBehaviour
                 minPlayerCount = ushort.Parse(splitArg[1]);
             }
         }
-        
-        Debug.LogError(minPlayerCount);
 
         Application.targetFrameRate = 60;
 
@@ -149,20 +147,17 @@ public class NetworkManager : MonoBehaviour
     {
         if (Server.ClientCount >= minPlayerCount && !lobbyHasStartedCounting)
         {
-            Debug.LogError("Starting Game Countdown");
             StartCoroutine(StartGameCountdown());
         }
 
         if (minPlayerCount == maxClientCount && !lobbyHasStartedCountingQuickly)
         {
-            Debug.LogError("Starting Quick Game Countdown");
             StartCoroutine(StartQuickGameCountdown());
         }
     }
 
     private IEnumerator StartGameCountdown()
     {
-        Debug.Log("Starting lobby countdown");
         lobbyHasStartedCounting = true;
         yield return new WaitForSeconds(readyCountdown);
         SendLobbyReady();
@@ -170,7 +165,6 @@ public class NetworkManager : MonoBehaviour
 
     private IEnumerator StartQuickGameCountdown()
     {
-        Debug.Log("Quickly starting lobby countdown");
         lobbyHasStartedCountingQuickly = true;
         yield return new WaitForSeconds(fullReadyCountdown);
         SendLobbyReady();

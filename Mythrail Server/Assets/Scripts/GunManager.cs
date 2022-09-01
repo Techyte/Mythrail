@@ -15,8 +15,8 @@ public class GunManager : MonoBehaviour
 
     [SerializeField] private ushort[] loadout;
 
-    private bool canSwapIn;
-    [SerializeField] private bool canShoot;
+    [SerializeField] private bool canSwapIn = true;
+    [SerializeField] private bool canShoot = true;
 
     private void OnValidate()
     {
@@ -57,7 +57,9 @@ public class GunManager : MonoBehaviour
         if(SceneManager.GetActiveScene().buildIndex == 0) return;
         
         if (inputs[0] && canShoot)
+        {
             Shoot(GeneratrBloom());
+        }
         if (inputs[1])
             Aim();
         if(inputs[2] && canSwapIn)

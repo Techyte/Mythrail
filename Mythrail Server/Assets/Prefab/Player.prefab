@@ -126,12 +126,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 2740904604180753793}
+  inputs: 
   currentWeaponIndex: 0
   guns:
   - {fileID: 11400000, guid: de175f04ed159bc45a577695a80e1550, type: 2}
   - {fileID: 11400000, guid: 56ebd8e2e1f2854499bb59adbee49cb3, type: 2}
   - {fileID: 11400000, guid: 3853edf9a87b0c9418e155abf3f61ea7, type: 2}
   loadout: 00000100
+  canShoot: 1
 --- !u!54 &2152747189613872484
 Rigidbody:
   m_ObjectHideFlags: 0
