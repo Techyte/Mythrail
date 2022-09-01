@@ -78,8 +78,6 @@ public class NetworkManager : MonoBehaviour
     private bool lobbyHasStartedCountingQuickly = false;
     private void Awake()
     {
-        Debug.Log("Started again");
-    
         Singleton = this;
         
         DontDestroyOnLoad(gameObject);
@@ -102,6 +100,8 @@ public class NetworkManager : MonoBehaviour
                 minPlayerCount = ushort.Parse(splitArg[1]);
             }
         }
+        
+        Debug.LogError(minPlayerCount);
 
         Application.targetFrameRate = 60;
 
@@ -129,6 +129,7 @@ public class NetworkManager : MonoBehaviour
         Server.Tick();
 
         if (CurrentTick % 200 == 0)
+        {
             if(SceneManager.GetActiveScene().buildIndex != 0)
             {
                 SendSync();
@@ -136,7 +137,8 @@ public class NetworkManager : MonoBehaviour
             else
             {
                 SendLobbySync();
-            }
+            }   
+        }
 
         CurrentTick++;
         
@@ -145,13 +147,15 @@ public class NetworkManager : MonoBehaviour
 
     private void UpdateLobbyStatus()
     {
-        if (Server.ClientCount >= minPlayerCount && minPlayerCount != maxClientCount && !lobbyHasStartedCounting)
+        if (Server.ClientCount >= minPlayerCount && !lobbyHasStartedCounting)
         {
+            Debug.LogError("Starting Game Countdown");
             StartCoroutine(StartGameCountdown());
         }
 
         if (minPlayerCount == maxClientCount && !lobbyHasStartedCountingQuickly)
         {
+            Debug.LogError("Starting Quick Game Countdown");
             StartCoroutine(StartQuickGameCountdown());
         }
     }

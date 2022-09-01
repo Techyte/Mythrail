@@ -128,10 +128,7 @@ namespace MythrailEngine
 
         private void Connect()
         {
-            if (JoinMatchInfo.port != 0)
-            {
-                port = JoinMatchInfo.port;
-            }
+            port = JoinMatchInfo.port;
             Client.Connect($"{ip}:{port}");
         }
 

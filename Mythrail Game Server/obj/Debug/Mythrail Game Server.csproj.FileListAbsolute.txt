@@ -16,3 +16,15 @@ C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\M
 C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\obj\Debug\Mythrail Game Server.csproj.CopyComplete
 C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\obj\Debug\Mythrail_Game_Server.exe
 C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\obj\Debug\Mythrail_Game_Server.pdb
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Debug\System.Data.Common.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Debug\System.Diagnostics.StackTrace.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Debug\System.Diagnostics.Tracing.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Debug\System.Globalization.Extensions.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Debug\System.IO.Compression.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Debug\System.Net.Http.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Debug\System.Net.Sockets.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Debug\System.Runtime.Serialization.Primitives.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Debug\System.Security.Cryptography.Algorithms.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Debug\System.Security.SecureString.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Debug\System.Threading.Overlapped.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Debug\System.Xml.XPath.XDocument.dll

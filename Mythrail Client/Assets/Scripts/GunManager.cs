@@ -46,6 +46,8 @@ namespace MythrailEngine
             if (!player.IsLocal)
                 return;
             
+            Debug.Log("Fixed Update");
+            
             SendWeaponInputs();
 
             for (int i = 0; i < weaponInputs.Length; i++)
@@ -74,9 +76,6 @@ namespace MythrailEngine
         
             int id0 = message.GetUShort();
             int id1 = message.GetUShort();
-            
-            Debug.Log(id0);
-            Debug.Log(id1);
             
             if (Player.list.TryGetValue(playerId, out Player player))
                 player.gunManager.AssignLoadout(id0, id1);

@@ -8,7 +8,7 @@ public class GunManager : MonoBehaviour
 {
     [SerializeField] private Player player;
 
-    private bool[] inputs;
+    [SerializeField] private bool[] inputs;
     [SerializeField] private int currentWeaponIndex;
 
     [SerializeField] private Weapon[] guns;
@@ -16,7 +16,7 @@ public class GunManager : MonoBehaviour
     [SerializeField] private ushort[] loadout;
 
     private bool canSwapIn;
-    private bool canShoot;
+    [SerializeField] private bool canShoot;
 
     private void OnValidate()
     {
@@ -54,7 +54,7 @@ public class GunManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(SceneManager.GetActiveScene().buildIndex != 0) return;
+        if(SceneManager.GetActiveScene().buildIndex == 0) return;
         
         if (inputs[0] && canShoot)
             Shoot(GeneratrBloom());
@@ -78,7 +78,7 @@ public class GunManager : MonoBehaviour
             {
                 SendHitInformation(hit.point, hit.normal);
                 
-                if(hit.transform.gameObject.tag == "Player")
+                if(hit.transform.gameObject.CompareTag("Player"))
                 {
                     hit.transform.gameObject.GetComponent<Player>().TakeDamage(guns[loadout[currentWeaponIndex]].damage, player.Id);
                 }

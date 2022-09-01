@@ -146,7 +146,7 @@ namespace Mythrail_Game_Server
             
                 program.SendMatches(fromClientId);
                 
-                program.SendMatchCreationConformation(fromClientId);
+                program.SendMatchCreationConformation(fromClientId, port);
                 
                 SendMatchesToAll();
             }
@@ -156,7 +156,7 @@ namespace Mythrail_Game_Server
             }
         }
 
-        private void SendMatchCreationConformation(ushort fromClientId)
+        private void SendMatchCreationConformation(ushort fromClientId, ushort port)
         {
             Message conformationMessage = Message.Create(MessageSendMode.reliable, GameServerToClientId.createMatchSuccess);
             conformationMessage.AddUShort(port);

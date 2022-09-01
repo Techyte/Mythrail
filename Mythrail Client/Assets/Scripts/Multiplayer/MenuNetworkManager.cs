@@ -217,10 +217,9 @@ namespace MythrailEngine
         public void CreateMatch()
         {
             Message message = Message.Create(MessageSendMode.reliable, ClientToGameServerId.createMatch);
-            message.AddString(matchName.text);
             message.AddUShort((ushort)maxPlayerCountSlider.value);
             message.AddUShort((ushort)minPlayerCountSlider.value);
-            Debug.Log(minPlayerCountSlider.value);
+            message.AddString(matchName.text);
             Singleton.Client.Send(message);
         }
     }
