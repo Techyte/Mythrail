@@ -1,3 +1,5 @@
+using System;
+using RiptideNetworking;
 using UnityEngine;
 
 public class GameLogic : MonoBehaviour
@@ -23,8 +25,36 @@ public class GameLogic : MonoBehaviour
     [Header("Prefabs")]
     [SerializeField] private GameObject playerPrefab;
 
+    private int readyPlayers;
+
+    public bool gameHasStarted;
+
     private void Awake()
     {
         Singleton = this;
+    }
+
+    private void FixedUpdate()
+    {
+        if (readyPlayers == NetworkManager.Singleton.Server.ClientCount)
+        {
+            SendReady();
+            gameHasStarted = true;
+        }
+    }
+
+    private void SendReady()
+    {
+        Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.gameStarted);
+        NetworkManager.Singleton.Server.SendToAll(message);
+    }
+
+    [MessageHandler((ushort)ClientToServerId.ready)]
+    private static void Ready(ushort fromClientId, Message message)
+    {
+        if (Player.list.TryGetValue(fromClientId, out Player player))
+        {
+            Singleton.readyPlayers++;
+        }
     }
 }

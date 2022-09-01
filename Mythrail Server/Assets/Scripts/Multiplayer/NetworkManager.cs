@@ -21,6 +21,7 @@ public enum ServerToClientId : ushort
     loadoutInfo,
     playerKilled,
     playerHealth,
+    gameStarted,
 }
 
 public enum ClientToServerId : ushort
@@ -28,6 +29,7 @@ public enum ClientToServerId : ushort
     name = 1,
     movementInput,
     weaponInput,
+    ready,
 }
 
 public enum LobbyServerToClient : ushort

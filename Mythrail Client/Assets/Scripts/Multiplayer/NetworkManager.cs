@@ -27,6 +27,7 @@ namespace MythrailEngine
         name = 1,
         movementInput,
         weaponInput,
+        ready,
     }
 
     public class NetworkManager : MonoBehaviour
@@ -86,6 +87,8 @@ namespace MythrailEngine
         public static TextMeshProUGUI DeathsText;
 
         public UIManager uiManager;
+
+        private bool PlayerReady = false;
 
         private void Awake()
         {
@@ -174,7 +177,18 @@ namespace MythrailEngine
             {
                 Debug.Log($"Client tick: {ServerTick} -> {serverTick}");
                 ServerTick = serverTick;
+                if (!PlayerReady)
+                {
+                    Ready();
+                }
             }
+        }
+
+        private void Ready()
+        {
+            PlayerReady = true;
+            Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.ready);
+            Client.Send(message);
         }
 
         [MessageHandler((ushort)ServerToClientId.sync)]

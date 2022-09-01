@@ -104,8 +104,6 @@ namespace MythrailEngine
             if (weaponModels[newWeaponIndex])
                 if (Player.list.TryGetValue(playerId, out Player player))
                 {
-                    Debug.Log(loadoutIndex[newWeaponIndex]);
-                    
                     player.gunManager.ChangePlayerGunModel(playerId, weaponModels[loadoutIndex[newWeaponIndex]]);   
                 }
         }
