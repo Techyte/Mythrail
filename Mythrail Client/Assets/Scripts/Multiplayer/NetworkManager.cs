@@ -20,6 +20,7 @@ namespace MythrailEngine
         loadoutInfo,
         playerKilled,
         playerHealth,
+        gameStarted,
     }
 
     public enum ClientToServerId : ushort
@@ -88,7 +89,7 @@ namespace MythrailEngine
 
         public UIManager uiManager;
 
-        private bool PlayerReady = false;
+        [SerializeField] private bool PlayerReady;
 
         private void Awake()
         {
@@ -97,6 +98,7 @@ namespace MythrailEngine
 
         private void Start()
         {
+            LoadingScreen.SetActive(true);
             KillsText = killsText;
             DeathsText = deathsText;
             
@@ -138,20 +140,20 @@ namespace MythrailEngine
         private void DidConnect(object sender, EventArgs e)
         {
             SendName();
-            LoadingScreen.SetActive(false);
         }
 
         private void SendName()
         {
             Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.name);
-            /*if (JoinMatchInfo.username != "")
+            if (JoinMatchInfo.username != "")
             {
                 message.Add(JoinMatchInfo.username);
             }
             else
             {
                 message.Add(username);
-            }*/
+            }
+            JoinMatchInfo.username = "";
             message.Add(username);
             
             Singleton.Client.Send(message);
@@ -195,6 +197,14 @@ namespace MythrailEngine
         public static void Sync(Message message)
         {
             Singleton.SetTick(message.GetUShort());
+        }
+
+        [MessageHandler((ushort)ServerToClientId.gameStarted)]
+        public static void GameStarted(Message message)
+        {
+            Debug.Log("Everyone is ready");
+            Player.LocalPlayer.playerController.canMove = true;
+            Singleton.LoadingScreen.SetActive(false);
         }
     }
 

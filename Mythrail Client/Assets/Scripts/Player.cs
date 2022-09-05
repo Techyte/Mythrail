@@ -37,6 +37,9 @@ namespace MythrailEngine
         private int deaths;
 
         private Vector3 NewPosition;
+
+        public PlayerController playerController;
+            
         private void Start()
         {
             if (!IsLocal) return;
@@ -96,6 +99,7 @@ namespace MythrailEngine
                 player = Instantiate(GameLogic.Singleton.LocalPlayerPrefab, position, Quaternion.identity).GetComponent<Player>();
                 player.IsLocal = true;
                 LocalPlayer = player;
+                player.playerController.canMove = false;
             }
             else
             {

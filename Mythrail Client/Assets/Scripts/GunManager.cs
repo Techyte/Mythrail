@@ -30,12 +30,15 @@ namespace MythrailEngine
         {
             if (!player.IsLocal)
                 return;
-            if (Input.GetMouseButton(0))
-                weaponInputs[0] = true;
-            if (Input.GetMouseButton(1))
-                weaponInputs[1] = true;
-            if (Input.GetAxis("Mouse ScrollWheel") != 0)
-                weaponInputs[2] = true;
+            if (Player.LocalPlayer.playerController.canMove)
+            {
+                if (Input.GetMouseButton(0))
+                    weaponInputs[0] = true;
+                if (Input.GetMouseButton(1))
+                    weaponInputs[1] = true;
+                if (Input.GetAxis("Mouse ScrollWheel") != 0)
+                    weaponInputs[2] = true;   
+            }
             
             currentGunModel.transform.localRotation = Quaternion.Lerp(currentGunModel.transform.localRotation, Quaternion.Euler(0, 0, 0), Time.deltaTime * 4f);
             currentGunModel.transform.localPosition = Vector3.Lerp(currentGunModel.transform.localPosition, weaponModels[currentWeaponIndex].transform.localPosition, Time.deltaTime * 4f);
@@ -79,8 +82,6 @@ namespace MythrailEngine
             
             if (Player.list.TryGetValue(playerId, out Player player))
                 player.gunManager.AssignLoadout(id0, id1);
-            
-            Debug.Log("Recived Message");
         }
 
         private void Shot(float recoil, float kickBack)

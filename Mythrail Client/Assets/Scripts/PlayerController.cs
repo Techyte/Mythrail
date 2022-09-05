@@ -10,6 +10,8 @@ namespace MythrailEngine
 
         [SerializeField] private bool[] movementInputs;
 
+        public bool canMove = true;
+
         private void Start()
         {
             movementInputs = new bool[6];
@@ -17,20 +19,23 @@ namespace MythrailEngine
 
         private void Update()
         {
-            if (Input.GetKey(KeyCode.W))
+            if (canMove)
             {
-                movementInputs[0] = true;
-                if (Input.GetKey(KeyCode.LeftShift))
-                    movementInputs[5] = true;
+                if (Input.GetKey(KeyCode.W))
+                {
+                    movementInputs[0] = true;
+                    if (Input.GetKey(KeyCode.LeftShift))
+                        movementInputs[5] = true;
+                }
+                if (Input.GetKey(KeyCode.S))
+                    movementInputs[1] = true;
+                if (Input.GetKey(KeyCode.A))
+                    movementInputs[2] = true;
+                if (Input.GetKey(KeyCode.D))
+                    movementInputs[3] = true;
+                if (Input.GetKey(KeyCode.Space))
+                    movementInputs[4] = true;   
             }
-            if (Input.GetKey(KeyCode.S))
-                movementInputs[1] = true;
-            if (Input.GetKey(KeyCode.A))
-                movementInputs[2] = true;
-            if (Input.GetKey(KeyCode.D))
-                movementInputs[3] = true;
-            if (Input.GetKey(KeyCode.Space))
-                movementInputs[4] = true;
         }
 
         private void FixedUpdate()

@@ -1,6 +1,7 @@
 using System;
 using RiptideNetworking;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameLogic : MonoBehaviour
 {
@@ -36,7 +37,8 @@ public class GameLogic : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (readyPlayers == NetworkManager.Singleton.Server.ClientCount)
+        Debug.Log(NetworkManager.Singleton.Server.Clients.Length);
+        if (readyPlayers == NetworkManager.Singleton.Server.ClientCount && SceneManager.GetActiveScene().buildIndex != 0 && NetworkManager.Singleton.Server.ClientCount > 0)
         {
             SendReady();
             gameHasStarted = true;

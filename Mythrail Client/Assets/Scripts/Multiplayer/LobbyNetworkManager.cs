@@ -57,7 +57,7 @@ namespace MythrailEngine
             set
             {
                 _ticksBetweenPositionUpdates = value;
-                InterpolationTick = (uint)(ServerTick - value);
+                InterpolationTick = (ServerTick - value);
             }
         }
 
@@ -124,15 +124,10 @@ namespace MythrailEngine
         private void SendName()
         {
             Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.name);
-            /*if (JoinMatchInfo.username != "")
-            {
-                message.Add(JoinMatchInfo.username);
-            }
-            else
-            {
-                message.Add(username);
-            }*/
-            message.Add(username);
+
+            string finalUsername = JoinMatchInfo.username != "" ? JoinMatchInfo.username : username;
+            message.AddString(username);
+            JoinMatchInfo.username = "";
             
             Singleton.Client.Send(message);
         }

@@ -511,6 +511,7 @@ MonoBehaviour:
   gunModelHolder: {fileID: 2913610624786428953}
   currentHealth: 50
   maxHealth: 50
+  playerController: {fileID: -5101889484708159959}
 --- !u!114 &-5101889484708159959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -525,6 +526,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camTransform: {fileID: 5521911285442223720}
   movementInputs: 
+  canMove: 1
 --- !u!114 &9098606700725488433
 MonoBehaviour:
   m_ObjectHideFlags: 0
