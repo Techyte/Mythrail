@@ -36,7 +36,7 @@ namespace MythrailEngine
                     weaponInputs[0] = true;
                 if (Input.GetMouseButton(1))
                     weaponInputs[1] = true;
-                if (Input.GetAxis("Mouse ScrollWheel") != 0)
+                if (Input.GetAxis("Mouse ScrollWheel") != 0 || Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2))
                     weaponInputs[2] = true;   
             }
             

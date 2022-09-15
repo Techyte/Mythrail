@@ -126,7 +126,7 @@ namespace MythrailEngine
             Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.name);
 
             string finalUsername = JoinMatchInfo.username != "" ? JoinMatchInfo.username : username;
-            message.AddString(username);
+            message.AddString(finalUsername);
             JoinMatchInfo.username = "";
             
             Singleton.Client.Send(message);
@@ -166,6 +166,7 @@ namespace MythrailEngine
         {
             JoinMatchInfo.port = Singleton.port;
             JoinMatchInfo.username = Singleton.username;
+            Singleton.Client.Disconnect();
             SceneManager.LoadScene(2);
         }
     }

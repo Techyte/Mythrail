@@ -52,13 +52,17 @@ public class GunManager : MonoBehaviour
         this.inputs = inputs;
     }
 
+    private bool shootCheck;
     private void FixedUpdate()
     {
         if(SceneManager.GetActiveScene().buildIndex == 0) return;
         
-        if (inputs[0] && canShoot)
+        if (inputs[0] && canShoot && !shootCheck)
         {
             Shoot(GeneratrBloom());
+        }else if (shootCheck)
+        {
+            shootCheck = false;
         }
         if (inputs[1])
             Aim();

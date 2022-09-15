@@ -80,7 +80,9 @@ namespace MythrailEngine
         [SerializeField] private GameObject MainScreen;
 
         [SerializeField] private Slider maxPlayerCountSlider;
+        [SerializeField] private TextMeshProUGUI maxPlayerDisplay;
         [SerializeField] private Slider minPlayerCountSlider;
+        [SerializeField] private TextMeshProUGUI minPlayerDisplay;
         [SerializeField] private TMP_InputField matchName;
 
         public void OpenCreateScreen()
@@ -104,12 +106,21 @@ namespace MythrailEngine
         {
             RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 
+            maxPlayerCountSlider.onValueChanged.AddListener(delegate {UpdateMinMax(); });
+            minPlayerCountSlider.onValueChanged.AddListener(delegate {UpdateMinMax(); });
+
             Client = new Client();
             Client.Connected += ClientConnected;
             Client.ClientDisconnected += ClientDisconnected;
             Client.ConnectionFailed += ConnectionFailed;
             Singleton.Client.Connect($"{ip}:{port}");
             connectionStatusText.text = "Connecting...";
+        }
+
+        private void UpdateMinMax()
+        {
+            maxPlayerDisplay.text = maxPlayerCountSlider.value.ToString();
+            minPlayerDisplay.text = minPlayerCountSlider.value.ToString();
         }
 
         private void ConnectionFailed(object o, EventArgs args)

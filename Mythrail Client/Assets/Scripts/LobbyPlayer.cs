@@ -61,32 +61,36 @@ namespace MythrailEngine
 
         private static void Spawn(ushort id, string username, Vector3 position)
         {
-            LobbyPlayer player;
+            LobbyPlayer lobbyPlayer;
             if (id == LobbyNetworkManager.Singleton.Client.Id)
             {
-                player = Instantiate(GameLogic.Singleton.LobbyLocalPlayerPrefab, position, Quaternion.identity).GetComponent<LobbyPlayer>();
-                player.IsLocal = true;
-                LocalPlayer = player;
+                lobbyPlayer = Instantiate(GameLogic.Singleton.LobbyLocalPlayerPrefab, position, Quaternion.identity).GetComponent<LobbyPlayer>();
+                lobbyPlayer.IsLocal = true;
+                LocalPlayer = lobbyPlayer;
             }
             else
             {
-                player = Instantiate(GameLogic.Singleton.LobbyPlayerPrefab, position, Quaternion.identity).GetComponent<LobbyPlayer>();
-                player.IsLocal = false;
+                lobbyPlayer = Instantiate(GameLogic.Singleton.LobbyPlayerPrefab, position, Quaternion.identity).GetComponent<LobbyPlayer>();
+                lobbyPlayer.IsLocal = false;
             }
 
-            player.name = $"Player {id} ({(string.IsNullOrEmpty(username) ? "Guest" : username)})";
-            player.Id = id;
-            player.username = username;
+            lobbyPlayer.name = $"Player {id} ({(string.IsNullOrEmpty(username) ? "Guest" : username)})";
+            lobbyPlayer.Id = id;
+            lobbyPlayer.username = username;
 
-            list.Add(id, player);
+            list.Add(id, lobbyPlayer);
 
-            player.usernameText.GetComponent<ObjectLookAt>().target = player.camTransform;
+            lobbyPlayer.usernameText.GetComponent<ObjectLookAt>().target = lobbyPlayer.camTransform;
 
             foreach (LobbyPlayer gotPlayer in list.Values)
-                gotPlayer.usernameText.text = gotPlayer.username;
+            {
+                gotPlayer.usernameText.text = gotPlayer.username;   
+            }
 
-            if (!player.IsLocal)
-                player.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;
+            if (!lobbyPlayer.IsLocal)
+            {
+                lobbyPlayer.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;
+            }
         }
 
         [MessageHandler((ushort)LobbyServerToClient.playerSpawned)]
@@ -98,7 +102,6 @@ namespace MythrailEngine
         [MessageHandler((ushort)LobbyServerToClient.playerMovement)]
         private static void PlayerMovement(Message message)
         {
-            Debug.Log("Received lobby movement");
             if (list.TryGetValue(message.GetUShort(), out LobbyPlayer player))
                 player.Move(message.GetUInt(), message.GetBool(), message.GetVector3(), message.GetVector3());
         }

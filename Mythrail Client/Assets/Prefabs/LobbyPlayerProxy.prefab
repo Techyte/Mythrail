@@ -278,8 +278,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1405705507154790366}
-  - component: {fileID: 6957738921811788528}
   - component: {fileID: 3544126110685234267}
+  - component: {fileID: 3398137071550328592}
   m_Layer: 0
   m_Name: LobbyPlayerProxy
   m_TagString: Untagged
@@ -305,28 +305,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6957738921811788528
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4142091868330885182}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5dd7f319973873241aca708dbdf1d0b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  camTransform: {fileID: 1405705507154790366}
-  interpolator: {fileID: 3544126110685234267}
-  gunManager: {fileID: 0}
-  usernameText: {fileID: 1880289478030972310}
-  playerCam: {fileID: 0}
-  runningFOV: 0
-  regularFOV: 0
-  gunModelHolder: {fileID: 0}
-  currentHealth: 50
-  maxHealth: 50
 --- !u!114 &3544126110685234267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -342,6 +320,24 @@ MonoBehaviour:
   timeElapsed: 0
   timeToReachTarget: 0.05
   movementThreshold: 0.05
+--- !u!114 &3398137071550328592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4142091868330885182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d650179b9e84834eacd18de234bdde6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camTransform: {fileID: 0}
+  interpolator: {fileID: 3544126110685234267}
+  usernameText: {fileID: 1880289478030972310}
+  playerCam: {fileID: 0}
+  runningFOV: 0
+  regularFOV: 0
 --- !u!1 &4354225500108574567
 GameObject:
   m_ObjectHideFlags: 0
