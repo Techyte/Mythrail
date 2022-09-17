@@ -56,7 +56,10 @@ namespace MythrailEngine
             interpolator.NewUpdate(tick, didTeleport, newPosition);
 
             if (!IsLocal)
+            {
+                Debug.Log("This is not the local player and we are setting their forward");
                 camTransform.forward = forward;
+            }
         }
 
         private static void Spawn(ushort id, string username, Vector3 position)

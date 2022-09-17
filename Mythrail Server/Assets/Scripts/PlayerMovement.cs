@@ -56,7 +56,7 @@ public class PlayerMovement : MonoBehaviour
     private void Move(Vector2 inputDirection, bool jump, bool sprint)
     {
         inputDirection.Normalize();
-        transform.rotation = FlattenQuaternion(camProxy.rotation);
+        transform.rotation = Quaternion.Euler(new (camProxy.rotation.x, 0, 0));
 
         float adjustedSpeed = jump ? MovementMultiplyer : RunSpeed;
 
@@ -80,13 +80,6 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity-= new Vector3(rb.velocity.x * HorizontalDrag, 0, rb.velocity.z * HorizontalDrag);
 
         SendMovement();
-    }
-
-    private Quaternion FlattenQuaternion(Quaternion quaternion)
-    {
-        quaternion.x = 0;
-        quaternion.z = 0;
-        return quaternion;
     }
 
     public void SetInputs(bool[] inputs, Vector3 forward)

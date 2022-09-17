@@ -154,6 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 4524565388947180181, guid: df3bc407b99fadf4290d6b5d22b0a3e3, type: 3}
+  gameHasStarted: 0
 --- !u!114 &114971619
 MonoBehaviour:
   m_ObjectHideFlags: 0

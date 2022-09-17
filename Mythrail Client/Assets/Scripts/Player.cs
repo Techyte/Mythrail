@@ -119,7 +119,9 @@ namespace MythrailEngine
                 gotPlayer.usernameText.text = gotPlayer.username;
 
             if (!player.IsLocal)
+            {
                 player.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;
+            }
             if(player.IsLocal)
                 NetworkManager.Singleton.uiManager.UpdateUsername();
         }

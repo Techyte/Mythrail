@@ -332,7 +332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d650179b9e84834eacd18de234bdde6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camTransform: {fileID: 0}
+  camTransform: {fileID: 1405705507154790366}
   interpolator: {fileID: 3544126110685234267}
   usernameText: {fileID: 1880289478030972310}
   playerCam: {fileID: 0}

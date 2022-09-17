@@ -125,7 +125,7 @@ namespace MythrailEngine
         {
             Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.name);
 
-            string finalUsername = JoinMatchInfo.username != "" ? JoinMatchInfo.username : username;
+            string finalUsername = JoinMatchInfo.username != null ? JoinMatchInfo.username : username;
             message.AddString(finalUsername);
             JoinMatchInfo.username = "";
             

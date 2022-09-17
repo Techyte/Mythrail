@@ -166,6 +166,7 @@ public class Player : MonoBehaviour
     {
         if (list.TryGetValue(fromClientId, out Player player))
         {
+            Debug.Log("Received game movement input");
             player.Movement.SetInputs(message.GetBools(6), message.GetVector3());
         }
     }
@@ -175,6 +176,7 @@ public class Player : MonoBehaviour
     {
         if (list.TryGetValue(fromClientId, out Player player))
         {
+            Debug.Log("Received lobby movement input");
             player.Movement.SetInputs(message.GetBools(6), message.GetVector3());
         }
     }
