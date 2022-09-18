@@ -116,14 +116,19 @@ namespace MythrailEngine
             player.usernameText.GetComponent<ObjectLookAt>().target = player.camTransform;
 
             foreach (Player gotPlayer in list.Values)
+            {
                 gotPlayer.usernameText.text = gotPlayer.username;
+            }
 
             if (!player.IsLocal)
             {
+                Debug.Log(LocalPlayer);
                 player.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;
             }
-            if(player.IsLocal)
-                NetworkManager.Singleton.uiManager.UpdateUsername();
+            else if(player.IsLocal)
+            {
+                UIManager.Singleton.UpdateUsername();
+            }
         }
 
         private void Killed(ushort killedPlayerId)
