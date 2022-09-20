@@ -328,6 +328,7 @@ MonoBehaviour:
   gunModelHolder: {fileID: 0}
   currentHealth: 50
   maxHealth: 50
+  playerController: {fileID: 0}
 --- !u!114 &3544126110685234267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,7 +390,7 @@ Transform:
   m_GameObject: {fileID: 4354225500108574567}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.178, y: 0.19510853, z: 0.621}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4799254149500129606}

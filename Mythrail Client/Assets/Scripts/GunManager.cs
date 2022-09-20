@@ -49,8 +49,6 @@ namespace MythrailEngine
             if (!player.IsLocal)
                 return;
             
-            Debug.Log("Fixed Update");
-            
             SendWeaponInputs();
 
             for (int i = 0; i < weaponInputs.Length; i++)
@@ -69,7 +67,9 @@ namespace MythrailEngine
         {
             ushort playerId = message.GetUShort();
             if (Player.list.TryGetValue(playerId, out Player player))
+            {
                 player.gunManager.SwapWeapon(playerId, message.GetInt());
+            }
         }
 
         [MessageHandler((ushort)ServerToClientId.loadoutInfo)]
@@ -81,12 +81,13 @@ namespace MythrailEngine
             int id1 = message.GetUShort();
             
             if (Player.list.TryGetValue(playerId, out Player player))
+            {
                 player.gunManager.AssignLoadout(id0, id1);
+            }
         }
 
         private void Shot(float recoil, float kickBack)
         {
-            Debug.Log("Shot");
             currentGunModel.transform.localRotation = Quaternion.Euler(-recoil, 0, 0);
             currentGunModel.transform.localPosition -= currentGunModel.transform.worldToLocalMatrix.MultiplyVector(currentGunModel.transform.forward).normalized * kickBack;
             //Recoil goes here
@@ -103,10 +104,12 @@ namespace MythrailEngine
         {
             currentWeaponIndex = newWeaponIndex;
             if (weaponModels[newWeaponIndex])
+            {
                 if (Player.list.TryGetValue(playerId, out Player player))
                 {
-                    player.gunManager.ChangePlayerGunModel(playerId, weaponModels[loadoutIndex[newWeaponIndex]]);   
+                    player.gunManager.ChangePlayerGunModel(playerId, weaponModels[loadoutIndex[newWeaponIndex]]);
                 }
+            }
         }
 
         private void AssignLoadout(int id0, int id1)
@@ -122,7 +125,9 @@ namespace MythrailEngine
             if (Player.list.TryGetValue((ushort)playerId, out Player player))
             {
                 if (currentGunModel)
+                {
                     Destroy(currentGunModel);
+                }
                 currentGunModel = Instantiate(gunModel);
                 currentGunModel.transform.parent = gunModelHolder.transform;
                 currentGunModel.transform.localPosition = gunModel.transform.localPosition;

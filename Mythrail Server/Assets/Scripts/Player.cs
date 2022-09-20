@@ -46,23 +46,19 @@ public class Player : MonoBehaviour
         if (SceneManager.GetActiveScene().buildIndex == 0)
         {
             player.SendLobbySpawned();
+            foreach (Player otherPlayer in list.Values)
+            {
+                otherPlayer.SendLobbyProxyPlayerSpawnInfo(id);
+            }
         }
         else
         {
             player.SendSpawned();
-        }
-
-        if (SceneManager.GetActiveScene().buildIndex == 0)
-        {
             foreach (Player otherPlayer in list.Values)
-                otherPlayer.SendLobbySpawned(id);
+            {
+                otherPlayer.SendProxyPlayerSpawnInfo(id);
+            }
         }
-        else
-        {
-            foreach (Player otherPlayer in list.Values)
-                otherPlayer.SendSpawned(id);
-        }
-
         list.Add(id, player);
     }
 
@@ -71,9 +67,9 @@ public class Player : MonoBehaviour
         NetworkManager.Singleton.Server.SendToAll(AddSpawnData(Message.Create(MessageSendMode.reliable, ServerToClientId.playerSpawned)));
     }
 
-    private void SendSpawned(ushort toClientId)
+    private void SendProxyPlayerSpawnInfo(ushort toClientId)
     {
-        NetworkManager.Singleton.Server.Send(AddSpawnData(Message.Create(MessageSendMode.reliable, ServerToClientId.playerSpawned)), toClientId);
+        NetworkManager.Singleton.Server.Send(AddSpawnData(Message.Create(MessageSendMode.reliable, ServerToClientId.otherPlayerSpawnInfo)), toClientId);
     }
 
     private void SendLobbySpawned()
@@ -81,9 +77,9 @@ public class Player : MonoBehaviour
         NetworkManager.Singleton.Server.SendToAll(AddSpawnData(Message.Create(MessageSendMode.reliable, LobbyServerToClient.playerSpawned)));
     }
 
-    private void SendLobbySpawned(ushort toClientId)
+    private void SendLobbyProxyPlayerSpawnInfo(ushort toClientId)
     {
-        NetworkManager.Singleton.Server.Send(AddSpawnData(Message.Create(MessageSendMode.reliable, LobbyServerToClient.playerSpawned)), toClientId);
+        NetworkManager.Singleton.Server.Send(AddSpawnData(Message.Create(MessageSendMode.reliable, LobbyServerToClient.otherPlayerSpawnInfo)), toClientId);
     }
 
     private Message AddSpawnData(Message message)

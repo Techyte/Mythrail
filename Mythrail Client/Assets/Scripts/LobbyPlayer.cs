@@ -57,15 +57,14 @@ namespace MythrailEngine
 
             if (!IsLocal)
             {
-                Debug.Log("This is not the local player and we are setting their forward");
                 camTransform.forward = forward;
             }
         }
 
-        private static void Spawn(ushort id, string username, Vector3 position)
+        private static void Spawn(ushort id, string username, Vector3 position, bool isLocal)
         {
             LobbyPlayer lobbyPlayer;
-            if (id == LobbyNetworkManager.Singleton.Client.Id)
+            if (isLocal)
             {
                 lobbyPlayer = Instantiate(GameLogic.Singleton.LobbyLocalPlayerPrefab, position, Quaternion.identity).GetComponent<LobbyPlayer>();
                 lobbyPlayer.IsLocal = true;
@@ -99,7 +98,15 @@ namespace MythrailEngine
         [MessageHandler((ushort)LobbyServerToClient.playerSpawned)]
         private static void SpawnPlayer(Message message)
         {
-            Spawn(message.GetUShort(), message.GetString(), message.GetVector3());
+            Debug.Log("Spawning lobby local players");
+            Spawn(message.GetUShort(), message.GetString(), message.GetVector3(), true);
+        }
+        
+        [MessageHandler((ushort)LobbyServerToClient.otherPlayerSpawnInfo)]
+        private static void OtherPlayerSpawnInfo(Message message)
+        {
+            Debug.Log("Spawning lobby proxy players");
+            Spawn(message.GetUShort(), message.GetString(), message.GetVector3(), false);
         }
 
         [MessageHandler((ushort)LobbyServerToClient.playerMovement)]

@@ -67,7 +67,7 @@ namespace MythrailEngine
 
         [SerializeField] private string ip;
         [SerializeField] private ushort port;
-        [SerializeField] private static string username = "TestTechyte";
+        private static string username = "TestTechyte";
 
         [SerializeField] private GameObject MatchObject;
         [SerializeField] private Transform MatchHolders;

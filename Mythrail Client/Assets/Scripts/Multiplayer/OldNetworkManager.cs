@@ -2,27 +2,40 @@ using UnityEngine;
 using RiptideNetworking;
 using RiptideNetworking.Utils;
 using System;
+using TMPro;
 using UnityEngine.SceneManagement;
 
 namespace MythrailEngine
 {
-    public enum ClientToLobbyServer : ushort
+    public enum ServerToClientId : ushort
     {
-        movementInput = 100,
+        sync = 1,
+        playerSpawned,
+        otherPlayerSpawnInfo,
+        playerMovement,
+        playerShot,
+        swapWeapon,
+        playerTookDamage,
+        playerDied,
+        bulletHole,
+        loadoutInfo,
+        playerKilled,
+        playerHealth,
+        gameStarted,
     }
 
-    public enum LobbyServerToClient : ushort
+    public enum ClientToServerId : ushort
     {
-        sync = 200,
+        name = 1,
+        movementInput,
+        weaponInput,
         ready,
-        playerSpawned,
-        playerMovement,
     }
-    
-    public class LobbyNetworkManager : MonoBehaviour
+
+    public class OldNetworkManager : MonoBehaviour
     {
-        private static LobbyNetworkManager _singleton;
-        public static LobbyNetworkManager Singleton
+        private static OldNetworkManager _singleton;
+        public static OldNetworkManager Singleton
         {
             get => _singleton;
             private set
@@ -31,7 +44,7 @@ namespace MythrailEngine
                     _singleton = value;
                 else if (_singleton != value)
                 {
-                    Debug.Log($"{nameof(LobbyNetworkManager)} instance already exists, destroying duplicate!");
+                    Debug.Log($"{nameof(OldNetworkManager)} instance already exists, destroying duplicate!");
                     Destroy(value);
                 }
             }
@@ -57,7 +70,7 @@ namespace MythrailEngine
             set
             {
                 _ticksBetweenPositionUpdates = value;
-                InterpolationTick = (ServerTick - value);
+                InterpolationTick = (uint)(ServerTick - value);
             }
         }
 
@@ -68,7 +81,16 @@ namespace MythrailEngine
         [SerializeField] private uint TickDivergenceTolerance = 1;
         [Space(10)]
         [SerializeField] private GameObject LoadingScreen;
-        
+
+        [SerializeField] private TextMeshProUGUI deathsText;
+        [SerializeField] private TextMeshProUGUI killsText;
+
+        public static TextMeshProUGUI KillsText;
+        public static TextMeshProUGUI DeathsText;
+
+        public UIManager uiManager;
+
+        [SerializeField] private bool PlayerReady;
 
         private void Awake()
         {
@@ -77,6 +99,10 @@ namespace MythrailEngine
 
         private void Start()
         {
+            LoadingScreen.SetActive(true);
+            KillsText = killsText;
+            DeathsText = deathsText;
+            
             RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 
             Client = new Client();
@@ -118,16 +144,16 @@ namespace MythrailEngine
         private void DidConnect(object sender, EventArgs e)
         {
             SendName();
-            LoadingScreen.SetActive(false);
         }
 
         private void SendName()
         {
             Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.name);
-
+            
             string finalUsername = JoinMatchInfo.username != null ? JoinMatchInfo.username : username;
             message.AddString(finalUsername);
             JoinMatchInfo.username = "";
+
             
             Singleton.Client.Send(message);
         }
@@ -135,13 +161,17 @@ namespace MythrailEngine
         private void PlayerLeft(object sender, ClientDisconnectedEventArgs e)
         {
             if (Player.list.TryGetValue(e.Id, out Player player))
+            {
                 Destroy(player.gameObject);
+            }
         }
 
         private void DidDisconnect(object sender, EventArgs e)
         {
             foreach (Player player in Player.list.Values)
+            {
                 Destroy(player.gameObject);
+            }
             
             SceneManager.LoadScene(0);
         }
@@ -152,22 +182,18 @@ namespace MythrailEngine
             {
                 Debug.Log($"Client tick: {ServerTick} -> {serverTick}");
                 ServerTick = serverTick;
+                if (!PlayerReady)
+                {
+                    Ready();
+                }
             }
         }
 
-        [MessageHandler((ushort)LobbyServerToClient.sync)]
-        public static void LobbySync(Message message)
+        private void Ready()
         {
-            Singleton.SetTick(message.GetUShort());
-        }
-
-        [MessageHandler((ushort)LobbyServerToClient.ready)]
-        private static void LobbyReady(Message message)
-        {
-            JoinMatchInfo.port = Singleton.port;
-            JoinMatchInfo.username = Singleton.username;
-            Singleton.Client.Disconnect();
-            SceneManager.LoadScene(2);
+            PlayerReady = true;
+            Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.ready);
+            Client.Send(message);
         }
     }
 
