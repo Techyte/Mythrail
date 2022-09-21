@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace MythrailEngine
@@ -30,6 +31,17 @@ namespace MythrailEngine
         private void Awake()
         {
             Singleton = this;
+            
+            SceneManager.sceneLoaded += LoadedGame;
+        }
+
+        private void LoadedGame(Scene scene, LoadSceneMode loadSceneMode)
+        {
+            if(scene.buildIndex == 2)
+            {
+                UIHealthBar = GameObject.Find("Health").GetComponentInChildren<Image>().transform;
+                username = GameObject.Find("Username").GetComponentInChildren<TextMeshProUGUI>();
+            }
         }
 
         public void UpdateUsername()

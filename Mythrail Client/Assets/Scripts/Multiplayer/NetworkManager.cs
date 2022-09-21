@@ -7,18 +7,36 @@ using UnityEngine.SceneManagement;
 
 namespace MythrailEngine
 {
-    public enum ClientToLobbyServer : ushort
-    {
-        movementInput = 100,
-    }
-
     public enum LobbyServerToClient : ushort
     {
         sync = 200,
         ready,
         playerSpawned,
-        otherPlayerSpawnInfo,
         playerMovement,
+    }
+    
+    public enum ServerToClientId : ushort
+    {
+        sync = 1,
+        playerSpawned,
+        playerMovement,
+        playerShot,
+        swapWeapon,
+        playerTookDamage,
+        playerDied,
+        bulletHole,
+        loadoutInfo,
+        playerKilled,
+        playerHealth,
+        gameStarted,
+    }
+
+    public enum ClientToServerId : ushort
+    {
+        name = 1,
+        movementInput,
+        weaponInput,
+        ready,
     }
     
     public class NetworkManager : MonoBehaviour
@@ -78,18 +96,23 @@ namespace MythrailEngine
 
         public static TextMeshProUGUI KillsText;
         public static TextMeshProUGUI DeathsText;
-        
 
+        [SerializeField] private bool PlayerReady;
+        
         private void Awake()
         {
             Singleton = this;
             
-            DontDestroyOnLoad(this);
+            DontDestroyOnLoad(gameObject);
         }
 
         private void Start()
         {
-            RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
+            LoadingScreen.SetActive(true);
+            KillsText = killsText;
+            DeathsText = deathsText;
+
+            //RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 
             Client = new Client();
             Client.Connected += DidConnect;
@@ -120,10 +143,9 @@ namespace MythrailEngine
 
         private void Connect()
         {
-            if (JoinMatchInfo.port != 0)
-            {
-                port = JoinMatchInfo.port;
-            }
+            port = JoinMatchInfo.port != 0 ? JoinMatchInfo.port : port;
+            JoinMatchInfo.port = 0;
+            
             Client.Connect($"{ip}:{port}");
         }
 
@@ -137,8 +159,8 @@ namespace MythrailEngine
         {
             Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.name);
 
-            string finalUsername = JoinMatchInfo.username != null ? JoinMatchInfo.username : username;
-            message.AddString(finalUsername);
+            username = JoinMatchInfo.username != null ? JoinMatchInfo.username : username;
+            message.AddString(username);
             JoinMatchInfo.username = "";
             
             Singleton.Client.Send(message);
@@ -147,13 +169,17 @@ namespace MythrailEngine
         private void PlayerLeft(object sender, ClientDisconnectedEventArgs e)
         {
             if (Player.list.TryGetValue(e.Id, out Player player))
+            {
                 Destroy(player.gameObject);
+            }
         }
 
         private void DidDisconnect(object sender, EventArgs e)
         {
             foreach (Player player in Player.list.Values)
+            {
                 Destroy(player.gameObject);
+            }
             
             SceneManager.LoadScene(0);
         }
@@ -162,9 +188,22 @@ namespace MythrailEngine
         {
             if (Mathf.Abs(ServerTick - serverTick) > TickDivergenceTolerance)
             {
-                Debug.Log($"Client tick: {ServerTick} -> {serverTick}");
                 ServerTick = serverTick;
+                if (SceneManager.GetActiveScene().buildIndex == 2)
+                {
+                    if (!PlayerReady)
+                    {
+                        Ready();
+                    }
+                }
             }
+        }
+
+        private void Ready()
+        {
+            PlayerReady = true;
+            Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.ready);
+            Client.Send(message);
         }
 
         [MessageHandler((ushort)LobbyServerToClient.sync)]
@@ -178,8 +217,8 @@ namespace MythrailEngine
         {
             JoinMatchInfo.port = Singleton.port;
             JoinMatchInfo.username = Singleton.username;
-            Singleton.Client.Disconnect();
             SceneManager.LoadScene(2);
+            Singleton.SendName();
         }
 
         [MessageHandler((ushort)ServerToClientId.sync)]
@@ -192,8 +231,10 @@ namespace MythrailEngine
         public static void GameStarted(Message message)
         {
             Player.LocalPlayer.playerController.canMove = true;
-            Singleton.LoadingScreen.SetActive(false);
+            if (SceneManager.GetActiveScene().buildIndex == 1)
+            {
+                Singleton.LoadingScreen.SetActive(false);
+            }
         }
     }
-
 }

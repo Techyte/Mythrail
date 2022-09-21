@@ -91,11 +91,12 @@ namespace MythrailEngine
             Debug.Log("Health changed");
         }
 
-        private static void Spawn(ushort id, string username, Vector3 position, bool isLocal)
+        private static void Spawn(ushort id, string username, Vector3 position)
         {
             Player player;
-            if (isLocal)
+            if (NetworkManager.Singleton.Client.Id == id)
             {
+                Debug.Log("Spawning local player");
                 player = Instantiate(GameLogic.Singleton.LocalPlayerPrefab, position, Quaternion.identity).GetComponent<Player>();
                 player.IsLocal = true;
                 LocalPlayer = player;
@@ -103,6 +104,7 @@ namespace MythrailEngine
             }
             else
             {
+                Debug.Log("Spawning proxy player");
                 player = Instantiate(GameLogic.Singleton.PlayerPrefab, position, Quaternion.identity).GetComponent<Player>();
                 player.IsLocal = false;
             }
@@ -163,15 +165,7 @@ namespace MythrailEngine
         [MessageHandler((ushort)ServerToClientId.playerSpawned)]
         private static void SpawnPlayer(Message message)
         {
-            Debug.Log("Spawning local players");
-            Spawn(message.GetUShort(), message.GetString(), message.GetVector3(), true);
-        }
-        
-        [MessageHandler((ushort)ServerToClientId.otherPlayerSpawnInfo)]
-        private static void OtherPlayerSpawnInfo(Message message)
-        {
-            Debug.Log("Spawning proxy players");
-            Spawn(message.GetUShort(), message.GetString(), message.GetVector3(), false);
+            Spawn(message.GetUShort(), message.GetString(), message.GetVector3());
         }
 
         [MessageHandler((ushort)ServerToClientId.playerMovement)]

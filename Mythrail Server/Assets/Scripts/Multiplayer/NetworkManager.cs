@@ -12,7 +12,6 @@ public enum ServerToClientId : ushort
 {
     sync = 1,
     playerSpawned,
-    otherPlayerSpawnInfo,
     playerMovement,
     playerShot,
     swapWeapon,
@@ -38,7 +37,6 @@ public enum LobbyServerToClient : ushort
     sync = 200,
     ready,
     playerSpawned,
-    otherPlayerSpawnInfo,
     playerMovement,
 }
 
@@ -110,7 +108,7 @@ public class NetworkManager : MonoBehaviour
 
         Application.targetFrameRate = 60;
 
-        RiptideLogger.Initialize(Debug.LogError, Debug.LogError, Debug.LogWarning, Debug.LogError, false);
+        RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 
         if (port == 0) port = (ushort)FreeTcpPort();
 

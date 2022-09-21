@@ -104,7 +104,7 @@ namespace MythrailEngine
 
         private void Start()
         {
-            RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
+            //RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 
             maxPlayerCountSlider.onValueChanged.AddListener(delegate {UpdateMinMax(); });
             minPlayerCountSlider.onValueChanged.AddListener(delegate {UpdateMinMax(); });

@@ -64,14 +64,16 @@ namespace MythrailEngine
         private static void Spawn(ushort id, string username, Vector3 position, bool isLocal)
         {
             LobbyPlayer lobbyPlayer;
-            if (isLocal)
+            if (NetworkManager.Singleton.Client.Id == id)
             {
+                Debug.Log("Spawning lobby local player");
                 lobbyPlayer = Instantiate(GameLogic.Singleton.LobbyLocalPlayerPrefab, position, Quaternion.identity).GetComponent<LobbyPlayer>();
                 lobbyPlayer.IsLocal = true;
                 LocalPlayer = lobbyPlayer;
             }
             else
             {
+                Debug.Log("Spawning lobby proxy player");
                 lobbyPlayer = Instantiate(GameLogic.Singleton.LobbyPlayerPrefab, position, Quaternion.identity).GetComponent<LobbyPlayer>();
                 lobbyPlayer.IsLocal = false;
             }
@@ -98,15 +100,7 @@ namespace MythrailEngine
         [MessageHandler((ushort)LobbyServerToClient.playerSpawned)]
         private static void SpawnPlayer(Message message)
         {
-            Debug.Log("Spawning lobby local players");
             Spawn(message.GetUShort(), message.GetString(), message.GetVector3(), true);
-        }
-        
-        [MessageHandler((ushort)LobbyServerToClient.otherPlayerSpawnInfo)]
-        private static void OtherPlayerSpawnInfo(Message message)
-        {
-            Debug.Log("Spawning lobby proxy players");
-            Spawn(message.GetUShort(), message.GetString(), message.GetVector3(), false);
         }
 
         [MessageHandler((ushort)LobbyServerToClient.playerMovement)]

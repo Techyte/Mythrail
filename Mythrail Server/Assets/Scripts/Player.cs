@@ -69,7 +69,7 @@ public class Player : MonoBehaviour
 
     private void SendProxyPlayerSpawnInfo(ushort toClientId)
     {
-        NetworkManager.Singleton.Server.Send(AddSpawnData(Message.Create(MessageSendMode.reliable, ServerToClientId.otherPlayerSpawnInfo)), toClientId);
+        NetworkManager.Singleton.Server.Send(AddSpawnData(Message.Create(MessageSendMode.reliable, ServerToClientId.playerSpawned)), toClientId);
     }
 
     private void SendLobbySpawned()
@@ -79,7 +79,7 @@ public class Player : MonoBehaviour
 
     private void SendLobbyProxyPlayerSpawnInfo(ushort toClientId)
     {
-        NetworkManager.Singleton.Server.Send(AddSpawnData(Message.Create(MessageSendMode.reliable, LobbyServerToClient.otherPlayerSpawnInfo)), toClientId);
+        NetworkManager.Singleton.Server.Send(AddSpawnData(Message.Create(MessageSendMode.reliable, LobbyServerToClient.playerSpawned)), toClientId);
     }
 
     private Message AddSpawnData(Message message)
