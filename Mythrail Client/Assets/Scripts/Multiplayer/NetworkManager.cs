@@ -204,6 +204,7 @@ namespace MythrailEngine
             PlayerReady = true;
             Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.ready);
             Client.Send(message);
+            Debug.LogError("Ready");
         }
 
         [MessageHandler((ushort)LobbyServerToClient.sync)]

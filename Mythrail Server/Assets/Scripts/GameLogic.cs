@@ -55,6 +55,7 @@ public class GameLogic : MonoBehaviour
     {
         if (Player.list.TryGetValue(fromClientId, out Player player))
         {
+            Debug.LogError($"{player} is ready");
             Singleton.readyPlayers++;
         }
     }
