@@ -1222,7 +1222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ip: 127.0.0.1
-  port: 56427
+  port: 59978
   username: Techyte
   TickDivergenceTolerance: 1
   LobbyLoadingScreen: {fileID: 738323054}
@@ -1281,3 +1281,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UIHealthBar: {fileID: 0}
   username: {fileID: 0}
+  loadingScreen: {fileID: 0}
