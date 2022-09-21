@@ -64,11 +64,13 @@ public class Player : MonoBehaviour
 
     private void SendSpawned()
     {
+        Debug.LogError("Spawning local player");
         NetworkManager.Singleton.Server.SendToAll(AddSpawnData(Message.Create(MessageSendMode.reliable, ServerToClientId.playerSpawned)));
     }
 
     private void SendProxyPlayerSpawnInfo(ushort toClientId)
     {
+        Debug.LogError("Spawning proxy player");
         NetworkManager.Singleton.Server.Send(AddSpawnData(Message.Create(MessageSendMode.reliable, ServerToClientId.playerSpawned)), toClientId);
     }
 
@@ -162,7 +164,6 @@ public class Player : MonoBehaviour
     {
         if (list.TryGetValue(fromClientId, out Player player))
         {
-            Debug.Log("Received game movement input");
             player.Movement.SetInputs(message.GetBools(6), message.GetVector3());
         }
     }
@@ -172,7 +173,6 @@ public class Player : MonoBehaviour
     {
         if (list.TryGetValue(fromClientId, out Player player))
         {
-            Debug.Log("Received lobby movement input");
             player.Movement.SetInputs(message.GetBools(6), message.GetVector3());
         }
     }

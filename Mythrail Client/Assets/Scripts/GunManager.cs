@@ -102,14 +102,14 @@ namespace MythrailEngine
 
         private void SwapWeapon(ushort playerId, int newWeaponIndex)
         {
-            currentWeaponIndex = newWeaponIndex;
+            currentWeaponIndex = newWeaponIndex;/*
             if (weaponModels[newWeaponIndex])
             {
                 if (Player.list.TryGetValue(playerId, out Player player))
                 {
                     player.gunManager.ChangePlayerGunModel(playerId, weaponModels[loadoutIndex[newWeaponIndex]]);
                 }
-            }
+            }*/
         }
 
         private void AssignLoadout(int id0, int id1)

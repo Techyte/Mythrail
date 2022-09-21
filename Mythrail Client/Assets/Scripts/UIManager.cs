@@ -28,6 +28,8 @@ namespace MythrailEngine
 
         [SerializeField] private TextMeshProUGUI username;
 
+        public GameObject loadingScreen;
+
         private void Awake()
         {
             Singleton = this;
@@ -41,6 +43,7 @@ namespace MythrailEngine
             {
                 UIHealthBar = GameObject.Find("Health").GetComponentInChildren<Image>().transform;
                 username = GameObject.Find("Username").GetComponentInChildren<TextMeshProUGUI>();
+                loadingScreen = GameObject.Find("Loading");
             }
         }
 

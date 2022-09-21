@@ -94,6 +94,7 @@ namespace MythrailEngine
         private static void Spawn(ushort id, string username, Vector3 position)
         {
             Player player;
+            Debug.Log($"Comparing {id} with {NetworkManager.Singleton.Client.Id}");
             if (NetworkManager.Singleton.Client.Id == id)
             {
                 Debug.Log("Spawning local player");
@@ -126,7 +127,7 @@ namespace MythrailEngine
             {
                 player.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;
             }
-            else if(player.IsLocal)
+            else
             {
                 UIManager.Singleton.UpdateUsername();
             }

@@ -37,8 +37,9 @@ public class GameLogic : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (readyPlayers == NetworkManager.Singleton.Server.ClientCount && SceneManager.GetActiveScene().buildIndex != 0 && NetworkManager.Singleton.Server.ClientCount > 0)
+        if (readyPlayers == NetworkManager.Singleton.Server.ClientCount && SceneManager.GetActiveScene().buildIndex != 0 && NetworkManager.Singleton.Server.ClientCount > 0 && !gameHasStarted)
         {
+            Debug.LogError("Everyone is ready");
             SendReady();
             gameHasStarted = true;
         }

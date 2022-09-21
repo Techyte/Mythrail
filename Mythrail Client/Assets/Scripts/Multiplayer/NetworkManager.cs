@@ -231,11 +231,9 @@ namespace MythrailEngine
         [MessageHandler((ushort)ServerToClientId.gameStarted)]
         public static void GameStarted(Message message)
         {
+            Debug.Log("Everyone is ready");
             Player.LocalPlayer.playerController.canMove = true;
-            if (SceneManager.GetActiveScene().buildIndex == 1)
-            {
-                Singleton.LoadingScreen.SetActive(false);
-            }
+            UIManager.Singleton.loadingScreen.SetActive(false);
         }
     }
 }

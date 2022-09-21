@@ -52,7 +52,7 @@ public class GunManager : MonoBehaviour
         this.inputs = inputs;
     }
 
-    private bool shootCheck;
+    private bool shootCheck;/*
     private void FixedUpdate()
     {
         if(SceneManager.GetActiveScene().buildIndex == 0) return;
@@ -68,7 +68,7 @@ public class GunManager : MonoBehaviour
             Aim();
         if(inputs[2] && canSwapIn)
             SwitchWeapon();
-    }
+    }*/
 
     private void Shoot(Vector3 bloomDirection)
     {
