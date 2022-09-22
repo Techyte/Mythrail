@@ -45,7 +45,6 @@ public enum ClientToLobbyServer : ushort
     movementInput = 100,
 }
 
-
 public class NetworkManager : MonoBehaviour
 {
     private static NetworkManager _singleton;
@@ -192,6 +191,10 @@ public class NetworkManager : MonoBehaviour
         if (Player.list.TryGetValue(e.Id, out Player player))
         {
             Destroy(player.gameObject);
+            if (SceneManager.GetActiveScene().buildIndex == 1 && !GameLogic.Singleton.gameHasStarted)
+            {
+                GameLogic.Singleton.PlayerLeftWhileLoading();
+            }
         }
     }
 

@@ -135,7 +135,7 @@ namespace Mythrail_Game_Server
 
                 matchProcess.Start();
             
-                MatchInfo newMatch = new MatchInfo(message.GetString(), fromClientId, matchProcess, port);
+                MatchInfo newMatch = new MatchInfo(message.GetString(), currentlyConnectedClients[fromClientId].username, matchProcess, port);
                 matches.Add(newMatch);
                 matchProcess.Exited += (sender, eventArgs) =>
                 {
@@ -205,14 +205,14 @@ namespace Mythrail_Game_Server
     public class MatchInfo
     {
         public string name;
-        public ushort creatorId;
+        public string creatorName;
         public Process process;
         public ushort port;
 
-        public MatchInfo(string name, ushort creatorId, Process process, ushort port)
+        public MatchInfo(string name, string creatorName, Process process, ushort port)
         {
             this.name = name;
-            this.creatorId = creatorId;
+            this.creatorName = creatorName;
             this.process = process;
             this.port = port;
         }

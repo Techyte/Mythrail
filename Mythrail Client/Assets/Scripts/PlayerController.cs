@@ -1,6 +1,5 @@
 using RiptideNetworking;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace MythrailEngine
 {

@@ -39,7 +39,9 @@ namespace MythrailEngine
         private Vector3 NewPosition;
 
         public PlayerController playerController;
-            
+
+        public static List<Player> usernameBufferPlayers = new List<Player>();
+
         private void Start()
         {
             if (!IsLocal) return;
@@ -79,7 +81,9 @@ namespace MythrailEngine
             interpolator.NewUpdate(tick, didTeleport, newPosition);
 
             if (!IsLocal)
+            {
                 camTransform.forward = forward;
+            }
 
             NewPosition = newPosition;
         }
@@ -114,6 +118,7 @@ namespace MythrailEngine
             player.Id = id;
             player.username = username;
 
+            Debug.Log(id);
             list.Add(id, player);
 
             player.usernameText.GetComponent<ObjectLookAt>().target = player.camTransform;
@@ -123,13 +128,24 @@ namespace MythrailEngine
                 gotPlayer.usernameText.text = gotPlayer.username;
             }
 
-            if (!player.IsLocal)
+            if (!player.IsLocal && !LocalPlayer)
+            {
+                usernameBufferPlayers.Add(player);
+            }
+
+            if (!player.IsLocal && LocalPlayer)
             {
                 player.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;
             }
-            else
+            
+            if(player.IsLocal && LocalPlayer)
             {
                 UIManager.Singleton.UpdateUsername();
+                foreach (Player bufferPlayer in usernameBufferPlayers)
+                {
+                    bufferPlayer.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;
+                }
+                usernameBufferPlayers.Clear();
             }
         }
 

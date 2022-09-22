@@ -1,4 +1,3 @@
-using System;
 using RiptideNetworking;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -35,12 +34,18 @@ public class GameLogic : MonoBehaviour
         Singleton = this;
     }
 
+    public void PlayerLeftWhileLoading()
+    {
+        readyPlayers--;
+    }
+
     private void FixedUpdate()
     {
         if (readyPlayers == NetworkManager.Singleton.Server.ClientCount && SceneManager.GetActiveScene().buildIndex != 0 && NetworkManager.Singleton.Server.ClientCount > 0 && !gameHasStarted)
         {
             Debug.LogError("Everyone is ready");
             SendReady();
+            Player.list.Clear();
             gameHasStarted = true;
         }
     }

@@ -15,7 +15,7 @@ namespace Mythrail_Game_Server
             for (int i = 0; i < value.Length; i++)
             {
                 names[i] = value[i].name;
-                creatorNames[i] = Program.currentlyConnectedClients[value[i].creatorId].username;
+                creatorNames[i] = value[i].creatorName;
                 ports[i] = value[i].port;
             }
             

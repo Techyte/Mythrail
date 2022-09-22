@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using RiptideNetworking;
-using RiptideNetworking.Utils;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;

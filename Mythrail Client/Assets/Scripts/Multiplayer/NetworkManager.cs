@@ -1,7 +1,7 @@
 using UnityEngine;
 using RiptideNetworking;
-using RiptideNetworking.Utils;
 using System;
+using RiptideNetworking.Utils;
 using TMPro;
 using UnityEngine.SceneManagement;
 
@@ -102,8 +102,17 @@ namespace MythrailEngine
         private void Awake()
         {
             Singleton = this;
-            
+
+            SceneManager.sceneLoaded += CheckForMainMenu;
             DontDestroyOnLoad(gameObject);
+        }
+
+        private void CheckForMainMenu(Scene scene, LoadSceneMode loadSceneMode)
+        {
+            if (scene.buildIndex == 0)
+            {
+                Destroy(gameObject);
+            }
         }
 
         private void Start()
@@ -191,7 +200,8 @@ namespace MythrailEngine
                 ServerTick = serverTick;
                 if (SceneManager.GetActiveScene().buildIndex == 2)
                 {
-                    if (!PlayerReady)
+                    Debug.Log($"Player Ready = {PlayerReady}");
+                    if (!PlayerReady && Player.LocalPlayer)
                     {
                         Ready();
                     }
@@ -216,8 +226,7 @@ namespace MythrailEngine
         [MessageHandler((ushort)LobbyServerToClient.ready)]
         private static void LobbyReady(Message message)
         {
-            JoinMatchInfo.port = Singleton.port;
-            JoinMatchInfo.username = Singleton.username;
+            Player.list.Clear();
             SceneManager.LoadScene(2);
             Singleton.SendName();
         }
