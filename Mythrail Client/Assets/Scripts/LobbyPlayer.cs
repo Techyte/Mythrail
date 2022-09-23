@@ -58,7 +58,7 @@ namespace MythrailEngine
             {
                 if(forward.x != 0)
                 {
-                    camTransform.forward = new Vector3(forward.x, 0, 0);
+                    camTransform.forward = new Vector3(forward.x, 0, forward.z);
                 }
             }
         }
