@@ -134,6 +134,7 @@ namespace MythrailEngine
             
             if(player.IsLocal && LocalPlayer)
             {
+                player.usernameText.text = "";
                 UIManager.Singleton.HUDUsernameDisplay.text = LocalPlayer.username;
                 foreach (Player bufferPlayer in usernameBufferPlayers)
                 {
