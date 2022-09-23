@@ -97,11 +97,11 @@ namespace MythrailEngine
 
         private static void Spawn(ushort id, string username, Vector3 position)
         {
+            if (list.ContainsKey(id)) return;
+            
             Player player;
-            Debug.Log($"Comparing {id} with {NetworkManager.Singleton.Client.Id}");
             if (NetworkManager.Singleton.Client.Id == id)
             {
-                Debug.Log("Spawning local player");
                 player = Instantiate(GameLogic.Singleton.LocalPlayerPrefab, position, Quaternion.identity).GetComponent<Player>();
                 player.IsLocal = true;
                 LocalPlayer = player;
@@ -109,7 +109,6 @@ namespace MythrailEngine
             }
             else
             {
-                Debug.Log("Spawning proxy player");
                 player = Instantiate(GameLogic.Singleton.PlayerPrefab, position, Quaternion.identity).GetComponent<Player>();
                 player.IsLocal = false;
             }
@@ -118,15 +117,10 @@ namespace MythrailEngine
             player.Id = id;
             player.username = username;
 
-            Debug.Log(id);
             list.Add(id, player);
 
             player.usernameText.GetComponent<ObjectLookAt>().target = player.camTransform;
-
-            foreach (Player gotPlayer in list.Values)
-            {
-                gotPlayer.usernameText.text = gotPlayer.username;
-            }
+            player.usernameText.text = player.username;
 
             if (!player.IsLocal && !LocalPlayer)
             {
@@ -140,7 +134,7 @@ namespace MythrailEngine
             
             if(player.IsLocal && LocalPlayer)
             {
-                UIManager.Singleton.UpdateUsername();
+                UIManager.Singleton.HUDUsernameDisplay.text = LocalPlayer.username;
                 foreach (Player bufferPlayer in usernameBufferPlayers)
                 {
                     bufferPlayer.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;
@@ -165,8 +159,8 @@ namespace MythrailEngine
 
         private void UpdateKillsAndDeaths()
         {
-            NetworkManager.DeathsText.text = deaths.ToString();
-            NetworkManager.KillsText.text = kills.ToString();
+            UIManager.Singleton.DeathsText.text = deaths.ToString();
+            UIManager.Singleton.KillsText.text = kills.ToString();
         }
         
         private void HeadBob(float z, float xIntensity, float yIntensity)

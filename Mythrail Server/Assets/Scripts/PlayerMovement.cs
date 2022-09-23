@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool canJump = true;
     public bool camMove;
 
-    private bool[] inputs;
+    [SerializeField] private bool[] inputs;
 
     private bool didTeleport;
 

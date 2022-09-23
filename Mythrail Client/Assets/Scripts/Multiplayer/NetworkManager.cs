@@ -91,12 +91,6 @@ namespace MythrailEngine
         [Space(10)]
         [SerializeField] private GameObject LoadingScreen;
 
-        [SerializeField] private TextMeshProUGUI deathsText;
-        [SerializeField] private TextMeshProUGUI killsText;
-
-        public static TextMeshProUGUI KillsText;
-        public static TextMeshProUGUI DeathsText;
-
         [SerializeField] private bool PlayerReady;
         
         private void Awake()
@@ -118,8 +112,6 @@ namespace MythrailEngine
         private void Start()
         {
             LoadingScreen.SetActive(true);
-            KillsText = killsText;
-            DeathsText = deathsText;
 
             //RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 
@@ -168,7 +160,7 @@ namespace MythrailEngine
         {
             Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.name);
 
-            username = JoinMatchInfo.username != null ? JoinMatchInfo.username : username;
+            username = !string.IsNullOrEmpty(JoinMatchInfo.username)? JoinMatchInfo.username : username;
             message.AddString(username);
             JoinMatchInfo.username = "";
             
@@ -200,7 +192,6 @@ namespace MythrailEngine
                 ServerTick = serverTick;
                 if (SceneManager.GetActiveScene().buildIndex == 2)
                 {
-                    Debug.Log($"Player Ready = {PlayerReady}");
                     if (!PlayerReady && Player.LocalPlayer)
                     {
                         Ready();
@@ -226,8 +217,8 @@ namespace MythrailEngine
         [MessageHandler((ushort)LobbyServerToClient.ready)]
         private static void LobbyReady(Message message)
         {
-            Player.list.Clear();
             SceneManager.LoadScene(2);
+            Player.list.Clear();
             Singleton.SendName();
         }
 

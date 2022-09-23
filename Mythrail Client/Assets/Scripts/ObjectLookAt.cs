@@ -8,7 +8,7 @@ namespace MythrailEngine
 
         void Update()
         {
-            if(Player.LocalPlayer)
+            if(target)
             {
                 Vector3 dir = target.position - transform.position;
                 Quaternion lookRot = Quaternion.LookRotation(dir);

@@ -26,9 +26,11 @@ namespace MythrailEngine
         [Header("Connect")]
         [SerializeField] private Transform UIHealthBar;
 
-        [SerializeField] private TextMeshProUGUI username;
-
         public GameObject loadingScreen;
+        
+        public TextMeshProUGUI KillsText;
+        public TextMeshProUGUI DeathsText;
+        public TextMeshProUGUI HUDUsernameDisplay;
 
         private void Awake()
         {
@@ -42,14 +44,11 @@ namespace MythrailEngine
             if(scene.buildIndex == 2)
             {
                 UIHealthBar = GameObject.Find("Health").GetComponentInChildren<Image>().transform;
-                username = GameObject.Find("Username").GetComponentInChildren<TextMeshProUGUI>();
                 loadingScreen = GameObject.Find("Loading");
+                KillsText = GameObject.Find("KillCounter").GetComponent<TextMeshProUGUI>();
+                DeathsText = GameObject.Find("DeathCounter").GetComponent<TextMeshProUGUI>();
+                HUDUsernameDisplay = GameObject.Find("UsernameText").GetComponent<TextMeshProUGUI>();
             }
-        }
-
-        public void UpdateUsername()
-        {
-            username.text = Player.LocalPlayer.Username;
         }
 
         private void Update()

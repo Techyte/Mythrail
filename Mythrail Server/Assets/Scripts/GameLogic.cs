@@ -45,7 +45,6 @@ public class GameLogic : MonoBehaviour
         {
             Debug.LogError("Everyone is ready");
             SendReady();
-            Player.list.Clear();
             gameHasStarted = true;
         }
     }

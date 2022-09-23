@@ -26,9 +26,8 @@ namespace MythrailEngine
         private float idleCounter;
 
         private string username;
-
-        private int kills;
-        private int deaths;
+        
+        public static List<LobbyPlayer> usernameBufferPlayers = new List<LobbyPlayer>();
         private void Start()
         {
             if (!IsLocal) return;
@@ -66,14 +65,12 @@ namespace MythrailEngine
             LobbyPlayer lobbyPlayer;
             if (NetworkManager.Singleton.Client.Id == id)
             {
-                Debug.Log("Spawning lobby local player");
                 lobbyPlayer = Instantiate(GameLogic.Singleton.LobbyLocalPlayerPrefab, position, Quaternion.identity).GetComponent<LobbyPlayer>();
                 lobbyPlayer.IsLocal = true;
                 LocalPlayer = lobbyPlayer;
             }
             else
             {
-                Debug.Log("Spawning lobby proxy player");
                 lobbyPlayer = Instantiate(GameLogic.Singleton.LobbyPlayerPrefab, position, Quaternion.identity).GetComponent<LobbyPlayer>();
                 lobbyPlayer.IsLocal = false;
             }
@@ -85,15 +82,26 @@ namespace MythrailEngine
             list.Add(id, lobbyPlayer);
 
             lobbyPlayer.usernameText.GetComponent<ObjectLookAt>().target = lobbyPlayer.camTransform;
+            lobbyPlayer.usernameText.text = lobbyPlayer.username;
 
-            foreach (LobbyPlayer gotPlayer in list.Values)
+            if (!lobbyPlayer.IsLocal && !LocalPlayer)
             {
-                gotPlayer.usernameText.text = gotPlayer.username;   
+                usernameBufferPlayers.Add(lobbyPlayer);
             }
 
-            if (!lobbyPlayer.IsLocal)
+            if (!lobbyPlayer.IsLocal && LocalPlayer)
             {
                 lobbyPlayer.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;
+            }
+            
+            if(lobbyPlayer.IsLocal && LocalPlayer)
+            {
+                lobbyPlayer.usernameText.text = "";
+                foreach (LobbyPlayer bufferPlayer in usernameBufferPlayers)
+                {
+                    bufferPlayer.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;
+                }
+                usernameBufferPlayers.Clear();
             }
         }
 

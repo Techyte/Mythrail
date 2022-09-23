@@ -1222,13 +1222,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ip: 127.0.0.1
-  port: 56154
+  port: 57899
   username: Techyte
   TickDivergenceTolerance: 1
   LobbyLoadingScreen: {fileID: 738323054}
   LoadingScreen: {fileID: 738323054}
-  deathsText: {fileID: 0}
-  killsText: {fileID: 0}
   PlayerReady: 0
 --- !u!114 &1860707044
 MonoBehaviour:
@@ -1280,5 +1278,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIHealthBar: {fileID: 0}
-  username: {fileID: 0}
   loadingScreen: {fileID: 0}
+  KillsText: {fileID: 0}
+  DeathsText: {fileID: 0}
+  HUDUsernameDisplay: {fileID: 0}
