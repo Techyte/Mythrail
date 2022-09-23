@@ -82,7 +82,10 @@ namespace MythrailEngine
 
             if (!IsLocal)
             {
-                camTransform.forward = forward;
+                if(forward.x != 0)
+                {
+                    camTransform.forward = new Vector3(forward.x, 0, forward.z);
+                }
             }
 
             NewPosition = newPosition;
