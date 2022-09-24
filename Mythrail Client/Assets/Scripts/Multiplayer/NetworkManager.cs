@@ -105,7 +105,7 @@ namespace MythrailEngine
         {
             if (scene.buildIndex == 0)
             {
-                Destroy(gameObject);
+                Destroy(this);
             }
         }
 

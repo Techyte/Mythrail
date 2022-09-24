@@ -38,8 +38,8 @@ namespace MythrailEngine
 
             verticalRotation = Mathf.Clamp(verticalRotation, -clampAngle, clampAngle);
 
-            transform.localRotation = Quaternion.Euler(verticalRotation, horizontalRotation, 0f);
-            //player.rotation = Quaternion.Euler(0f, horizontalRotation, 0f);
+            transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
+            player.rotation = Quaternion.Euler(0f, horizontalRotation, 0f);
         }
 
         private void ToggleCursorMode()

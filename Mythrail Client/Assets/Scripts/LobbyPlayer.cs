@@ -56,11 +56,7 @@ namespace MythrailEngine
 
             if (!IsLocal)
             {
-                if(forward.x != 0)
-                {
-                    camTransform.forward = forward;
-                }
-
+                camTransform.forward = forward;
                 camTransform.rotation = FlattenQuaternion(camTransform.rotation);
             }
         }

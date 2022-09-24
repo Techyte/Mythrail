@@ -40,7 +40,7 @@ namespace MythrailEngine
 
         public PlayerController playerController;
 
-        public static List<Player> usernameBufferPlayers = new List<Player>();
+        private static List<Player> usernameBufferPlayers = new List<Player>();
 
         private void Start()
         {
@@ -81,12 +81,8 @@ namespace MythrailEngine
             interpolator.NewUpdate(tick, didTeleport, newPosition);
 
             if (!IsLocal)
-            {
-                if(forward.x != 0)
-                {
-                    camTransform.forward = forward;
-                }
-
+            { 
+                camTransform.forward = forward;
                 camTransform.rotation = FlattenQuaternion(camTransform.rotation);
             }
         }
