@@ -185,6 +185,7 @@ namespace MythrailEngine
             SceneManager.LoadScene(0);
         }
 
+        public static bool hasBeenReadyOnce;
         private void SetTick(ushort serverTick)
         {
             if (Mathf.Abs(ServerTick - serverTick) > TickDivergenceTolerance)
@@ -192,15 +193,22 @@ namespace MythrailEngine
                 ServerTick = serverTick;
                 if (SceneManager.GetActiveScene().buildIndex == 2)
                 {
-                    if (!PlayerReady && Player.LocalPlayer)
+                    if (!PlayerReady)
                     {
-                        Ready();
+                        if(Player.LocalPlayer)
+                        {
+                            Ready();
+                        }
+                        else
+                        {
+                            hasBeenReadyOnce = true;
+                        }
                     }
                 }
             }
         }
 
-        private void Ready()
+        public void Ready()
         {
             PlayerReady = true;
             Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.ready);

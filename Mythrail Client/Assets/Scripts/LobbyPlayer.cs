@@ -58,9 +58,18 @@ namespace MythrailEngine
             {
                 if(forward.x != 0)
                 {
-                    camTransform.forward = new Vector3(forward.x, 0, forward.z);
+                    camTransform.forward = forward;
                 }
+
+                camTransform.rotation = FlattenQuaternion(camTransform.rotation);
             }
+        }
+        
+        private Quaternion FlattenQuaternion(Quaternion quaternion)
+        {
+            quaternion.x = 0;
+            quaternion.z = 0;
+            return quaternion;
         }
 
         private static void Spawn(ushort id, string username, Vector3 position, bool isLocal)

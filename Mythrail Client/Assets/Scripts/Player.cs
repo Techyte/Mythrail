@@ -84,11 +84,18 @@ namespace MythrailEngine
             {
                 if(forward.x != 0)
                 {
-                    camTransform.forward = new Vector3(forward.x, 0, forward.z);
+                    camTransform.forward = forward;
                 }
-            }
 
-            NewPosition = newPosition;
+                camTransform.rotation = FlattenQuaternion(camTransform.rotation);
+            }
+        }
+        
+        private Quaternion FlattenQuaternion(Quaternion quaternion)
+        {
+            quaternion.x = 0;
+            quaternion.z = 0;
+            return quaternion;
         }
 
         private void NewHealth(int newHealth, int newMaxHealth)
@@ -137,6 +144,10 @@ namespace MythrailEngine
             
             if(player.IsLocal && LocalPlayer)
             {
+                if (NetworkManager.hasBeenReadyOnce)
+                {
+                    NetworkManager.Singleton.Ready();
+                }
                 player.usernameText.text = "";
                 UIManager.Singleton.HUDUsernameDisplay.text = LocalPlayer.username;
                 foreach (Player bufferPlayer in usernameBufferPlayers)
