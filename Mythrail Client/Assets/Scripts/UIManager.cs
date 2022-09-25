@@ -43,7 +43,7 @@ namespace MythrailEngine
         {
             if(scene.buildIndex == 2)
             {
-                UIHealthBar = GameObject.Find("Health").GetComponentInChildren<Image>().transform;
+                UIHealthBar = GameObject.Find("Health").GetComponentsInChildren<Image>()[1].transform;
                 loadingScreen = GameObject.Find("Loading");
                 KillsText = GameObject.Find("KillCounter").GetComponent<TextMeshProUGUI>();
                 DeathsText = GameObject.Find("DeathCounter").GetComponent<TextMeshProUGUI>();

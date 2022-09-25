@@ -46,29 +46,44 @@ public class GunManager : MonoBehaviour
         
         NetworkManager.Singleton.Server.Send(message, player.Id);
     }
-    
+
+    private bool hasAssignedInputsOnce;
     public void SetInputs(bool[] inputs)
     {
         this.inputs = inputs;
+        if (!hasAssignedInputsOnce)
+        {
+            hasAssignedInputsOnce = true;
+        }
     }
 
-    private bool shootCheck;/*
+    private bool shootCheck;
     private void FixedUpdate()
     {
         if(SceneManager.GetActiveScene().buildIndex == 0) return;
         
-        if (inputs[0] && canShoot && !shootCheck)
+        if(hasAssignedInputsOnce)
         {
-            Shoot(GeneratrBloom());
-        }else if (shootCheck)
-        {
-            shootCheck = false;
+            if (inputs[0] && canShoot && shootCheck)
+            {
+                Shoot(GeneratrBloom());
+            }
+            else if (!shootCheck)
+            {
+                shootCheck = true;
+            }
+
+            if (inputs[1])
+            {
+                Aim();
+            }
+
+            if (inputs[2] && canSwapIn)
+            {
+                SwitchWeapon();
+            }
         }
-        if (inputs[1])
-            Aim();
-        if(inputs[2] && canSwapIn)
-            SwitchWeapon();
-    }*/
+    }
 
     private void Shoot(Vector3 bloomDirection)
     {
@@ -86,7 +101,8 @@ public class GunManager : MonoBehaviour
                 
                 if(hit.transform.gameObject.CompareTag("Player"))
                 {
-                    hit.transform.gameObject.GetComponent<Player>().TakeDamage(guns[loadout[currentWeaponIndex]].damage, player.Id);
+                    Player hitPlayer = hit.transform.gameObject.GetComponent<Player>();
+                    hitPlayer.TakeDamage(guns[loadout[currentWeaponIndex]].damage, player.Id);
                 }
             }
             Debug.DrawLine(spawn.position, spawn.forward, Color.red, 10);

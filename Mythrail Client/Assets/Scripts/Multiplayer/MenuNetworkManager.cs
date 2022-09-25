@@ -110,7 +110,6 @@ namespace MythrailEngine
 
             Client = new Client();
             Client.Connected += ClientConnected;
-            Client.ClientDisconnected += ClientDisconnected;
             Client.ConnectionFailed += ConnectionFailed;
             Singleton.Client.Connect($"{ip}:{port}");
             connectionStatusText.text = "Connecting...";
@@ -125,11 +124,6 @@ namespace MythrailEngine
         private void ConnectionFailed(object o, EventArgs args)
         {
             connectionStatusText.text = "Connection Failed!";
-        }
-
-        private void ClientDisconnected(object o, EventArgs args)
-        {
-            connectionStatusText.text = "Connection Failed";
         }
 
         private void SendInitialServerInfo()

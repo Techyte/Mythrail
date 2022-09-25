@@ -93,27 +93,27 @@ public class Player : MonoBehaviour
         return message;
     }
 
-    public void TakeDamage(int damage, ushort playerShotId)
+    public void TakeDamage(int damage, ushort playerThatShotId)
     {
         currentHealth -= damage;
-        Debug.Log(currentHealth);
+        Debug.LogError(Username);
 
         Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.playerTookDamage);
         message.AddInt(Id);
         NetworkManager.Singleton.Server.SendToAll(message);
         
-        SendHealth(playerShotId);
+        SendHealth();
 
         if (currentHealth <= 0)
         {
-            PlayerDied(playerShotId, Id);
+            PlayerDied(playerThatShotId, Id);
         }
     }
 
-    private void SendHealth(ushort playerId)
+    private void SendHealth()
     {
         Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.playerHealth);
-        message.AddUShort(playerId);
+        message.AddUShort(Id);
         message.AddUShort((ushort)currentHealth);
         message.AddUShort((ushort)maxHealth);
         NetworkManager.Singleton.Server.SendToAll(message);
@@ -126,9 +126,9 @@ public class Player : MonoBehaviour
         Debug.Log("Respawned");
     }
 
-    private void PlayerDied(ushort playerShotId, ushort killedPlayerId)
+    private void PlayerDied(ushort playerThatShotId, ushort killedPlayerId)
     {
-        SendKilled(playerShotId, killedPlayerId);
+        SendKilled(playerThatShotId, killedPlayerId);
         StartCoroutine(RespawnTimer());
         Died();
     }
@@ -142,7 +142,7 @@ public class Player : MonoBehaviour
         Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.playerDied);
         message.AddUShort(Id);
         NetworkManager.Singleton.Server.SendToAll(message);
-        SendHealth(Id);
+        SendHealth();
     }
 
     private void SendKilled(ushort playerShotId, ushort killedPlayerId)
