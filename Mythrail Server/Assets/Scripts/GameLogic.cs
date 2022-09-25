@@ -25,7 +25,7 @@ public class GameLogic : MonoBehaviour
     [Header("Prefabs")]
     [SerializeField] private GameObject playerPrefab;
 
-    private int readyPlayers;
+    public int readyPlayers;
 
     public bool gameHasStarted;
 
@@ -41,7 +41,7 @@ public class GameLogic : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (readyPlayers == NetworkManager.Singleton.Server.ClientCount && SceneManager.GetActiveScene().buildIndex != 0 && NetworkManager.Singleton.Server.ClientCount > 0 && !gameHasStarted)
+        if (readyPlayers >= NetworkManager.Singleton.Server.ClientCount && SceneManager.GetActiveScene().buildIndex != 0 && NetworkManager.Singleton.Server.ClientCount > 0 && !gameHasStarted)
         {
             Debug.LogError("Everyone is ready");
             SendReady();
@@ -62,6 +62,7 @@ public class GameLogic : MonoBehaviour
         {
             Debug.LogError($"{player} is ready");
             Singleton.readyPlayers++;
+            player.isGameReady = true;
         }
     }
 }

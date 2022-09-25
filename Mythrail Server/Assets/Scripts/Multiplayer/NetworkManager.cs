@@ -71,6 +71,8 @@ public class NetworkManager : MonoBehaviour
     [SerializeField] private ushort minPlayerCount;
 
     [SerializeField] private TextMeshProUGUI portText;
+    [SerializeField] private TextMeshProUGUI readyPlayersText;
+    [SerializeField] private TextMeshProUGUI totalPlayersText;
     [Space]
     [SerializeField] private float readyCountdown;
     [SerializeField] private float fullReadyCountdown;
@@ -115,6 +117,28 @@ public class NetworkManager : MonoBehaviour
         Server.Start(port, maxClientCount);
         Server.ClientDisconnected += PlayerLeft;
         if(portText) portText.text = port.ToString();
+
+        SceneManager.sceneLoaded += UpdateReferences;
+    }
+
+    private void UpdateReferences(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        if (scene.buildIndex == 1)
+        {
+            portText = GameObject.Find("PortText").GetComponent<TextMeshProUGUI>();
+            portText.text = port.ToString();
+            readyPlayersText = GameObject.Find("ReadyPlayers").GetComponent<TextMeshProUGUI>();
+            totalPlayersText = GameObject.Find("TotalPlayers").GetComponent<TextMeshProUGUI>();
+        }
+    }
+
+    private void Update()
+    {
+        if (readyPlayersText)
+        {
+            readyPlayersText.text = GameLogic.Singleton.readyPlayers.ToString();
+            totalPlayersText.text = Server.ClientCount.ToString();
+        }
     }
 
     static int FreeTcpPort()
@@ -190,11 +214,11 @@ public class NetworkManager : MonoBehaviour
     {
         if (Player.list.TryGetValue(e.Id, out Player player))
         {
-            Destroy(player.gameObject);
-            if (SceneManager.GetActiveScene().buildIndex == 1 && !GameLogic.Singleton.gameHasStarted)
+            if (SceneManager.GetActiveScene().buildIndex == 1 && player.isGameReady)
             {
                 GameLogic.Singleton.PlayerLeftWhileLoading();
             }
+            Destroy(player.gameObject);
         }
     }
 

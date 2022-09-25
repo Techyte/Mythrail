@@ -23,6 +23,8 @@ public class Player : MonoBehaviour
 
     [SerializeField] private float respawnDelay = 5f;
 
+    public bool isGameReady;
+
     private void OnDestroy()
     {
         list.Remove(Id);
