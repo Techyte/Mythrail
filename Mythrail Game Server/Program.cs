@@ -13,6 +13,7 @@ namespace Mythrail_Game_Server
     {
         matches = 100,
         createMatchSuccess,
+        joinedPrivateMatch,
     }
 
     public enum ClientToGameServerId : ushort
@@ -21,6 +22,7 @@ namespace Mythrail_Game_Server
         updateUsername,
         requestMatches,
         createMatch,
+        joinPrivateMatch,
     }
     
     internal class Program
@@ -88,7 +90,16 @@ namespace Mythrail_Game_Server
         private void SendMatches(ushort clientId)
         {
             Message message = Message.Create(MessageSendMode.reliable, GameServerToClientId.matches);
-            message.AddMatchInfos(matches.ToArray());
+            
+            List<MatchInfo> publicMatches = new List<MatchInfo>();
+            foreach (var match in matches)
+            {
+                if (!match.isPrivate)
+                {
+                    publicMatches.Add(match);
+                }
+            }
+            message.AddMatchInfos(publicMatches.ToArray());
             
             Server.Send(message, clientId);
         }
@@ -96,7 +107,15 @@ namespace Mythrail_Game_Server
         private static void SendMatchesToAll()
         {
             Message message = Message.Create(MessageSendMode.reliable, GameServerToClientId.matches);
-            message.AddMatchInfos(matches.ToArray());
+            List<MatchInfo> publicMatches = new List<MatchInfo>();
+            foreach (var match in matches)
+            {
+                if (!match.isPrivate)
+                {
+                    publicMatches.Add(match);
+                }
+            }
+            message.AddMatchInfos(publicMatches.ToArray());
 
             Server.SendToAll(message);
         }
@@ -130,12 +149,21 @@ namespace Mythrail_Game_Server
                 ushort port = FreeTcpPort();
                 ushort maxPlayers = message.GetUShort();
                 ushort minPlayers = message.GetUShort();
-                Console.WriteLine(minPlayers);
+                Random random = new Random();
+                string code = "";
+                for (int i = 0; i < 5; i++)
+                {
+                    int randValue = random.Next(0, 26);
+                    char letter = Convert.ToChar(randValue + 65);
+                    code = code + letter;
+                }
                 matchProcess.StartInfo.Arguments = $"port:{port.ToString()} maxPlayers:{maxPlayers.ToString()} minPlayers:{minPlayers.ToString()}";
 
                 matchProcess.Start();
-            
-                MatchInfo newMatch = new MatchInfo(message.GetString(), currentlyConnectedClients[fromClientId].username, matchProcess, port);
+
+                string name = message.GetString();
+                bool isPrivate = message.GetBool();
+                MatchInfo newMatch = new MatchInfo(name, currentlyConnectedClients[fromClientId].username, matchProcess, port, isPrivate, code);
                 matches.Add(newMatch);
                 matchProcess.Exited += (sender, eventArgs) =>
                 {
@@ -146,7 +174,7 @@ namespace Mythrail_Game_Server
             
                 program.SendMatches(fromClientId);
                 
-                program.SendMatchCreationConformation(fromClientId, port);
+                program.SendMatchCreationConformation(fromClientId, port, isPrivate, code);
                 
                 SendMatchesToAll();
             }
@@ -156,11 +184,13 @@ namespace Mythrail_Game_Server
             }
         }
 
-        private void SendMatchCreationConformation(ushort fromClientId, ushort port)
+        private void SendMatchCreationConformation(ushort fromClientId, ushort port, bool isPrivate, string code)
         {
-            Message conformationMessage = Message.Create(MessageSendMode.reliable, GameServerToClientId.createMatchSuccess);
-            conformationMessage.AddUShort(port);
-            Server.Send(conformationMessage, fromClientId);
+            Message message = Message.Create(MessageSendMode.reliable, GameServerToClientId.createMatchSuccess);
+            message.AddBool(isPrivate);
+            message.AddString(code);
+            message.AddUShort(port);
+            Server.Send(message, fromClientId);
         }
 
         private static void MatchEnded(MatchInfo match)
@@ -168,6 +198,13 @@ namespace Mythrail_Game_Server
             matches.Remove(match);
             Console.WriteLine("Match Ended");
             SendMatchesToAll();
+        }
+
+        private void PrivateMatchFound(ushort toClientId, ushort port)
+        {
+            Message message = Message.Create(MessageSendMode.reliable, GameServerToClientId.joinedPrivateMatch);
+            message.AddUShort(port);
+            Server.Send(message, toClientId);
         }
 
         [MessageHandler((ushort)ClientToGameServerId.requestMatches)]
@@ -184,6 +221,23 @@ namespace Mythrail_Game_Server
             {
                 clientInfo.username = message.GetString();
                 Console.WriteLine("Updated username: " + clientInfo.username);
+            }
+        }
+
+        [MessageHandler((ushort)ClientToGameServerId.joinPrivateMatch)]
+        private static void JoinPrivateMatch(ushort fromClientId, Message message)
+        {
+            string codeKey = message.GetString();
+            foreach (MatchInfo match in matches)
+            {
+                if (match.isPrivate)
+                {
+                    if (match.code == codeKey)
+                    {
+                        program.PrivateMatchFound(fromClientId, match.port);
+                        return;
+                    }
+                }
             }
         }
     }
@@ -208,13 +262,17 @@ namespace Mythrail_Game_Server
         public string creatorName;
         public Process process;
         public ushort port;
+        public bool isPrivate;
+        public string code;
 
-        public MatchInfo(string name, string creatorName, Process process, ushort port)
+        public MatchInfo(string name, string creatorName, Process process, ushort port, bool isPrivate, string code)
         {
             this.name = name;
             this.creatorName = creatorName;
             this.process = process;
             this.port = port;
+            this.isPrivate = isPrivate;
+            this.code = code;
         }
     }
 }

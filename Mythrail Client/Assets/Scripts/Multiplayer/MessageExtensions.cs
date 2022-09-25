@@ -84,12 +84,13 @@ namespace MythrailEngine
             string[] matchNames = message.GetStrings();
             string[] matchCreatorNames = message.GetStrings();
             ushort[] matchPorts = message.GetUShorts();
+            string[] codes = message.GetStrings();
             
             MatchInfo[] infos = new MatchInfo[matchNames.Length];
 
             for (int i = 0; i < matchNames.Length; i++)
             {
-                infos[i] = new MatchInfo(matchNames[i], matchCreatorNames[i], matchPorts[i]);
+                infos[i] = new MatchInfo(matchNames[i], matchCreatorNames[i], matchPorts[i], codes[i]);
             }
 
             return infos;
@@ -103,12 +104,14 @@ namespace MythrailEngine
         public string name;
         public string creatorName;
         public ushort port;
+        public string code;
 
-        public MatchInfo(string name, string creatorName, ushort port)
+        public MatchInfo(string name, string creatorName, ushort port, string code)
         {
             this.name = name;
             this.creatorName = creatorName;
             this.port = port;
+            this.code = code;
         }
     }
 

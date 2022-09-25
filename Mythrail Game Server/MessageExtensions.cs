@@ -11,17 +11,20 @@ namespace Mythrail_Game_Server
             string[] names = new string[value.Length];
             string[] creatorNames = new string[value.Length];
             ushort[] ports = new ushort[value.Length];
+            string[] codes = new string[value.Length];
             
             for (int i = 0; i < value.Length; i++)
             {
                 names[i] = value[i].name;
                 creatorNames[i] = value[i].creatorName;
                 ports[i] = value[i].port;
+                codes[i] = value[i].code;
             }
             
             message.AddStrings(names);
             message.AddStrings(creatorNames);
             message.AddUShorts(ports);
+            message.AddStrings(codes);
             
             return message;
         }

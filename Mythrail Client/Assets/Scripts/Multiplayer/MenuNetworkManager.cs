@@ -14,12 +14,14 @@ namespace MythrailEngine
         updateUsername,
         requestMatches,
         createMatch,
+        joinPrivateMatch,
     }
     
     public enum GameServerToClientId : ushort
     {
         matches = 100,
         createMatchSuccess,
+        joinedPrivateMatch,
     }
 
     public class MenuNetworkManager : MonoBehaviour
@@ -67,6 +69,8 @@ namespace MythrailEngine
         [SerializeField] private string ip;
         [SerializeField] private ushort port;
         private static string username = "TestTechyte";
+        
+        [Space]
 
         [SerializeField] private GameObject MatchObject;
         [SerializeField] private Transform MatchHolders;
@@ -76,6 +80,7 @@ namespace MythrailEngine
         [SerializeField] private TextMeshProUGUI connectionStatusText;
 
         [SerializeField] private GameObject CreateScreen;
+        [SerializeField] private GameObject JoinPrivateMatchScreen;
         [SerializeField] private GameObject MainScreen;
 
         [SerializeField] private Slider maxPlayerCountSlider;
@@ -83,17 +88,39 @@ namespace MythrailEngine
         [SerializeField] private Slider minPlayerCountSlider;
         [SerializeField] private TextMeshProUGUI minPlayerDisplay;
         [SerializeField] private TMP_InputField matchName;
+        [SerializeField] private Button matchMap;
+        [SerializeField] private Toggle privateMatch;
+
+        [SerializeField] private Button CreateBackButton;
+        [SerializeField] private Button CreateComfirmButton;
+
+        [SerializeField] private TMP_InputField privateMatchJoinCodeText;
+
+        [SerializeField] private RectTransform privateMatchPopup;
+        [SerializeField] private TextMeshProUGUI privateCodeText;
+        [SerializeField] private TextMeshProUGUI privateCodeURLText;
+
+        private ushort privateMatchPort;
 
         public void OpenCreateScreen()
         {
             CreateScreen.SetActive(true);
             MainScreen.SetActive(false);
+            JoinPrivateMatchScreen.SetActive(false);
         }
 
         public void OpenMainScreen()
         {
             CreateScreen.SetActive(false);
             MainScreen.SetActive(true);
+            JoinPrivateMatchScreen.SetActive(false);
+        }
+
+        public void OpenJoinPrivateMatchScreen()
+        {
+            CreateScreen.SetActive(false);
+            MainScreen.SetActive(false);
+            JoinPrivateMatchScreen.SetActive(true);
         }
 
         private void Awake()
@@ -170,6 +197,21 @@ namespace MythrailEngine
             Client.Disconnect();
         }
 
+        private void ShowPrivateMatchMessage(string code)
+        {
+            privateMatchPopup.gameObject.SetActive(true);
+            privateCodeText.text = code;
+            matchName.interactable = false;
+            matchMap.interactable = false;
+            maxPlayerCountSlider.interactable = false;
+            minPlayerCountSlider.interactable = false;
+            privateMatch.interactable = false;
+            CreateBackButton.interactable = false;
+            CreateComfirmButton.interactable = false;
+
+            //privateCodeURLText.text = "mythrail://" + code;
+        }
+
         [MessageHandler((ushort)GameServerToClientId.matches)]
         private static void Matches(Message message)
         {
@@ -182,12 +224,29 @@ namespace MythrailEngine
 
             for (int i = 0; i < matchInfos.Length; i++)
             {
-                Singleton.CreateMatchButton(matchInfos[i].name, matchInfos[i].creatorName, matchInfos[i].port);
+                Singleton.CreateMatchButton(matchInfos[i].name, matchInfos[i].creatorName, matchInfos[i].code);
             }
         }
 
         [MessageHandler((ushort)GameServerToClientId.createMatchSuccess)]
         private static void CreateMatchSuccess(Message message)
+        {
+            if (message.GetBool())
+            {
+                Singleton.ShowPrivateMatchMessage(message.GetString());
+                Singleton.privateMatchPort = message.GetUShort();
+            }
+            else
+            {
+                JoinMatchInfo.port = message.GetUShort();
+                JoinMatchInfo.username = username;
+            
+                SceneManager.LoadScene(1);   
+            }
+        }
+
+        [MessageHandler((ushort)GameServerToClientId.joinedPrivateMatch)]
+        private static void PrivateMatchJoinSuccess(Message message)
         {
             JoinMatchInfo.port = message.GetUShort();
             JoinMatchInfo.username = username;
@@ -195,13 +254,13 @@ namespace MythrailEngine
             SceneManager.LoadScene(1);
         }
 
-        private void CreateMatchButton(string name, string creator, ushort port)
+        private void CreateMatchButton(string name, string creator, string code)
         {
             GameObject newMatchObj = Instantiate(MatchObject, MatchHolders);
 
             newMatchObj.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = name;
             newMatchObj.transform.Find("Creator").GetComponent<TextMeshProUGUI>().text = creator;
-            newMatchObj.transform.Find("Port").GetComponent<TextMeshProUGUI>().text = port.ToString();
+            newMatchObj.transform.Find("Port").GetComponent<TextMeshProUGUI>().text = code;
             
             newMatchObj.GetComponent<Button>().onClick.AddListener(delegate
             {
@@ -224,7 +283,33 @@ namespace MythrailEngine
             message.AddUShort((ushort)maxPlayerCountSlider.value);
             message.AddUShort((ushort)minPlayerCountSlider.value);
             message.AddString(matchName.text);
+            message.AddBool(privateMatch.isOn);
             Singleton.Client.Send(message);
+        }
+
+        public void JoinPrivateMatchFromCreate()
+        {
+            JoinMatchInfo.port = privateMatchPort;
+            JoinMatchInfo.username = username;
+            
+            SceneManager.LoadScene(1); 
+        }
+
+        public void JoinPrivateMatch()
+        {
+            Message message = Message.Create(MessageSendMode.reliable, ClientToGameServerId.joinPrivateMatch);
+            message.AddString(privateMatchJoinCodeText.text);
+            Client.Send(message);
+        }
+
+        public void CopyPrivateMatchCode()
+        {
+            GUIUtility.systemCopyBuffer = privateCodeText.text;
+        }
+
+        public void CopyPrivateMatchURL()
+        {
+            GUIUtility.systemCopyBuffer = privateCodeURLText.text;
         }
     }
 
