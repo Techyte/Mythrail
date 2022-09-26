@@ -1,0 +1,20 @@
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\bin\Debug\netcoreapp3.1\Mythrail Launcher.exe
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\bin\Debug\netcoreapp3.1\Mythrail Launcher.deps.json
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\bin\Debug\netcoreapp3.1\Mythrail Launcher.runtimeconfig.json
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\bin\Debug\netcoreapp3.1\Mythrail Launcher.runtimeconfig.dev.json
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\bin\Debug\netcoreapp3.1\Mythrail Launcher.dll
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\bin\Debug\netcoreapp3.1\Mythrail Launcher.pdb
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\obj\Debug\netcoreapp3.1\Mythrail Launcher.csproj.AssemblyReference.cache
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\obj\Debug\netcoreapp3.1\MainWindow.g.cs
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\obj\Debug\netcoreapp3.1\App.g.cs
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\obj\Debug\netcoreapp3.1\Mythrail Launcher_MarkupCompile.cache
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\obj\Debug\netcoreapp3.1\Mythrail Launcher_MarkupCompile.lref
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\obj\Debug\netcoreapp3.1\MainWindow.baml
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\obj\Debug\netcoreapp3.1\Mythrail Launcher.g.resources
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\obj\Debug\netcoreapp3.1\Mythrail Launcher.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\obj\Debug\netcoreapp3.1\Mythrail Launcher.AssemblyInfoInputs.cache
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\obj\Debug\netcoreapp3.1\Mythrail Launcher.AssemblyInfo.cs
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\obj\Debug\netcoreapp3.1\Mythrail Launcher.csproj.CoreCompileInputs.cache
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\obj\Debug\netcoreapp3.1\Mythrail Launcher.dll
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\obj\Debug\netcoreapp3.1\Mythrail Launcher.pdb
+C:\Users\Mr. Monster\Documents\Coding\Launchers\Mythrail Launcher\obj\Debug\netcoreapp3.1\Mythrail Launcher.genruntimeconfig.cache
