@@ -31,6 +31,7 @@ namespace MythrailEngine
         public TextMeshProUGUI KillsText;
         public TextMeshProUGUI DeathsText;
         public TextMeshProUGUI HUDUsernameDisplay;
+        public TextMeshProUGUI LoadingStatusDisplay;
 
         private void Awake()
         {
@@ -48,6 +49,7 @@ namespace MythrailEngine
                 KillsText = GameObject.Find("KillCounter").GetComponent<TextMeshProUGUI>();
                 DeathsText = GameObject.Find("DeathCounter").GetComponent<TextMeshProUGUI>();
                 HUDUsernameDisplay = GameObject.Find("UsernameText").GetComponent<TextMeshProUGUI>();
+                LoadingStatusDisplay = GameObject.Find("Loading...").GetComponent<TextMeshProUGUI>();
             }
         }
 

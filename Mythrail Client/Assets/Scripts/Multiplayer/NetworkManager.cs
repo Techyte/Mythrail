@@ -1,8 +1,6 @@
 using UnityEngine;
 using RiptideNetworking;
 using System;
-using RiptideNetworking.Utils;
-using TMPro;
 using UnityEngine.SceneManagement;
 
 namespace MythrailEngine
@@ -215,6 +213,7 @@ namespace MythrailEngine
             Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.ready);
             Client.Send(message);
             Debug.LogError("Ready");
+            UIManager.Singleton.LoadingStatusDisplay.text = "Waiting for other players";
         }
 
         [MessageHandler((ushort)LobbyServerToClient.sync)]
