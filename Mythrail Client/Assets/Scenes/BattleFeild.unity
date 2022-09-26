@@ -3298,6 +3298,99 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1167108822}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1206955384
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1206955388}
+  - component: {fileID: 1206955387}
+  - component: {fileID: 1206955386}
+  - component: {fileID: 1206955385}
+  m_Layer: 0
+  m_Name: NetworkManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1206955385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206955384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5e0360ad3021074a9059c8dfbd138be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UIHealthBar: {fileID: 0}
+  loadingScreen: {fileID: 0}
+  KillsText: {fileID: 0}
+  DeathsText: {fileID: 0}
+  HUDUsernameDisplay: {fileID: 0}
+  LoadingStatusDisplay: {fileID: 0}
+--- !u!114 &1206955386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206955384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da482e80c216c684bb1eba10863aa2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ip: 192.168.1.33
+  port: 57899
+  username: Techyte
+  TickDivergenceTolerance: 1
+  LobbyLoadingScreen: {fileID: 0}
+  LoadingScreen: {fileID: 0}
+  PlayerReady: 0
+--- !u!114 &1206955387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206955384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf1c04c93edcbb2428f1536eaf4cb9ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localPlayerPrefab: {fileID: 8367171813486412650, guid: a5d57426c109b6849b4aebfa32ac38e5,
+    type: 3}
+  playerPrefab: {fileID: 4142091868330885182, guid: 49dfc6374c862154496679e8f5f5748c,
+    type: 3}
+  bulletHolePrefab: {fileID: 3617851779111143124, guid: 6799067f102b6e74ea67baa742560466,
+    type: 3}
+  lobbyPlayerPrefab: {fileID: 4142091868330885182, guid: f6bc28baec55add409b65eb6d5e0c7e0,
+    type: 3}
+  lobbyLocalPlayerPrefab: {fileID: 8367171813486412650, guid: 92aa95ab310917b47ba75305d4798536,
+    type: 3}
+--- !u!4 &1206955388
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206955384}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1238629050
 GameObject:
   m_ObjectHideFlags: 0

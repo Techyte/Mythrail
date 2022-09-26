@@ -22,6 +22,7 @@ public enum ServerToClientId : ushort
     playerKilled,
     playerHealth,
     gameStarted,
+    isInGameResult,
 }
 
 public enum ClientToServerId : ushort
@@ -30,6 +31,7 @@ public enum ClientToServerId : ushort
     movementInput,
     weaponInput,
     ready,
+    isInGameRequest,
 }
 
 public enum LobbyServerToClient : ushort
@@ -236,5 +238,13 @@ public class NetworkManager : MonoBehaviour
         message.AddUInt(CurrentTick);
 
         Server.SendToAll(message);
+    }
+
+    [MessageHandler((ushort)ClientToServerId.isInGameRequest)]
+    private static void IsInGameRequest(ushort fromClientId, Message message)
+    {
+        Message resaultMessage = Message.Create(MessageSendMode.reliable, ServerToClientId.isInGameResult);
+        resaultMessage.AddBool(SceneManager.GetActiveScene().buildIndex == 1);
+        Singleton.Server.Send(resaultMessage, fromClientId);
     }
 }

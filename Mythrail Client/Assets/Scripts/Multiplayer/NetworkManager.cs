@@ -27,6 +27,7 @@ namespace MythrailEngine
         playerKilled,
         playerHealth,
         gameStarted,
+        isInGameResult,
     }
 
     public enum ClientToServerId : ushort
@@ -35,6 +36,7 @@ namespace MythrailEngine
         movementInput,
         weaponInput,
         ready,
+        isInGameRequest,
     }
     
     public class NetworkManager : MonoBehaviour
@@ -104,7 +106,7 @@ namespace MythrailEngine
             Singleton = this;
             if (scene.buildIndex == 0)
             {
-                Destroy(this);
+                Destroy(gameObject);
             }
         }
 
@@ -151,8 +153,14 @@ namespace MythrailEngine
 
         private void DidConnect(object sender, EventArgs e)
         {
-            SendName();
+            GetIsInGameStatus();
             LobbyLoadingScreen.SetActive(false);
+        }
+
+        private void GetIsInGameStatus()
+        {
+            Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.isInGameRequest);
+            Client.Send(message);
         }
 
         private void SendName()
@@ -224,6 +232,24 @@ namespace MythrailEngine
 
         [MessageHandler((ushort)LobbyServerToClient.ready)]
         private static void LobbyReady(Message message)
+        {
+            Singleton.LoadGame();
+        }
+
+        [MessageHandler((ushort)ServerToClientId.isInGameResult)]
+        private static void IsInGameResault(Message message)
+        {
+            if (message.GetBool())
+            {
+                Singleton.LoadGame();
+            }
+            else
+            {
+                Singleton.SendName();
+            }
+        }
+
+        private void LoadGame()
         {
             SceneManager.LoadScene(2);
             Player.list.Clear();

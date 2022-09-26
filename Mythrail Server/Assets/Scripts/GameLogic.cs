@@ -63,6 +63,12 @@ public class GameLogic : MonoBehaviour
             Debug.LogError($"{player} is ready");
             Singleton.readyPlayers++;
             player.isGameReady = true;
+
+            if (Singleton.gameHasStarted)
+            {
+                Message readyMessage = Message.Create(MessageSendMode.reliable, ServerToClientId.gameStarted);
+                NetworkManager.Singleton.Server.Send(readyMessage, fromClientId);
+            }
         }
     }
 }

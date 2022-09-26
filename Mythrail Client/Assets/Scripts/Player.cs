@@ -2,6 +2,7 @@ using RiptideNetworking;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 namespace MythrailEngine
 {
