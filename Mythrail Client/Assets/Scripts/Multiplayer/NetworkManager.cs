@@ -103,6 +103,7 @@ namespace MythrailEngine
 
         private void CheckForMainMenu(Scene scene, LoadSceneMode loadSceneMode)
         {
+            Singleton = this;
             if (scene.buildIndex == 0)
             {
                 Destroy(this);

@@ -22,6 +22,7 @@ namespace MythrailEngine
         matches = 100,
         createMatchSuccess,
         joinedPrivateMatch,
+        privateMatchNotFound,
     }
 
     public class MenuNetworkManager : MonoBehaviour
@@ -102,6 +103,8 @@ namespace MythrailEngine
 
         private ushort privateMatchPort;
 
+        [SerializeField] private Sprite PrivateMatchNotFoundImage;
+
         public void OpenCreateScreen()
         {
             CreateScreen.SetActive(true);
@@ -181,6 +184,17 @@ namespace MythrailEngine
 
         private void ClientConnected(object sender, EventArgs e)
         {
+            string[] args = Environment.GetCommandLineArgs();
+
+            if (args.Length == 2)
+            {
+                string[] urlPeices = args[1].Split("//");
+                
+                Message message = Message.Create(MessageSendMode.reliable, ClientToGameServerId.joinPrivateMatch);
+                message.AddString(urlPeices[1].Remove(urlPeices[1].Length - 1, 1));
+                Client.Send(message);
+            }
+            
             SendInitialServerInfo();
             RequestMatches();
             connectionStatusText.text = "Connected";
@@ -209,7 +223,7 @@ namespace MythrailEngine
             CreateBackButton.interactable = false;
             CreateComfirmButton.interactable = false;
 
-            //privateCodeURLText.text = "mythrail://" + code;
+            privateCodeURLText.text = "mythrail://" + code;
         }
 
         [MessageHandler((ushort)GameServerToClientId.matches)]
@@ -224,21 +238,25 @@ namespace MythrailEngine
 
             for (int i = 0; i < matchInfos.Length; i++)
             {
-                Singleton.CreateMatchButton(matchInfos[i].name, matchInfos[i].creatorName, matchInfos[i].code);
+                Singleton.CreateMatchButton(matchInfos[i].name, matchInfos[i].creatorName, matchInfos[i].code, matchInfos[i].port);
             }
         }
 
         [MessageHandler((ushort)GameServerToClientId.createMatchSuccess)]
         private static void CreateMatchSuccess(Message message)
         {
-            if (message.GetBool())
+            bool isPrivate = message.GetBool();
+            string code = message.GetString();
+            ushort port = message.GetUShort();
+            
+            if (isPrivate)
             {
-                Singleton.ShowPrivateMatchMessage(message.GetString());
-                Singleton.privateMatchPort = message.GetUShort();
+                Singleton.ShowPrivateMatchMessage(code);
+                Singleton.privateMatchPort = port;
             }
             else
             {
-                JoinMatchInfo.port = message.GetUShort();
+                JoinMatchInfo.port = port;
                 JoinMatchInfo.username = username;
             
                 SceneManager.LoadScene(1);   
@@ -254,7 +272,15 @@ namespace MythrailEngine
             SceneManager.LoadScene(1);
         }
 
-        private void CreateMatchButton(string name, string creator, string code)
+        [MessageHandler((ushort)GameServerToClientId.privateMatchNotFound)]
+        private static void PrivateMatchNotFound(Message message)
+        {
+            Singleton.OpenMainScreen();
+            NotificationManager.Singleton.AddNotificationToQue(Singleton.PrivateMatchNotFoundImage, "Incorrect Code", "This is not the game you are looking for...");
+        }
+
+
+        private void CreateMatchButton(string name, string creator, string code, ushort port)
         {
             GameObject newMatchObj = Instantiate(MatchObject, MatchHolders);
 

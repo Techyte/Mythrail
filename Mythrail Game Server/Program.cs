@@ -14,6 +14,7 @@ namespace Mythrail_Game_Server
         matches = 100,
         createMatchSuccess,
         joinedPrivateMatch,
+        privateMatchNotFound,
     }
 
     public enum ClientToGameServerId : ushort
@@ -228,6 +229,7 @@ namespace Mythrail_Game_Server
         private static void JoinPrivateMatch(ushort fromClientId, Message message)
         {
             string codeKey = message.GetString();
+            Console.WriteLine(codeKey);
             foreach (MatchInfo match in matches)
             {
                 if (match.isPrivate)
@@ -239,6 +241,9 @@ namespace Mythrail_Game_Server
                     }
                 }
             }
+            
+            Message failedMessage = Message.Create(MessageSendMode.reliable, GameServerToClientId.privateMatchNotFound);
+            Server.Send(failedMessage, fromClientId);
         }
     }
     
