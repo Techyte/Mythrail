@@ -1,3 +1,3 @@
 # Mythrail
 
-My biggest project yet. When finished Mythrail will be a fully fleged FPS. It is built on top of unity3d and RiptideNetworking (you can check that out over here: https://github.com/RiptideNetworking/Riptide)
+My biggest project yet. When finished Mythrail will be a small FPS that I can play with friends! It is built on top of Unity3D and RiptideNetworking (you can check that out over here: https://github.com/RiptideNetworking/Riptide)
