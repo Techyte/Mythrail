@@ -15,6 +15,7 @@ namespace Mythrail_Game_Server
         createMatchSuccess,
         joinedPrivateMatch,
         privateMatchNotFound,
+        invalidName,
     }
 
     public enum ClientToGameServerId : ushort
@@ -34,7 +35,7 @@ namespace Mythrail_Game_Server
 
         private static Server Server;
 
-        private ushort port;
+        private ushort port = 63231;
         private ushort maxClientCount = 10;
 
         private static List<MatchInfo> matches = new List<MatchInfo>();
@@ -50,10 +51,6 @@ namespace Mythrail_Game_Server
             AppDomain.CurrentDomain.ProcessExit += StopServer;
             
             RiptideLogger.Initialize(Console.Write, Console.Write, Console.Write, Console.Write, false);
-            
-            port = FreeTcpPort();
-            
-            Console.WriteLine(port);
 
             Server = new Server();
             Server.Start(port, maxClientCount);
@@ -220,7 +217,17 @@ namespace Mythrail_Game_Server
         {
             if (currentlyConnectedClients.TryGetValue(fromClientId, out ClientInfo clientInfo))
             {
-                clientInfo.username = message.GetString();
+                string newUsername = message.GetString();
+                foreach (var client in currentlyConnectedClients)
+                {
+                    if (client.Value.username == newUsername)
+                    {
+                        Message invalidUsernameMessage = Message.Create(MessageSendMode.reliable, GameServerToClientId.invalidName);
+                        Server.Send(invalidUsernameMessage, fromClientId);
+                        return;
+                    }
+                }
+                clientInfo.username = newUsername;
                 Console.WriteLine("Updated username: " + clientInfo.username);
             }
         }

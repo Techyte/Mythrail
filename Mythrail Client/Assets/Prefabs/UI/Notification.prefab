@@ -306,10 +306,9 @@ MonoBehaviour:
   logo: {fileID: 176078387997035134}
   title: {fileID: 176078388282337720}
   content: {fileID: 176078387786967181}
-  startPos: {x: 1088, y: 375, z: 0}
-  endPos: {x: 688, y: 375, z: 0}
   hasReachedResting: 0
   timeToGoBack: 0
+  hasStartedCountdown: 0
 --- !u!1 &176078388282337726
 GameObject:
   m_ObjectHideFlags: 0
@@ -419,7 +418,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}

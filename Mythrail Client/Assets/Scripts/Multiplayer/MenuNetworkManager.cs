@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using RiptideNetworking;
 using TMPro;
@@ -23,6 +24,7 @@ namespace MythrailEngine
         createMatchSuccess,
         joinedPrivateMatch,
         privateMatchNotFound,
+        invalidName,
     }
 
     public class MenuNetworkManager : MonoBehaviour
@@ -79,6 +81,7 @@ namespace MythrailEngine
         private static List<GameObject> matchButtons = new List<GameObject>();
 
         [SerializeField] private TextMeshProUGUI connectionStatusText;
+        [SerializeField] private TMP_InputField usernameFeild;
 
         [SerializeField] private GameObject CreateScreen;
         [SerializeField] private GameObject JoinPrivateMatchScreen;
@@ -105,8 +108,16 @@ namespace MythrailEngine
 
         [SerializeField] private Sprite PrivateMatchNotFoundImage;
 
+        [SerializeField] private Animator screenShakeAnimator;
+
         public void OpenCreateScreen()
         {
+            if (string.IsNullOrEmpty(username))
+            {
+                NotificationManager.Singleton.AddNotificationToQue(PrivateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.");
+                ShakeScreen();
+                return;
+            }
             CreateScreen.SetActive(true);
             MainScreen.SetActive(false);
             JoinPrivateMatchScreen.SetActive(false);
@@ -121,9 +132,27 @@ namespace MythrailEngine
 
         public void OpenJoinPrivateMatchScreen()
         {
+            if (string.IsNullOrEmpty(username))
+            {
+                NotificationManager.Singleton.AddNotificationToQue(PrivateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.");
+                ShakeScreen();
+                return;
+            }
             CreateScreen.SetActive(false);
             MainScreen.SetActive(false);
             JoinPrivateMatchScreen.SetActive(true);
+        }
+
+        public void ShakeScreen()
+        {
+            screenShakeAnimator.SetBool("CanShake", true);
+            StartCoroutine(ShakeScreenOff());
+        }
+
+        private IEnumerator ShakeScreenOff()
+        {
+            yield return new WaitForSeconds(.1f);
+            screenShakeAnimator.SetBool("CanShake", false);
         }
 
         private void Awake()
@@ -133,10 +162,11 @@ namespace MythrailEngine
 
         private void Start()
         {
+            LoadUsername();
             //RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 
-            maxPlayerCountSlider.onValueChanged.AddListener(delegate {UpdateMinMax(); });
-            minPlayerCountSlider.onValueChanged.AddListener(delegate {UpdateMinMax(); });
+            maxPlayerCountSlider.onValueChanged.AddListener(delegate { UpdateMinMax(); });
+            minPlayerCountSlider.onValueChanged.AddListener(delegate { UpdateMinMax(); });
 
             Client = new Client();
             Client.Connected += ClientConnected;
@@ -172,11 +202,30 @@ namespace MythrailEngine
         public void OnUsernameFieldChanged(string newUsername)
         {
             username = newUsername;
+            SaveUsername(newUsername);
             SendUpdatedUsername();
+        }
+
+        private void LoadUsername()
+        {
+            string username = PlayerPrefs.GetString("Username");
+            MenuNetworkManager.username = username;
+            usernameFeild.text = username;
+        }
+
+        private void SaveUsername(string newUsername)
+        {
+            PlayerPrefs.SetString("Username", newUsername);
         }
 
         private void SendUpdatedUsername()
         {
+            if (string.IsNullOrEmpty(username))
+            {
+                NotificationManager.Singleton.AddNotificationToQue(PrivateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.");
+                ShakeScreen();
+                return;
+            }
             Message message = Message.Create(MessageSendMode.reliable, ClientToGameServerId.updateUsername);
             message.AddString(username);
             Singleton.Client.Send(message);
@@ -202,8 +251,11 @@ namespace MythrailEngine
 
         private void FixedUpdate()
         {
-            Client.Tick();
-            ServerTick++;
+            if (Client != null)
+            {
+                Client.Tick();
+                ServerTick++;   
+            }
         }
 
         private void OnApplicationQuit()
@@ -279,6 +331,12 @@ namespace MythrailEngine
             NotificationManager.Singleton.AddNotificationToQue(Singleton.PrivateMatchNotFoundImage, "Incorrect Code", "This is not the game you are looking for...");
         }
 
+        [MessageHandler((ushort)GameServerToClientId.invalidName)]
+        private static void InvalidName(Message message)
+        {
+            Singleton.usernameFeild.text = "";
+            NotificationManager.Singleton.AddNotificationToQue(Singleton.PrivateMatchNotFoundImage, "Can't use that name", "A user on this server is already using that name, please try again with a different name");
+        }
 
         private void CreateMatchButton(string name, string creator, string code, ushort port)
         {

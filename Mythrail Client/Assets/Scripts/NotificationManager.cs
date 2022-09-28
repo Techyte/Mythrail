@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System;
+using System.Collections;
 
 namespace MythrailEngine
 {
@@ -32,14 +32,18 @@ namespace MythrailEngine
             };
         }
 
-        private List<NotificationData> que;
+        public List<NotificationData> que;
 
         public float NotificationStayTime = 5f;
         public float NotificationAnimationTime = .8f;
+        [SerializeField] private float NotificaionCooldown;
+        [Space]
         public GameObject startPosObj;
         public GameObject endPosObj;
         [Space]
         [SerializeField] private GameObject notificationSRC;
+
+        private bool canTakeNewNotifications = true;
 
         private void Start()
         {
@@ -49,12 +53,17 @@ namespace MythrailEngine
 
         public void AddNotificationToQue(Sprite logo, string title, string content)
         {
-            NotificationData data = new NotificationData(logo, title, content);
-            que.Add(data);
-
-            if (que.Count == 1)
+            if(canTakeNewNotifications)
             {
-                Next();
+                NotificationData data = new NotificationData(logo, title, content);
+                que.Add(data);
+
+                if (que.Count == 1)
+                {
+                    Next();
+                }
+
+                StartCoroutine(Cooldown());
             }
         }
 
@@ -63,8 +72,14 @@ namespace MythrailEngine
             if (que.Count != 0)
             {
                 CreateNotification(que[0]);
-                que.RemoveAt(0);
             }
+        }
+
+        private IEnumerator Cooldown()
+        {
+            canTakeNewNotifications = false;
+            yield return new WaitForSeconds(NotificaionCooldown);
+            canTakeNewNotifications = true;
         }
 
         private void CreateNotification(NotificationData data)
@@ -80,7 +95,6 @@ namespace MythrailEngine
         }
     }
 
-    [Serializable]
     public class NotificationData
     {
         public Sprite logo;

@@ -17,7 +17,7 @@ namespace MythrailEngine
                     _singleton = value;
                 else if (_singleton != value)
                 {
-                    Debug.Log($"{nameof(UIManager)} instance already exists, destroying duplicate!");
+                    //Debug.Log($"{nameof(UIManager)} instance already exists, destroying duplicate!");
                     Destroy(value);
                 }
             }

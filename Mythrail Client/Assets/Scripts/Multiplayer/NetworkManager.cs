@@ -104,10 +104,6 @@ namespace MythrailEngine
         private void CheckForMainMenu(Scene scene, LoadSceneMode loadSceneMode)
         {
             Singleton = this;
-            if (scene.buildIndex == 0)
-            {
-                Destroy(gameObject);
-            }
         }
 
         private void Start()
@@ -197,6 +193,7 @@ namespace MythrailEngine
         {
             if (Mathf.Abs(ServerTick - serverTick) > TickDivergenceTolerance)
             {
+                Debug.Log("Setting tick");
                 ServerTick = serverTick;
                 if (SceneManager.GetActiveScene().buildIndex == 2)
                 {

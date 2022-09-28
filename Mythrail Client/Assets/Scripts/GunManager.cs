@@ -27,6 +27,9 @@ namespace MythrailEngine
 
         private void Update()
         {
+            currentGunModel.transform.localPosition = Vector3.Lerp(currentGunModel.transform.localPosition, Player.LocalPlayer.gunManager.weaponModels[currentWeaponIndex].transform.localPosition, Time.deltaTime * 4f);
+            currentGunModel.transform.localRotation = Quaternion.Lerp(currentGunModel.transform.localRotation, Quaternion.Euler(0, 0, 0), Time.deltaTime * 4f);
+            
             if (!player.IsLocal)
                 return;
             if (Player.LocalPlayer.playerController.canMove)
@@ -38,9 +41,6 @@ namespace MythrailEngine
                 if (Input.GetAxis("Mouse ScrollWheel") != 0 || Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2))
                     weaponInputs[2] = true;   
             }
-            
-            currentGunModel.transform.localRotation = Quaternion.Lerp(currentGunModel.transform.localRotation, Quaternion.Euler(0, 0, 0), Time.deltaTime * 4f);
-            currentGunModel.transform.localPosition = Vector3.Lerp(currentGunModel.transform.localPosition, weaponModels[currentWeaponIndex].transform.localPosition, Time.deltaTime * 4f);
         }
 
         private void FixedUpdate()
@@ -67,7 +67,7 @@ namespace MythrailEngine
             ushort playerId = message.GetUShort();
             if (Player.list.TryGetValue(playerId, out Player player))
             {
-                player.gunManager.SwapWeapon(playerId, message.GetInt());
+                player.gunManager.SwapWeapon(message.GetInt());
             }
         }
 
@@ -99,16 +99,13 @@ namespace MythrailEngine
             NetworkManager.Singleton.Client.Send(message);
         }
 
-        private void SwapWeapon(ushort playerId, int newWeaponIndex)
+        private void SwapWeapon(int newWeaponIndex)
         {
-            currentWeaponIndex = newWeaponIndex;/*
-            if (weaponModels[newWeaponIndex])
+            currentWeaponIndex = newWeaponIndex;
+            if (Player.LocalPlayer.gunManager.weaponModels[newWeaponIndex])
             {
-                if (Player.list.TryGetValue(playerId, out Player player))
-                {
-                    player.gunManager.ChangePlayerGunModel(playerId, weaponModels[loadoutIndex[newWeaponIndex]]);
-                }
-            }*/
+                ChangePlayerGunModel(Player.LocalPlayer.gunManager.weaponModels[loadoutIndex[newWeaponIndex]]);
+            }
         }
 
         private void AssignLoadout(int id0, int id1)
@@ -119,20 +116,17 @@ namespace MythrailEngine
             Debug.Log("Assigning loadout");
         }
 
-        private void ChangePlayerGunModel(int playerId, GameObject gunModel)
+        private void ChangePlayerGunModel(GameObject gunModel)
         {
-            if (Player.list.TryGetValue((ushort)playerId, out Player player))
+            if (currentGunModel)
             {
-                if (currentGunModel)
-                {
-                    Destroy(currentGunModel);
-                }
-                currentGunModel = Instantiate(gunModel);
-                currentGunModel.transform.parent = gunModelHolder.transform;
-                currentGunModel.transform.localPosition = gunModel.transform.localPosition;
-                currentGunModel.transform.localScale = gunModel.transform.localScale;
-                currentGunModel.transform.localRotation = gunModel.transform.localRotation;
+                Destroy(currentGunModel);
             }
+            currentGunModel = Instantiate(gunModel);
+            currentGunModel.transform.parent = gunModelHolder.transform;
+            currentGunModel.transform.localPosition = gunModel.transform.localPosition;
+            currentGunModel.transform.localScale = gunModel.transform.localScale;
+            currentGunModel.transform.localRotation = gunModel.transform.localRotation;
         }
     }
 }

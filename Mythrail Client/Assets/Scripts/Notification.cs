@@ -19,14 +19,12 @@ namespace MythrailEngine
         {
             if (!hasReachedResting)
             {
-                Debug.Log("coming!");
                 transform.position = Vector3.Lerp(transform.position, NotificationManager.Singleton.endPosObj.transform.position, NotificationManager.Singleton.NotificationAnimationTime * Time.deltaTime);
             }
 
             if (transform.position.x <= NotificationManager.Singleton.endPosObj.transform.position.x+1 && !hasStartedCountdown)
             {
                 hasStartedCountdown = true;
-                Debug.Log("finished animating");
                 hasReachedResting = true;
                 StartCoroutine(WaitTimer());
             }
@@ -34,12 +32,12 @@ namespace MythrailEngine
             
             if (timeToGoBack)
             {
-                Debug.Log("going back");
                 transform.position = Vector3.Lerp(transform.position, NotificationManager.Singleton.startPosObj.transform.position, NotificationManager.Singleton.NotificationAnimationTime * Time.deltaTime);
             }
 
             if (transform.position.x >= NotificationManager.Singleton.startPosObj.transform.position.x-1)
             {
+                NotificationManager.Singleton.que.RemoveAt(0);
                 NotificationManager.Singleton.Next();
                 Destroy(gameObject);
             }
