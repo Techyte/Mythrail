@@ -99,18 +99,24 @@ namespace MythrailEngine
                 camTransform.forward = forward;
                 camTransform.rotation = FlattenQuaternion(camTransform.rotation);
             }
-
+            
             if (isCrouching)
             {
                 crouchingModel.SetActive(true);
                 defaultModel.SetActive(false);
-                camTransform.position = crouchingCameraPos.position;
+                if(IsLocal)
+                {
+                    camTransform.position = crouchingCameraPos.position;
+                }
             }
             else
             {
                 crouchingModel.SetActive(false);
                 defaultModel.SetActive(true);
-                camTransform.position = defaultCameraPos.position;
+                if(IsLocal)
+                {
+                    camTransform.position = defaultCameraPos.position;
+                }
             }
         }
         
