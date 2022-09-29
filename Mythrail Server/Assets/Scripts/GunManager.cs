@@ -8,7 +8,7 @@ public class GunManager : MonoBehaviour
 {
     [SerializeField] private Player player;
 
-    [SerializeField] private bool[] inputs;
+    [SerializeField] private bool[] inputs = new bool[4];
     [SerializeField] private int currentWeaponIndex;
 
     [SerializeField] private Weapon[] guns;
@@ -17,6 +17,7 @@ public class GunManager : MonoBehaviour
 
     [SerializeField] private bool canSwapIn = true;
     [SerializeField] private bool canShoot = true;
+    public bool isAiming;
 
     private void OnValidate()
     {
@@ -27,8 +28,6 @@ public class GunManager : MonoBehaviour
     private void Start()
     {
         if(SceneManager.GetActiveScene().buildIndex != 0) return;
-        
-        inputs = new bool[3];
 
         canShoot = true;
         canSwapIn = true;
@@ -73,10 +72,7 @@ public class GunManager : MonoBehaviour
                 shootCheck = true;
             }
 
-            if (inputs[1])
-            {
-                Aim();
-            }
+            isAiming = inputs[1];
 
             if (inputs[2] && canSwapIn)
             {
@@ -118,8 +114,18 @@ public class GunManager : MonoBehaviour
         Transform spawn = transform.Find("CamProxy");
         Vector3 bloom = spawn.position + spawn.forward * 1000f;
 
-        bloom += Random.Range(-guns[loadout[currentWeaponIndex]].bloom, guns[loadout[currentWeaponIndex]].bloom) * spawn.up;
-        bloom += Random.Range(-guns[loadout[currentWeaponIndex]].bloom, guns[loadout[currentWeaponIndex]].bloom) * spawn.right;
+        if(isAiming)
+        {
+            bloom += Random.Range(-guns[loadout[currentWeaponIndex]].bloom / 2, guns[loadout[currentWeaponIndex]].bloom / 2) * spawn.up;
+            bloom += Random.Range(-guns[loadout[currentWeaponIndex]].bloom / 2, guns[loadout[currentWeaponIndex]].bloom / 2) * spawn.right;
+        }
+        else
+        {
+            bloom += Random.Range(-guns[loadout[currentWeaponIndex]].bloom, guns[loadout[currentWeaponIndex]].bloom) *
+                     spawn.up;
+            bloom += Random.Range(-guns[loadout[currentWeaponIndex]].bloom, guns[loadout[currentWeaponIndex]].bloom) *
+                     spawn.right;
+        }
         bloom -= spawn.position;
         bloom.Normalize();
 
@@ -132,11 +138,6 @@ public class GunManager : MonoBehaviour
         message.AddVector3(position);
         message.AddVector3(normal);
         NetworkManager.Singleton.Server.SendToAll(message);
-    }
-
-    private void Aim()
-    {
-
     }
 
     private void SwitchWeapon()

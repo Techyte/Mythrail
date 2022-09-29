@@ -7,14 +7,10 @@ namespace MythrailEngine
     {
         [SerializeField] private Transform camTransform;
 
-        [SerializeField] private bool[] movementInputs;
+        [SerializeField] private bool[] movementInputs = new bool[6];
 
         public bool canMove = true;
 
-        private void Start()
-        {
-            movementInputs = new bool[6];
-        }
 
         private void Update()
         {
@@ -33,7 +29,7 @@ namespace MythrailEngine
                 if (Input.GetKey(KeyCode.D))
                     movementInputs[3] = true;
                 if (Input.GetKey(KeyCode.Space))
-                    movementInputs[4] = true;   
+                    movementInputs[4] = true;
             }
         }
 

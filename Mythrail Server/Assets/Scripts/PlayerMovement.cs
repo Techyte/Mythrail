@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool canJump = true;
     public bool camMove;
 
-    [SerializeField] private bool[] inputs;
+    [SerializeField] private bool[] inputs = new bool[6];
 
     private bool didTeleport;
 
@@ -28,11 +28,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (player == null)
             player = GetComponent<Player>();
-    }
-
-    private void Start()
-    {
-        inputs = new bool[6];
     }
 
     private void FixedUpdate()
@@ -58,13 +53,17 @@ public class PlayerMovement : MonoBehaviour
         inputDirection.Normalize();
         transform.rotation = FlattenQuaternion(camProxy.rotation);
 
-        float adjustedSpeed = jump ? MovementMultiplyer : RunSpeed;
+        float adjustedSpeed = sprint && !player.GunManager.isAiming ? MovementMultiplyer : RunSpeed;
+
+        if (player.GunManager.isAiming)
+        {
+            adjustedSpeed /= 2;
+        }
 
         bool isGrounded = Physics.Raycast(groundDetector.transform.position, Vector3.down, 0.1f, ground);
 
         Vector3 move = new Vector3(Time.deltaTime * adjustedSpeed * inputDirection.x, 0, Time.deltaTime * adjustedSpeed * inputDirection.y);
 
-        // Move the controller
         rb.AddRelativeForce(move);
 
         if (canJump && jump && isGrounded)

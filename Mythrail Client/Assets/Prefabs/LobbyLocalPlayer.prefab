@@ -453,7 +453,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camTransform: {fileID: 8304938681845342928}
-  movementInputs: 
+  movementInputs: 000000000000
   canMove: 1
 --- !u!114 &9098606700725488433
 MonoBehaviour:

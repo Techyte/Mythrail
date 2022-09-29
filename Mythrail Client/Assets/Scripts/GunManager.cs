@@ -8,7 +8,7 @@ namespace MythrailEngine
     {
         [SerializeField] private Player player;
 
-        [SerializeField] private bool[] weaponInputs;
+        [SerializeField] private bool[] weaponInputs = new bool[4];
         [SerializeField] private GameObject gunModelHolder;
         [SerializeField] private GameObject currentGunModel;
 
@@ -18,12 +18,7 @@ namespace MythrailEngine
         
         public List<GameObject> weaponModels = new List<GameObject>();
 
-        public static bool isAiming;
-
-        private void Awake()
-        {
-            weaponInputs = new bool[3];
-        }
+        public bool isAiming => weaponInputs[1];
 
         private void Update()
         {
@@ -35,11 +30,21 @@ namespace MythrailEngine
             if (Player.LocalPlayer.playerController.canMove)
             {
                 if (Input.GetMouseButton(0))
+                {
                     weaponInputs[0] = true;
+                }
+                
                 if (Input.GetMouseButton(1))
+                {
                     weaponInputs[1] = true;
+                }
+                
                 if (Input.GetAxis("Mouse ScrollWheel") != 0 || Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2))
-                    weaponInputs[2] = true;   
+                {
+                    weaponInputs[2] = true;
+                }
+                
+                currentGunModel.GetComponent<Gun>().Aim(isAiming);
             }
         }
 

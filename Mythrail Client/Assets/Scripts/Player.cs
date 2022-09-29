@@ -22,6 +22,7 @@ namespace MythrailEngine
 
         [SerializeField] private float runningFOV;
         [SerializeField] private float regularFOV;
+        [SerializeField] private float zoomedFOV;
 
         [SerializeField] private GameObject gunModelHolder;
         private float movementCounter;
@@ -55,9 +56,16 @@ namespace MythrailEngine
 
             bool canRun = Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.W);
 
-            playerCam.fieldOfView = canRun
-                ? Mathf.Lerp(playerCam.fieldOfView, runningFOV, .03f)
-                : Mathf.Lerp(playerCam.fieldOfView, regularFOV, .03f);
+            if (!Input.GetMouseButton(1))
+            {
+                playerCam.fieldOfView = canRun
+                    ? Mathf.Lerp(playerCam.fieldOfView, runningFOV, .03f)
+                    : Mathf.Lerp(playerCam.fieldOfView, regularFOV, .03f);   
+            }
+            else
+            {
+                playerCam.fieldOfView = Mathf.Lerp(playerCam.fieldOfView, zoomedFOV, 0.05f);
+            }
             
             if (NewPosition == Vector3.zero)
             {

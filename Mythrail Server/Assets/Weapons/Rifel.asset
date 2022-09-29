@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: Rifel
   m_EditorClassIdentifier: 
   name: Rifel
-  model: {fileID: 0}
   damage: 15
   distance: 100
   fireRate: 0.5
