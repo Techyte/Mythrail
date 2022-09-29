@@ -43,6 +43,12 @@ namespace MythrailEngine
 
         private static List<Player> usernameBufferPlayers = new List<Player>();
 
+        [SerializeField] private GameObject crouchingModel;
+        [SerializeField] private GameObject defaultModel;
+
+        [SerializeField] private Transform crouchingCameraPos;
+        [SerializeField] private Transform defaultCameraPos;
+
         private void Start()
         {
             if (!IsLocal) return;
@@ -84,7 +90,7 @@ namespace MythrailEngine
             list.Remove(Id);
         }
 
-        private void Move(uint tick, bool didTeleport, Vector3 newPosition, Vector3 forward)
+        private void Move(uint tick, bool didTeleport, Vector3 newPosition, Vector3 forward, bool isCrouching)
         {
             interpolator.NewUpdate(tick, didTeleport, newPosition);
 
@@ -92,6 +98,19 @@ namespace MythrailEngine
             { 
                 camTransform.forward = forward;
                 camTransform.rotation = FlattenQuaternion(camTransform.rotation);
+            }
+
+            if (isCrouching)
+            {
+                crouchingModel.SetActive(true);
+                defaultModel.SetActive(false);
+                camTransform.position = crouchingCameraPos.position;
+            }
+            else
+            {
+                crouchingModel.SetActive(false);
+                defaultModel.SetActive(true);
+                camTransform.position = defaultCameraPos.position;
             }
         }
         
@@ -202,7 +221,7 @@ namespace MythrailEngine
         private static void PlayerMovement(Message message)
         {
             if (list.TryGetValue(message.GetUShort(), out Player player))
-                player.Move(message.GetUInt(), message.GetBool(), message.GetVector3(), message.GetVector3());
+                player.Move(message.GetUInt(), message.GetBool(), message.GetVector3(), message.GetVector3(), message.GetBool());
         }
 
         [MessageHandler((ushort)ServerToClientId.playerTookDamage)]

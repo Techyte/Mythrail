@@ -17,6 +17,9 @@ public class PlayerMovement : MonoBehaviour
     
     [SerializeField] private Rigidbody rb;
 
+    [SerializeField] private GameObject crouchingModel;
+    [SerializeField] private GameObject defaultModel;
+
     [SerializeField] private bool canJump = true;
     public bool camMove;
 
@@ -45,19 +48,30 @@ public class PlayerMovement : MonoBehaviour
         if (inputs[3])
             inputDirection.x += 1;
 
-        Move(inputDirection, inputs[4], inputs[5]);
+        Move(inputDirection, inputs[4], inputs[5], inputs[6]);
     }
 
-    private void Move(Vector2 inputDirection, bool jump, bool sprint)
+    private void Move(Vector2 inputDirection, bool jump, bool sprint, bool isCrouching)
     {
         inputDirection.Normalize();
         transform.rotation = FlattenQuaternion(camProxy.rotation);
 
         float adjustedSpeed = sprint && !player.GunManager.isAiming ? MovementMultiplyer : RunSpeed;
 
-        if (player.GunManager.isAiming)
+        if (player.GunManager.isAiming || isCrouching)
         {
             adjustedSpeed /= 2;
+        }
+
+        if (isCrouching)
+        {
+            defaultModel.SetActive(false);
+            crouchingModel.SetActive(true);
+        }
+        else
+        {
+            defaultModel.SetActive(true);
+            crouchingModel.SetActive(false);
         }
 
         bool isGrounded = Physics.Raycast(groundDetector.transform.position, Vector3.down, 0.1f, ground);
@@ -66,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
 
         rb.AddRelativeForce(move);
 
-        if (canJump && jump && isGrounded)
+        if (canJump && jump && isGrounded && !isCrouching)
         {
             rb.AddForce(Vector3.up * JumpStrength);
         }
@@ -104,6 +118,7 @@ public class PlayerMovement : MonoBehaviour
             message.AddBool(didTeleport);
             message.AddVector3(transform.position);
             message.AddVector3(camProxy.forward);
+            message.AddBool(inputs[6]);
             NetworkManager.Singleton.Server.SendToAll(message);
 
             didTeleport = false;   

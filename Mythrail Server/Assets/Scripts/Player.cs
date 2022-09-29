@@ -167,7 +167,7 @@ public class Player : MonoBehaviour
         if (list.TryGetValue(fromClientId, out Player player))
         {
             Debug.Log("Found the player");
-            player.Movement.SetInputs(message.GetBools(6), message.GetVector3());
+            player.Movement.SetInputs(message.GetBools(7), message.GetVector3());
         }
     }
 
@@ -176,7 +176,7 @@ public class Player : MonoBehaviour
     {
         if (list.TryGetValue(fromClientId, out Player player))
         {
-            player.Movement.SetInputs(message.GetBools(6), message.GetVector3());
+            player.Movement.SetInputs(message.GetBools(7), message.GetVector3());
         }
     }
 
@@ -185,7 +185,7 @@ public class Player : MonoBehaviour
     {
         if (list.TryGetValue(fromClientId, out Player player))
         {
-            player.GunManager.SetInputs(message.GetBools(3));
+            player.GunManager.SetInputs(message.GetBools(4));
         }
     }
 }

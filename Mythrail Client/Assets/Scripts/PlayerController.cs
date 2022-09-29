@@ -1,5 +1,6 @@
 using RiptideNetworking;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MythrailEngine
 {
@@ -10,7 +11,6 @@ namespace MythrailEngine
         [SerializeField] private bool[] movementInputs = new bool[6];
 
         public bool canMove = true;
-
 
         private void Update()
         {
@@ -30,6 +30,8 @@ namespace MythrailEngine
                     movementInputs[3] = true;
                 if (Input.GetKey(KeyCode.Space))
                     movementInputs[4] = true;
+                if (Input.GetKey(KeyCode.LeftControl) && SceneManager.GetActiveScene().buildIndex != 1)
+                    movementInputs[6] = true;
             }
         }
 
