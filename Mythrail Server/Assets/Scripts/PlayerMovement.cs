@@ -8,7 +8,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Player player;
 
     [SerializeField] private LayerMask ground;
-    [SerializeField] private Transform camProxy;
+    public Transform camProxy;
     [SerializeField] private GameObject groundDetector;
     [SerializeField] private float MovementMultiplyer = 2000;
     [SerializeField] private float RunSpeed = 2500;
@@ -19,6 +19,9 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private GameObject crouchingModel;
     [SerializeField] private GameObject defaultModel;
+
+    [SerializeField] private Transform crouchingCameraPos;
+    [SerializeField] private Transform defaultCameraPos;
 
     [SerializeField] private bool canJump = true;
     public bool camMove;
@@ -67,11 +70,13 @@ public class PlayerMovement : MonoBehaviour
         {
             defaultModel.SetActive(false);
             crouchingModel.SetActive(true);
+            camProxy.position = crouchingCameraPos.position;
         }
         else
         {
             defaultModel.SetActive(true);
             crouchingModel.SetActive(false);
+            camProxy.position = defaultCameraPos.position;
         }
 
         bool isGrounded = Physics.Raycast(groundDetector.transform.position, Vector3.down, 0.1f, ground);

@@ -139,6 +139,9 @@ namespace MythrailEngine
 
         private void FailedToConnect(object sender, EventArgs e)
         {
+            Cursor.lockState = CursorLockMode.None;
+            Player.list.Clear();
+            Client.Disconnect();
             SceneManager.LoadScene(0);
         }
 
@@ -188,6 +191,9 @@ namespace MythrailEngine
                 Destroy(player.gameObject);
             }
             
+            Cursor.lockState = CursorLockMode.None;
+            Player.list.Clear();
+            Client.Disconnect();
             SceneManager.LoadScene(0);
         }
 

@@ -203,7 +203,12 @@ namespace MythrailEngine
         {
             username = newUsername;
             SaveUsername(newUsername);
-            SendUpdatedUsername();
+            SendUpdatedUsername(newUsername);
+        }
+
+        public void Quit()
+        {
+            Application.Quit();
         }
 
         private void LoadUsername()
@@ -218,14 +223,19 @@ namespace MythrailEngine
             PlayerPrefs.SetString("Username", newUsername);
         }
 
-        private void SendUpdatedUsername()
+        private void SendUpdatedUsername(string newUsername)
         {
-            if (string.IsNullOrEmpty(username))
+            if(newUsername == username) return;
+            
+            if (string.IsNullOrEmpty(newUsername))
             {
                 NotificationManager.Singleton.AddNotificationToQue(PrivateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.");
                 ShakeScreen();
                 return;
             }
+
+            username = newUsername;
+            
             Message message = Message.Create(MessageSendMode.reliable, ClientToGameServerId.updateUsername);
             message.AddString(username);
             Singleton.Client.Send(message);
@@ -363,6 +373,13 @@ namespace MythrailEngine
 
         public void CreateMatch()
         {
+            if (string.IsNullOrEmpty(matchName.text))
+            {
+                NotificationManager.Singleton.AddNotificationToQue(PrivateMatchNotFoundImage, "Name empty", "The match name you enter cannot be empty, please try again.");
+                ShakeScreen();
+                return;
+            }
+            
             Message message = Message.Create(MessageSendMode.reliable, ClientToGameServerId.createMatch);
             message.AddUShort((ushort)maxPlayerCountSlider.value);
             message.AddUShort((ushort)minPlayerCountSlider.value);

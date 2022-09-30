@@ -83,9 +83,13 @@ public class NetworkManager : MonoBehaviour
     private bool lobbyHasStartedCountingQuickly = false;
 
     private bool hasLoadedLobby;
+
+    [SerializeField] private float emptyLobbyTimer = 30;
+    private float emptyLobbyTimerCurrent;
     
     private void Awake()
     {
+        emptyLobbyTimerCurrent = emptyLobbyTimer;
         Singleton = this;
         
         DontDestroyOnLoad(gameObject);
@@ -140,6 +144,16 @@ public class NetworkManager : MonoBehaviour
         {
             readyPlayersText.text = GameLogic.Singleton.readyPlayers.ToString();
             totalPlayersText.text = Server.ClientCount.ToString();
+        }
+
+        if (Server.ClientCount == 0)
+        {
+            emptyLobbyTimerCurrent -= Time.deltaTime;
+            if (emptyLobbyTimerCurrent <= 0)
+            {
+                Debug.Log("Match Was Empty For To Long");
+                Application.Quit();
+            }
         }
     }
 
@@ -214,13 +228,16 @@ public class NetworkManager : MonoBehaviour
 
     private void PlayerLeft(object sender, ClientDisconnectedEventArgs e)
     {
+        Debug.Log("Player left id: " + e.Id);
         if (Player.list.TryGetValue(e.Id, out Player player))
         {
-            if (SceneManager.GetActiveScene().buildIndex == 1 && player.isGameReady)
+            if (SceneManager.GetActiveScene().buildIndex == 1 && !player.isGameReady)
             {
                 GameLogic.Singleton.PlayerLeftWhileLoading();
             }
+            Debug.LogError("Player destroyed");
             Destroy(player.gameObject);
+            emptyLobbyTimerCurrent = emptyLobbyTimer;
         }
     }
 

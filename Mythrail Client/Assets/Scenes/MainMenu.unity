@@ -3041,7 +3041,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8173b3157602a99409781bee0d4e82db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NotificationStayTime: 1
+  NotificationStayTime: 2
   NotificationAnimationTime: 8
   NotificaionCooldown: 0.1
   startPosObj: {fileID: 2059377868}
@@ -6381,9 +6381,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: QuitGame
+      - m_Target: {fileID: 1738739432}
+        m_TargetAssemblyTypeName: MythrailEngine.MenuNetworkManager, Assembly-CSharp
+        m_MethodName: Quit
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

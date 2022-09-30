@@ -89,8 +89,11 @@ namespace MythrailEngine
 
             list.Add(id, lobbyPlayer);
 
-            lobbyPlayer.usernameText.GetComponent<ObjectLookAt>().target = lobbyPlayer.camTransform;
-            lobbyPlayer.usernameText.text = lobbyPlayer.username;
+            if(!lobbyPlayer.IsLocal)
+            {
+                lobbyPlayer.usernameText.GetComponent<ObjectLookAt>().target = lobbyPlayer.camTransform;
+                lobbyPlayer.usernameText.text = lobbyPlayer.username;
+            }
 
             if (!lobbyPlayer.IsLocal && !LocalPlayer)
             {
@@ -104,7 +107,6 @@ namespace MythrailEngine
             
             if(lobbyPlayer.IsLocal && LocalPlayer)
             {
-                lobbyPlayer.usernameText.text = "";
                 foreach (LobbyPlayer bufferPlayer in usernameBufferPlayers)
                 {
                     bufferPlayer.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;

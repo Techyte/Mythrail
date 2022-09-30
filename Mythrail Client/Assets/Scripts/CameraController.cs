@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MythrailEngine
 {
@@ -7,6 +9,9 @@ namespace MythrailEngine
         [SerializeField] private Transform player;
         [SerializeField] private float sensitivity = 100f;
         [SerializeField] private float clampAngle = 85f;
+
+        [SerializeField] private GameObject pauseScreen;
+        [SerializeField] private GameObject loadingScreen;
 
         private float verticalRotation;
         private float horizontalRotation;
@@ -21,11 +26,23 @@ namespace MythrailEngine
         {
             if (Input.GetKeyDown(KeyCode.Escape))
                 ToggleCursorMode();
-
+            
             if (Cursor.lockState == CursorLockMode.Locked)
                 Look();
+        }
 
-            Debug.DrawRay(transform.position, transform.forward * 2f, Color.green);
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            if (hasFocus)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                pauseScreen.SetActive(false);
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.None;
+                pauseScreen.SetActive(true);
+            }
         }
 
         private void Look()
@@ -45,11 +62,31 @@ namespace MythrailEngine
         private void ToggleCursorMode()
         {
             Cursor.visible = !Cursor.visible;
-
+            
             if (Cursor.lockState == CursorLockMode.None)
+            {
                 Cursor.lockState = CursorLockMode.Locked;
+                pauseScreen.SetActive(false);
+            }
             else
+            {
                 Cursor.lockState = CursorLockMode.None;
+                pauseScreen.SetActive(true);
+            }
+        }
+
+        public void Resume()
+        {
+            ToggleCursorMode();
+        }
+
+        public void Exit()
+        {
+            Cursor.lockState = CursorLockMode.None;
+            pauseScreen.SetActive(true);
+            Player.list.Clear();
+            NetworkManager.Singleton.Client.Disconnect();
+            SceneManager.LoadScene(0);
         }
     }
 

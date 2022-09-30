@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -142,7 +143,7 @@ namespace Mythrail_Game_Server
             {
                 Process matchProcess = new Process();
                 matchProcess.EnableRaisingEvents = true;
-                matchProcess.StartInfo.FileName = @"C:\Users\Mr. Monster\Documents\Coding\Match\Mythrail Server.exe";
+                matchProcess.StartInfo.FileName = Directory.GetCurrentDirectory() + @"\Match Application\Mythrail Server.exe";
             
                 ushort port = FreeTcpPort();
                 ushort maxPlayers = message.GetUShort();

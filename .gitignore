@@ -10,6 +10,7 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 
+/Mythrail Game Server/bin/Debug/Match Application
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
