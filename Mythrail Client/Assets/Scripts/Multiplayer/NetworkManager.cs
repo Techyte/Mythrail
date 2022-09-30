@@ -51,7 +51,6 @@ namespace MythrailEngine
                     _singleton = value;
                 else if (_singleton != value)
                 {
-                    Debug.Log($"{nameof(NetworkManager)} instance already exists, destroying duplicate!");
                     Destroy(value);
                 }
             }

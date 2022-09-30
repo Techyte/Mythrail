@@ -1987,6 +1987,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: HUD
       objectReference: {fileID: 0}
+    - target: {fileID: 5866438012392374504, guid: 2f56e178021a5054e9a7a05ae922171c,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866438012392374504, guid: 2f56e178021a5054e9a7a05ae922171c,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 7602410520286587930, guid: 2f56e178021a5054e9a7a05ae922171c,
         type: 3}
       propertyPath: m_Pivot.x
@@ -3335,6 +3345,7 @@ MonoBehaviour:
   DeathsText: {fileID: 0}
   HUDUsernameDisplay: {fileID: 0}
   LoadingStatusDisplay: {fileID: 0}
+  GunName: {fileID: 0}
 --- !u!114 &1206955386
 MonoBehaviour:
   m_ObjectHideFlags: 0

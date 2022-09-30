@@ -110,6 +110,7 @@ namespace MythrailEngine
             if (Player.LocalPlayer.gunManager.weaponModels[newWeaponIndex])
             {
                 ChangePlayerGunModel(Player.LocalPlayer.gunManager.weaponModels[loadoutIndex[newWeaponIndex]]);
+                UIManager.Singleton.GunName.text = Player.LocalPlayer.gunManager.weaponModels[newWeaponIndex].name.ToUpper();
             }
         }
 
@@ -117,8 +118,6 @@ namespace MythrailEngine
         {
             loadoutIndex[0] = id0;
             loadoutIndex[1] = id1;
-            
-            Debug.Log("Assigning loadout");
         }
 
         private void ChangePlayerGunModel(GameObject gunModel)

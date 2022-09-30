@@ -14,7 +14,6 @@ namespace MythrailEngine
                     _singleton = value;
                 else if (_singleton != value)
                 {
-                    Debug.Log($"{nameof(GameLogic)} instance already exists, destroying duplicate!");
                     Destroy(value);
                 }
             }

@@ -158,8 +158,11 @@ namespace MythrailEngine
 
             list.Add(id, player);
 
-            player.usernameText.GetComponent<ObjectLookAt>().target = player.camTransform;
-            player.usernameText.text = player.username;
+            if(!player.IsLocal)
+            {
+                player.usernameText.GetComponent<ObjectLookAt>().target = player.camTransform;
+                player.usernameText.text = player.username;
+            }
 
             if (!player.IsLocal && !LocalPlayer)
             {
@@ -177,7 +180,6 @@ namespace MythrailEngine
                 {
                     NetworkManager.Singleton.Ready();
                 }
-                player.usernameText.text = "";
                 UIManager.Singleton.HUDUsernameDisplay.text = LocalPlayer.username;
                 foreach (Player bufferPlayer in usernameBufferPlayers)
                 {

@@ -64,7 +64,16 @@ namespace MythrailEngine
                 return;
             }
 
-            transform.position = Vector3.LerpUnclamped(from.Position, to.Position, lerpAmount);
+            Vector3 newPosition = Vector3.LerpUnclamped(from.Position, to.Position, lerpAmount);
+
+            try
+            {
+                transform.position = newPosition;
+            }
+            catch
+            {
+                Debug.Log(newPosition);
+            }
         }
 
         public void NewUpdate(uint tick, bool isTeliport, Vector3 position)
