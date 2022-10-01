@@ -162,7 +162,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   aimPos: {x: -0.62, y: -0.01, z: 0.7}
-  defaultPos: {x: 0.386, y: -0.84, z: 0.531}
+  defaultPos: {x: 0.386, y: -0.084, z: 0.531}
 --- !u!1 &6880361925085713638
 GameObject:
   m_ObjectHideFlags: 0

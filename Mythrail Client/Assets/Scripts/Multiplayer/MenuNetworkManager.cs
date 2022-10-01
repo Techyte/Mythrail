@@ -163,6 +163,10 @@ namespace MythrailEngine
         private void Start()
         {
             LoadUsername();
+            
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            
             //RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 
             maxPlayerCountSlider.onValueChanged.AddListener(delegate { UpdateMinMax(); });

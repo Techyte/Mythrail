@@ -102,7 +102,6 @@ namespace MythrailEngine
 
         private void CheckForMainMenu(Scene scene, LoadSceneMode loadSceneMode)
         {
-            Singleton = this;
             if (scene.buildIndex == 0)
             {
                 Destroy(gameObject);
@@ -226,7 +225,7 @@ namespace MythrailEngine
             PlayerReady = true;
             Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.ready);
             Client.Send(message);
-            Debug.LogError("Ready");
+            Debug.Log("Ready");
             UIManager.Singleton.LoadingStatusDisplay.text = "Waiting for other players";
         }
 

@@ -163,10 +163,8 @@ public class Player : MonoBehaviour
     [MessageHandler((ushort)ClientToServerId.movementInput)]
     private static void MovementInput(ushort fromClientId, Message message)
     {
-        Debug.Log("Received movement input");
         if (list.TryGetValue(fromClientId, out Player player))
         {
-            Debug.Log("Found the player");
             player.Movement.SetInputs(message.GetBools(7), message.GetVector3());
         }
     }

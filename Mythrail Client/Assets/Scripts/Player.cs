@@ -183,6 +183,11 @@ namespace MythrailEngine
                 UIManager.Singleton.HUDUsernameDisplay.text = LocalPlayer.username;
                 foreach (Player bufferPlayer in usernameBufferPlayers)
                 {
+                    Debug.Log(bufferPlayer);
+                    Debug.Log(bufferPlayer.usernameText);
+                    Debug.Log(bufferPlayer.usernameText.GetComponent<ObjectLookAt>());
+                    Debug.Log(LocalPlayer);
+                    Debug.Log(LocalPlayer.transform);
                     bufferPlayer.usernameText.GetComponent<ObjectLookAt>().target = LocalPlayer.transform;
                 }
                 usernameBufferPlayers.Clear();

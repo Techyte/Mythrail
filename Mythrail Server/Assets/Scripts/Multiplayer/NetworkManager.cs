@@ -77,10 +77,9 @@ public class NetworkManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI totalPlayersText;
     [Space]
     [SerializeField] private float readyCountdown;
-    [SerializeField] private float fullReadyCountdown;
+    [SerializeField] private float currentReadCountdown;
 
-    private bool lobbyHasStartedCounting = false;
-    private bool lobbyHasStartedCountingQuickly = false;
+    [SerializeField] private bool isCountingDown;
 
     private bool hasLoadedLobby;
 
@@ -115,7 +114,7 @@ public class NetworkManager : MonoBehaviour
 
         Application.targetFrameRate = 60;
 
-        RiptideLogger.Initialize(Debug.LogError, Debug.LogError, Debug.LogWarning, Debug.LogError, false);
+        RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 
         if (port == 0) port = (ushort)FreeTcpPort();
 
@@ -151,9 +150,30 @@ public class NetworkManager : MonoBehaviour
             emptyLobbyTimerCurrent -= Time.deltaTime;
             if (emptyLobbyTimerCurrent <= 0)
             {
-                Debug.Log("Match Was Empty For To Long");
                 Application.Quit();
             }
+        }  
+
+        if (SceneManager.GetActiveScene().buildIndex == 0)
+        {
+            if (Server.ClientCount >= minPlayerCount && !isCountingDown)
+            {
+                isCountingDown = true;
+                currentReadCountdown = readyCountdown;
+            }
+            else if(Server.ClientCount < minPlayerCount)
+            {
+                isCountingDown = false;
+            }
+            
+            if (isCountingDown)
+            {
+                currentReadCountdown -= Time.deltaTime;
+                if (currentReadCountdown <= 0)
+                {
+                    SendLobbyReady();
+                }
+            }   
         }
     }
 
@@ -183,35 +203,6 @@ public class NetworkManager : MonoBehaviour
         }
 
         CurrentTick++;
-        
-        if(SceneManager.GetActiveScene().buildIndex == 0) UpdateLobbyStatus();
-    }
-
-    private void UpdateLobbyStatus()
-    {
-        if (Server.ClientCount >= minPlayerCount && !lobbyHasStartedCounting)
-        {
-            StartCoroutine(StartGameCountdown());
-        }
-
-        if (minPlayerCount == maxClientCount && !lobbyHasStartedCountingQuickly)
-        {
-            StartCoroutine(StartQuickGameCountdown());
-        }
-    }
-
-    private IEnumerator StartGameCountdown()
-    {
-        lobbyHasStartedCounting = true;
-        yield return new WaitForSeconds(readyCountdown);
-        SendLobbyReady();
-    }
-
-    private IEnumerator StartQuickGameCountdown()
-    {
-        lobbyHasStartedCountingQuickly = true;
-        yield return new WaitForSeconds(fullReadyCountdown);
-        SendLobbyReady();
     }
 
     private void SendLobbyReady()
@@ -228,16 +219,31 @@ public class NetworkManager : MonoBehaviour
 
     private void PlayerLeft(object sender, ClientDisconnectedEventArgs e)
     {
-        Debug.Log("Player left id: " + e.Id);
         if (Player.list.TryGetValue(e.Id, out Player player))
         {
             if (SceneManager.GetActiveScene().buildIndex == 1 && !player.isGameReady)
             {
                 GameLogic.Singleton.PlayerLeftWhileLoading();
             }
-            Debug.LogError("Player destroyed");
+            
             Destroy(player.gameObject);
-            emptyLobbyTimerCurrent = emptyLobbyTimer;
+            
+            if (Server.ClientCount == 0)
+            {
+                emptyLobbyTimerCurrent = emptyLobbyTimer;
+            }
+            
+            if(SceneManager.GetActiveScene().buildIndex == 0)
+            {
+                if (Server.ClientCount >= minPlayerCount && !isCountingDown)
+                {
+                    isCountingDown = true;
+                    currentReadCountdown = readyCountdown;
+                }else if(Server.ClientCount < minPlayerCount)
+                {
+                    isCountingDown = false;
+                }
+            }
         }
     }
 

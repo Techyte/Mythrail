@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,7 +10,6 @@ namespace MythrailEngine
         [SerializeField] private float clampAngle = 85f;
 
         [SerializeField] private GameObject pauseScreen;
-        [SerializeField] private GameObject loadingScreen;
 
         private float verticalRotation;
         private float horizontalRotation;
@@ -27,8 +25,22 @@ namespace MythrailEngine
             if (Input.GetKeyDown(KeyCode.Escape))
                 ToggleCursorMode();
             
-            if (Cursor.lockState == CursorLockMode.Locked)
-                Look();
+            if(SceneManager.GetActiveScene().buildIndex == 1)
+            {
+                if (LobbyPlayer.LocalPlayer)
+                {
+                    if (Cursor.lockState != CursorLockMode.None && LobbyPlayer.LocalPlayer.playerController.canMove)
+                        Look();
+                }
+            }
+            else
+            {
+                if (Player.LocalPlayer)
+                {
+                    if (Cursor.lockState != CursorLockMode.None && Player.LocalPlayer.playerController.canMove)
+                        Look();
+                }
+            }
         }
 
         private void OnApplicationFocus(bool hasFocus)

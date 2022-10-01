@@ -1053,6 +1053,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camTransform: {fileID: 8304938681845342928}
   interpolator: {fileID: 9098606700725488433}
+  playerController: {fileID: -5101889484708159959}
   usernameText: {fileID: 0}
   playerCam: {fileID: 6253392608022633297}
   runningFOV: 75

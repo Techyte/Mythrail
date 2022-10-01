@@ -15,6 +15,7 @@ namespace MythrailEngine
 
         [SerializeField] private Transform camTransform;
         [SerializeField] private Interpolator interpolator;
+        public PlayerController playerController;
 
         [SerializeField] private TextMeshPro usernameText;
         [SerializeField] private Camera playerCam;
