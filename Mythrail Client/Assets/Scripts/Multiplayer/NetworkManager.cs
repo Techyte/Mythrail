@@ -90,6 +90,8 @@ namespace MythrailEngine
         [Space(10)]
         [SerializeField] private GameObject LoadingScreen;
 
+        [SerializeField] private GameObject BufferCamera;
+
         [SerializeField] private bool PlayerReady;
         
         private void Awake()
@@ -105,6 +107,11 @@ namespace MythrailEngine
             if (scene.buildIndex == 0)
             {
                 Destroy(gameObject);
+            }
+
+            if (SceneManager.GetActiveScene().buildIndex == 2)
+            {
+                BufferCamera = GameObject.Find("Buffer Camera");
             }
         }
 
@@ -271,6 +278,7 @@ namespace MythrailEngine
         public static void GameStarted(Message message)
         {
             Debug.Log("Everyone is ready");
+            Singleton.BufferCamera.SetActive(false);
             Player.LocalPlayer.playerController.canMove = true;
             UIManager.Singleton.loadingScreen.SetActive(false);
         }

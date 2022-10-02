@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -10,6 +11,8 @@ using RiptideNetworking.Utils;
 
 namespace Mythrail_Game_Server
 {
+    #region MessageIds
+
     public enum GameServerToClientId : ushort
     {
         matches = 100,
@@ -17,6 +20,7 @@ namespace Mythrail_Game_Server
         joinedPrivateMatch,
         privateMatchNotFound,
         invalidName,
+        playersResult,
     }
 
     public enum ClientToGameServerId : ushort
@@ -26,13 +30,16 @@ namespace Mythrail_Game_Server
         requestMatches,
         createMatch,
         joinPrivateMatch,
+        getPlayers,
     }
-    
-    internal class Program
+
+    #endregion
+
+    public class Program
     {
         public static Dictionary<int, ClientInfo> currentlyConnectedClients = new Dictionary<int, ClientInfo>();
 
-        private static Program program;
+        private static Program _Program;
 
         private static Server Server;
 
@@ -40,26 +47,26 @@ namespace Mythrail_Game_Server
         private ushort maxClientCount = 10;
 
         private static List<MatchInfo> matches = new List<MatchInfo>();
-        
+
         public static void Main()
-        {   
-            program = new Program();
-            program.Start();
+        {
+            _Program = new Program();
+            _Program.Start();
         }
 
         private void Start()
         {
             AppDomain.CurrentDomain.ProcessExit += StopServer;
-            
+
             RiptideLogger.Initialize(Console.Write, Console.Write, Console.Write, Console.Write, false);
 
             Server = new Server();
             Server.Start(port, maxClientCount);
             Server.ClientDisconnected += ClientDisconnected;
-            
+
             var ServerTickTimer = new Timer(ServerTick, null, 0, 25);
-            
-            if(Console.ReadLine()=="-stop")
+
+            if (Console.ReadLine() == "-stop")
                 StopServer(null, null);
 
             Console.ReadKey();
@@ -79,108 +86,25 @@ namespace Mythrail_Game_Server
         {
             Server.Tick();
         }
-        
+
         private void ClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
-            if(currentlyConnectedClients.TryGetValue(e.Id, out ClientInfo clientInfo))
+            if (currentlyConnectedClients.TryGetValue(e.Id, out ClientInfo clientInfo))
                 currentlyConnectedClients.Remove(e.Id);
         }
 
         private void SendMatches(ushort clientId)
         {
-            Message message = Message.Create(MessageSendMode.reliable, GameServerToClientId.matches);
-            
-            List<MatchInfo> publicMatches = new List<MatchInfo>();
-            foreach (var match in matches)
-            {
-                if (!match.isPrivate)
-                {
-                    publicMatches.Add(match);
-                }
-            }
-            message.AddMatchInfos(publicMatches.ToArray());
-            
+            Message message = AddMatchInfos();
+
             Server.Send(message, clientId);
         }
 
         private static void SendMatchesToAll()
         {
-            Message message = Message.Create(MessageSendMode.reliable, GameServerToClientId.matches);
-            List<MatchInfo> publicMatches = new List<MatchInfo>();
-            foreach (var match in matches)
-            {
-                if (!match.isPrivate)
-                {
-                    publicMatches.Add(match);
-                }
-            }
-            message.AddMatchInfos(publicMatches.ToArray());
+            Message message = _Program.AddMatchInfos();
 
             Server.SendToAll(message);
-        }
-        
-        static ushort FreeTcpPort()
-        {
-            TcpListener l = new TcpListener(IPAddress.Loopback, 0);
-            l.Start();
-            ushort port = (ushort)((IPEndPoint)l.LocalEndpoint).Port;
-            l.Stop();
-            return port;
-        }
-
-        [MessageHandler((ushort)ClientToGameServerId.id)]
-        private static void ReceiveConnecrId(ushort fromClientId, Message message)
-        {
-            currentlyConnectedClients.Add(fromClientId, new ClientInfo(fromClientId, message.GetString()));
-            Console.WriteLine(currentlyConnectedClients[fromClientId].username);
-            Console.WriteLine("Client connected and we are receiving information");
-        }
-
-        [MessageHandler((ushort)ClientToGameServerId.createMatch)]
-        private static void CreateMatchHandler(ushort fromClientId, Message message)
-        {
-            try
-            {
-                Process matchProcess = new Process();
-                matchProcess.EnableRaisingEvents = true;
-                matchProcess.StartInfo.FileName = Directory.GetCurrentDirectory() + @"\Match Application\Mythrail Server.exe";
-            
-                ushort port = FreeTcpPort();
-                ushort maxPlayers = message.GetUShort();
-                ushort minPlayers = message.GetUShort();
-                Random random = new Random();
-                string code = "";
-                for (int i = 0; i < 5; i++)
-                {
-                    int randValue = random.Next(0, 26);
-                    char letter = Convert.ToChar(randValue + 65);
-                    code = code + letter;
-                }
-                matchProcess.StartInfo.Arguments = $"port:{port.ToString()} maxPlayers:{maxPlayers.ToString()} minPlayers:{minPlayers.ToString()}";
-
-                matchProcess.Start();
-
-                string name = message.GetString();
-                bool isPrivate = message.GetBool();
-                MatchInfo newMatch = new MatchInfo(name, currentlyConnectedClients[fromClientId].username, matchProcess, port, isPrivate, code);
-                matches.Add(newMatch);
-                matchProcess.Exited += (sender, eventArgs) =>
-                {
-                    MatchEnded(newMatch);
-                };
-            
-                Console.WriteLine("Client requested a match to be created");
-            
-                program.SendMatches(fromClientId);
-                
-                program.SendMatchCreationConformation(fromClientId, port, isPrivate, code);
-                
-                SendMatchesToAll();
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine("Match Creation Failure: " + e);
-            }
         }
 
         private void SendMatchCreationConformation(ushort fromClientId, ushort port, bool isPrivate, string code)
@@ -205,11 +129,100 @@ namespace Mythrail_Game_Server
             message.AddUShort(port);
             Server.Send(message, toClientId);
         }
+        
+        private Message AddMatchInfos()
+        {
+            Message message = Message.Create(MessageSendMode.reliable, GameServerToClientId.matches);
+            List<MatchInfo> publicMatches = new List<MatchInfo>();
+            foreach (var match in matches)
+            {
+                if (!match.isPrivate)
+                {
+                    publicMatches.Add(match);
+                }
+            }
+
+            message.AddMatchInfos(publicMatches.ToArray());
+
+            return message;
+        }
+
+        static ushort FreeTcpPort()
+        {
+            TcpListener l = new TcpListener(IPAddress.Loopback, 0);
+            l.Start();
+            ushort port = (ushort)((IPEndPoint)l.LocalEndpoint).Port;
+            l.Stop();
+            return port;
+        }
+
+        private string GenerateGameCode()
+        {
+            Random random = new Random();
+            string code = "";
+            for (int i = 0; i < 5; i++)
+            {
+                int randValue = random.Next(0, 26);
+                char letter = Convert.ToChar(randValue + 65);
+                code = code + letter;
+            }
+
+            return code;
+        }
+
+        #region Message Handlers
+
+        private MatchCreationInfo CreateMatch(ushort creatorId, ushort maxPlayers, ushort minPlayers, string name,
+            bool isPrivate)
+        {
+            Process matchProcess = new Process();
+            matchProcess.EnableRaisingEvents = true;
+            matchProcess.StartInfo.FileName =
+                Directory.GetCurrentDirectory() + @"\Match Application\Mythrail Server.exe";
+
+            ushort port = FreeTcpPort();
+            string code = GenerateGameCode();
+            matchProcess.StartInfo.Arguments =
+                $"port:{port.ToString()} maxPlayers:{maxPlayers.ToString()} minPlayers:{minPlayers.ToString()}";
+
+            matchProcess.Start();
+
+            MatchInfo newMatch = new MatchInfo(name, currentlyConnectedClients[creatorId].username, matchProcess, port,
+                isPrivate, code);
+            matches.Add(newMatch);
+            matchProcess.Exited += (sender, eventArgs) => { MatchEnded(newMatch); };
+
+            return new MatchCreationInfo(port, code);
+        }
+
+        [MessageHandler((ushort)ClientToGameServerId.id)]
+        private static void ReceiveConnecrId(ushort fromClientId, Message message)
+        {
+            currentlyConnectedClients.Add(fromClientId, new ClientInfo(fromClientId, message.GetString()));
+            Console.WriteLine(currentlyConnectedClients[fromClientId].username);
+            Console.WriteLine("Client connected and we are receiving information");
+        }
+
+        [MessageHandler((ushort)ClientToGameServerId.createMatch)]
+        private static void CreateMatchHandler(ushort fromClientId, Message message)
+        {
+            ushort maxPlayers = message.GetUShort();
+            ushort minPlayers = message.GetUShort();
+            string name = message.GetString();
+            bool isPrivate = message.GetBool();
+
+            MatchCreationInfo creationInfo =
+                _Program.CreateMatch(fromClientId, maxPlayers, minPlayers, name, message.GetBool());
+
+            _Program.SendMatchCreationConformation(fromClientId, creationInfo.port, isPrivate, creationInfo.code);
+
+            SendMatchesToAll();
+        }
 
         [MessageHandler((ushort)ClientToGameServerId.requestMatches)]
         private static void MatchesRequested(ushort fromClientId, Message message)
         {
-            program.SendMatches(fromClientId);
+            _Program.SendMatches(fromClientId);
             Console.WriteLine("Client requested a matches list");
         }
 
@@ -219,15 +232,17 @@ namespace Mythrail_Game_Server
             if (currentlyConnectedClients.TryGetValue(fromClientId, out ClientInfo clientInfo))
             {
                 string newUsername = message.GetString();
-                foreach (var client in currentlyConnectedClients)
+                foreach (ClientInfo client in currentlyConnectedClients.Values)
                 {
-                    if (client.Value.username == newUsername)
+                    if (client.username == newUsername)
                     {
-                        Message invalidUsernameMessage = Message.Create(MessageSendMode.reliable, GameServerToClientId.invalidName);
+                        Message invalidUsernameMessage =
+                            Message.Create(MessageSendMode.reliable, GameServerToClientId.invalidName);
                         Server.Send(invalidUsernameMessage, fromClientId);
                         return;
                     }
                 }
+
                 clientInfo.username = newUsername;
                 Console.WriteLine("Updated username: " + clientInfo.username);
             }
@@ -244,20 +259,42 @@ namespace Mythrail_Game_Server
                 {
                     if (match.code == codeKey)
                     {
-                        program.PrivateMatchFound(fromClientId, match.port);
+                        _Program.PrivateMatchFound(fromClientId, match.port);
                         return;
                     }
                 }
             }
-            
+
             Message failedMessage = Message.Create(MessageSendMode.reliable, GameServerToClientId.privateMatchNotFound);
             Server.Send(failedMessage, fromClientId);
         }
-    }
-    
-    
 
-    public class ClientInfo
+        [MessageHandler((ushort)ClientToGameServerId.getPlayers)]
+        private static void GetPlayersForInviting(ushort fromClientId, Message message)
+        {
+            Message resultMessage = Message.Create(MessageSendMode.reliable, GameServerToClientId.playersResult);
+            resultMessage.AddClientInfos(currentlyConnectedClients.Values.ToArray());
+            Server.Send(resultMessage, fromClientId);
+        }
+
+        #endregion Message Handlers
+    }
+
+    #region Custom Data Types
+
+    public struct MatchCreationInfo
+    {
+        public ushort port;
+        public string code;
+
+        public MatchCreationInfo(ushort port, string code)
+        {
+            this.port = port;
+            this.code = code;
+        }
+    }
+
+    public struct ClientInfo
     {
         public ushort id;
         public string username;
@@ -269,7 +306,7 @@ namespace Mythrail_Game_Server
         }
     }
 
-    public class MatchInfo
+    public struct MatchInfo
     {
         public string name;
         public string creatorName;
@@ -288,4 +325,6 @@ namespace Mythrail_Game_Server
             this.code = code;
         }
     }
+
+    #endregion
 }

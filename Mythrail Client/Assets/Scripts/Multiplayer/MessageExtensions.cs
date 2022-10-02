@@ -96,6 +96,21 @@ namespace MythrailEngine
             return infos;
         }
 
+        public static ClientInfo[] GetClientInfos(this Message message)
+        {
+            ushort[] ids = message.GetUShorts();
+            string[] usernames = message.GetStrings();
+            
+            ClientInfo[] infos = new ClientInfo[ids.Length];
+
+            for (int i = 0; i < ids.Length; i++)
+            {
+                infos[i] = new ClientInfo(ids[i], usernames[i]);
+            }
+
+            return infos;
+        }
+
         #endregion
     }
     

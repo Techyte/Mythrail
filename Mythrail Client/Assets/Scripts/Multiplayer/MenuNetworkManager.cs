@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using RiptideNetworking;
 using TMPro;
@@ -16,6 +17,7 @@ namespace MythrailEngine
         requestMatches,
         createMatch,
         joinPrivateMatch,
+        getPlayers,
     }
     
     public enum GameServerToClientId : ushort
@@ -25,6 +27,7 @@ namespace MythrailEngine
         joinedPrivateMatch,
         privateMatchNotFound,
         invalidName,
+        playersResult,
     }
 
     public class MenuNetworkManager : MonoBehaviour
@@ -77,6 +80,8 @@ namespace MythrailEngine
 
         [SerializeField] private GameObject MatchObject;
         [SerializeField] private Transform MatchHolders;
+        [SerializeField] private GameObject PlayerObject;
+        [SerializeField] private Transform PlayerHolders;
 
         private static List<GameObject> matchButtons = new List<GameObject>();
 
@@ -110,6 +115,9 @@ namespace MythrailEngine
 
         [SerializeField] private Animator screenShakeAnimator;
 
+        [SerializeField] private GameObject InviteScreen;
+        [SerializeField] private GameObject InviteQuestionPopup;
+
         public void OpenCreateScreen()
         {
             if (string.IsNullOrEmpty(username))
@@ -141,6 +149,42 @@ namespace MythrailEngine
             CreateScreen.SetActive(false);
             MainScreen.SetActive(false);
             JoinPrivateMatchScreen.SetActive(true);
+        }
+
+        public void GetCurrentPlayers()
+        {
+            Message message = Message.Create(MessageSendMode.reliable, ClientToGameServerId.getPlayers);
+            Client.Send(message);
+        }
+
+        [MessageHandler((ushort)GameServerToClientId.playersResult)]
+        private static void PlayersResult(Message message)
+        {
+            Singleton.CreateScreen.SetActive(false);
+            Singleton.InviteQuestionPopup.SetActive(false);
+            Singleton.InviteScreen.SetActive(true);
+            Singleton.OpenInviteScreen(message.GetClientInfos().ToList());
+        }
+
+        private void OpenInviteScreen(List<ClientInfo> clientInfos)
+        {
+            foreach (var client in clientInfos)
+            {
+                GameObject PlayerListObject = Instantiate(PlayerObject, PlayerHolders);
+                PlayerListObject.GetComponentInChildren<TextMeshProUGUI>().text = client.username;
+                PlayerListObject.GetComponentInChildren<Toggle>().onValueChanged.AddListener(ChangePlayerInviteStatus);
+            }
+        }
+
+        private void ChangePlayerInviteStatus(bool newStatus)
+        {
+            
+        }
+
+        private void OpenInviteQuestionScreen()
+        {
+            InviteScreen.SetActive(false);
+            InviteQuestionPopup.SetActive(true);
         }
 
         public void ShakeScreen()
@@ -308,6 +352,7 @@ namespace MythrailEngine
             }
         }
 
+        private ushort quickPort;
         [MessageHandler((ushort)GameServerToClientId.createMatchSuccess)]
         private static void CreateMatchSuccess(Message message)
         {
@@ -322,11 +367,17 @@ namespace MythrailEngine
             }
             else
             {
-                JoinMatchInfo.port = port;
-                JoinMatchInfo.username = username;
-            
-                SceneManager.LoadScene(1);   
+                Singleton.quickPort = port;
+                Singleton.OpenInviteQuestionScreen();
             }
+        }
+
+        public void JoinMatchWithoutInviting()
+        {
+            JoinMatchInfo.port = quickPort;
+            JoinMatchInfo.username = username;
+            
+            SceneManager.LoadScene(1);   
         }
 
         [MessageHandler((ushort)GameServerToClientId.joinedPrivateMatch)]
@@ -422,5 +473,17 @@ namespace MythrailEngine
     {
         public static ushort port;
         public static string username;
+    }
+
+    public class ClientInfo
+    {
+        public ushort id;
+        public string username;
+
+        public ClientInfo(ushort id, string username)
+        {
+            this.id = id;
+            this.username = username;
+        }
     }
 }

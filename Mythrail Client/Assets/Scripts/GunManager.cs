@@ -22,11 +22,17 @@ namespace MythrailEngine
 
         private void Update()
         {
-            currentGunModel.transform.localPosition = Vector3.Lerp(currentGunModel.transform.localPosition, Player.LocalPlayer.gunManager.weaponModels[currentWeaponIndex].transform.localPosition, Time.deltaTime * 4f);
-            currentGunModel.transform.localRotation = Quaternion.Lerp(currentGunModel.transform.localRotation, Quaternion.Euler(0, 0, 0), Time.deltaTime * 4f);
+            if(Player.LocalPlayer)
+            {
+                currentGunModel.transform.localPosition = Vector3.Lerp(currentGunModel.transform.localPosition,
+                    Player.LocalPlayer.gunManager.weaponModels[currentWeaponIndex].transform.localPosition,
+                    Time.deltaTime * 4f);
+                currentGunModel.transform.localRotation = Quaternion.Lerp(currentGunModel.transform.localRotation,
+                    Quaternion.Euler(0, 0, 0), Time.deltaTime * 4f);
+            }
             
-            if (!player.IsLocal)
-                return;
+            if (!player.IsLocal) return;
+            
             if (Player.LocalPlayer.playerController.canMove)
             {
                 if (Input.GetMouseButton(0))
