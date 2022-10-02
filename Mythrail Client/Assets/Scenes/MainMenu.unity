@@ -7675,7 +7675,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1738739432}
         m_TargetAssemblyTypeName: MythrailEngine.MenuNetworkManager, Assembly-CSharp
-        m_MethodName: OpenInviteScreen
+        m_MethodName: GetCurrentPlayers
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10536,6 +10536,8 @@ MonoBehaviour:
   MatchObject: {fileID: 8364882422335040266, guid: 55d8e49a0b7a0d7438391f15fdc02e82,
     type: 3}
   MatchHolders: {fileID: 1516710734}
+  PlayerObject: {fileID: 0}
+  PlayerHolders: {fileID: 0}
   connectionStatusText: {fileID: 445828384}
   usernameFeild: {fileID: 789310816}
   CreateScreen: {fileID: 1019143512}
