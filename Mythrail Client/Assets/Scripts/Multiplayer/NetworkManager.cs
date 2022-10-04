@@ -93,6 +93,10 @@ namespace MythrailEngine
         [SerializeField] private GameObject BufferCamera;
 
         [SerializeField] private bool PlayerReady;
+
+        private bool isPrivate;
+        private ushort maxClientCount;
+        private ushort clientCount;
         
         private void Awake()
         {
@@ -126,10 +130,26 @@ namespace MythrailEngine
             Client.ConnectionFailed += FailedToConnect;
             Client.ClientDisconnected += PlayerLeft;
             Client.Disconnected += DidDisconnect;
+            Client.ClientConnected += ClientConnected;
 
             ServerTick = 2;
             
             Connect();
+        }
+
+        private void ClientConnected(object sender, ClientConnectedEventArgs e)
+        {
+            if(!Singleton.isPrivate)
+            {
+                clientCount++;
+                RichPresenseManager.Singleton.UpdateStatus("In Game",
+                    $"Game ({clientCount} of {maxClientCount})", false);
+            }
+            else
+            {
+                RichPresenseManager.Singleton.UpdateStatus("In Game",
+                    $"Private Match", false);
+            }
         }
 
         private void FixedUpdate()
@@ -246,18 +266,58 @@ namespace MythrailEngine
         private static void LobbyReady(Message message)
         {
             Singleton.LoadGame();
+            Singleton.isPrivate = message.GetBool();
+            ushort clientCount = message.GetUShort();
+            Singleton.maxClientCount = message.GetUShort();
+            
+            if(!Singleton.isPrivate)
+            {
+                RichPresenseManager.Singleton.UpdateStatus("In Lobby",
+                    $"Game ({clientCount} of {message.GetUShort()})", false);
+            }
+            else
+            {
+                RichPresenseManager.Singleton.UpdateStatus("In Lobby",
+                    "Private Match", false);
+            }
         }
 
         [MessageHandler((ushort)ServerToClientId.isInGameResult)]
         private static void IsInGameResault(Message message)
-        {
+        {   
             if (message.GetBool())
             {
+                Singleton.isPrivate = message.GetBool();
+                ushort clientCount = message.GetUShort();
+                Singleton.maxClientCount = message.GetUShort();
                 Singleton.LoadGame();
+                if(!Singleton.isPrivate)
+                {
+                    RichPresenseManager.Singleton.UpdateStatus("In Game",
+                        $"Game ({clientCount} of {Singleton.maxClientCount})", false);
+                }
+                else
+                {
+                    RichPresenseManager.Singleton.UpdateStatus("In Game",
+                        "Private Match", false);
+                }
             }
             else
             {
+                Singleton.isPrivate = message.GetBool();
+                ushort clientCount = message.GetUShort();
+                Singleton.maxClientCount = message.GetUShort();
                 Singleton.SendName();
+                if(!Singleton.isPrivate)
+                {
+                    RichPresenseManager.Singleton.UpdateStatus("In Lobby",
+                        $"Waiting ({clientCount} of {Singleton.maxClientCount})", false);
+                }
+                else
+                {
+                    RichPresenseManager.Singleton.UpdateStatus("In Lobby",
+                        "Private Match", false);
+                }
             }
         }
 

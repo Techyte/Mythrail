@@ -183,7 +183,7 @@ namespace Mythrail_Game_Server
             ushort port = FreeTcpPort();
             string code = GenerateGameCode();
             matchProcess.StartInfo.Arguments =
-                $"port:{port.ToString()} maxPlayers:{maxPlayers.ToString()} minPlayers:{minPlayers.ToString()}";
+                $"port:{port.ToString()} maxPlayers:{maxPlayers.ToString()} minPlayers:{minPlayers.ToString()} isPrivate:{isPrivate.ToString()}";
 
             matchProcess.Start();
 

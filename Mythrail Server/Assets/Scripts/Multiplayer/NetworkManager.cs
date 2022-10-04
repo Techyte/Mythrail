@@ -85,6 +85,8 @@ public class NetworkManager : MonoBehaviour
 
     [SerializeField] private float emptyLobbyTimer = 30;
     private float emptyLobbyTimerCurrent;
+
+    private bool isPrivate;
     
     private void Awake()
     {
@@ -109,6 +111,10 @@ public class NetworkManager : MonoBehaviour
             {
                 string[] splitArg = args[i].Split(":");
                 minPlayerCount = ushort.Parse(splitArg[1]);
+            }else if (args[i].StartsWith("isPrivate"))
+            {
+                string[] splitArg = args[i].Split(":");
+                isPrivate = bool.Parse(splitArg[1]);
             }
         }
 
@@ -208,6 +214,9 @@ public class NetworkManager : MonoBehaviour
     private void SendLobbyReady()
     {
         Message message = Message.Create(MessageSendMode.reliable, LobbyServerToClient.ready);
+        message.AddBool(Singleton.isPrivate);
+        message.AddUShort((ushort)Server.ClientCount);
+        message.AddUShort(Server.MaxClientCount);
         Singleton.Server.SendToAll(message);
         SceneManager.LoadScene(1);
     }
@@ -268,6 +277,9 @@ public class NetworkManager : MonoBehaviour
     {
         Message resaultMessage = Message.Create(MessageSendMode.reliable, ServerToClientId.isInGameResult);
         resaultMessage.AddBool(SceneManager.GetActiveScene().buildIndex == 1);
+        resaultMessage.AddBool(Singleton.isPrivate);
+        resaultMessage.AddUShort((ushort)Singleton.Server.ClientCount);
+        resaultMessage.AddUShort(Singleton.Server.MaxClientCount);
         Singleton.Server.Send(resaultMessage, fromClientId);
     }
 }
