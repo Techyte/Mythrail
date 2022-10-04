@@ -182,6 +182,7 @@ namespace Mythrail_Game_Server
 
             ushort port = FreeTcpPort();
             string code = GenerateGameCode();
+            Console.WriteLine(isPrivate.ToString());
             matchProcess.StartInfo.Arguments =
                 $"port:{port.ToString()} maxPlayers:{maxPlayers.ToString()} minPlayers:{minPlayers.ToString()} isPrivate:{isPrivate.ToString()}";
 
@@ -212,7 +213,7 @@ namespace Mythrail_Game_Server
             bool isPrivate = message.GetBool();
 
             MatchCreationInfo creationInfo =
-                _Program.CreateMatch(fromClientId, maxPlayers, minPlayers, name, message.GetBool());
+                _Program.CreateMatch(fromClientId, maxPlayers, minPlayers, name, isPrivate);
 
             _Program.SendMatchCreationConformation(fromClientId, creationInfo.port, isPrivate, creationInfo.code);
 

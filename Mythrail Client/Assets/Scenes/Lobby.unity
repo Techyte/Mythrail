@@ -1330,12 +1330,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da482e80c216c684bb1eba10863aa2ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ip: 192.168.1.33
+  ip: 127.0.0.1
   port: 54144
   username: Techyte
   TickDivergenceTolerance: 1
   LobbyLoadingScreen: {fileID: 738323054}
   LoadingScreen: {fileID: 738323054}
+  BufferCamera: {fileID: 0}
   PlayerReady: 0
 --- !u!114 &1860707044
 MonoBehaviour:

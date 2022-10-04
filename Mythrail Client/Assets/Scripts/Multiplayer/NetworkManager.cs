@@ -272,24 +272,25 @@ namespace MythrailEngine
             
             if(!Singleton.isPrivate)
             {
-                RichPresenseManager.Singleton.UpdateStatus("In Lobby",
-                    $"Game ({clientCount} of {message.GetUShort()})", false);
+                RichPresenseManager.Singleton.UpdateStatus("In Game",
+                    $"Battlefield ({clientCount} of {Singleton.maxClientCount})", false);
             }
             else
             {
-                RichPresenseManager.Singleton.UpdateStatus("In Lobby",
+                RichPresenseManager.Singleton.UpdateStatus("In Game",
                     "Private Match", false);
             }
         }
 
         [MessageHandler((ushort)ServerToClientId.isInGameResult)]
         private static void IsInGameResault(Message message)
-        {   
-            if (message.GetBool())
+        {
+            bool isInGame = message.GetBool();
+            Singleton.isPrivate = message.GetBool();
+            ushort clientCount = message.GetUShort();
+            Singleton.maxClientCount = message.GetUShort();
+            if (isInGame)
             {
-                Singleton.isPrivate = message.GetBool();
-                ushort clientCount = message.GetUShort();
-                Singleton.maxClientCount = message.GetUShort();
                 Singleton.LoadGame();
                 if(!Singleton.isPrivate)
                 {
@@ -304,9 +305,6 @@ namespace MythrailEngine
             }
             else
             {
-                Singleton.isPrivate = message.GetBool();
-                ushort clientCount = message.GetUShort();
-                Singleton.maxClientCount = message.GetUShort();
                 Singleton.SendName();
                 if(!Singleton.isPrivate)
                 {

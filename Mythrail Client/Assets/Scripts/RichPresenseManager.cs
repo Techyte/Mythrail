@@ -39,6 +39,10 @@ public class RichPresenseManager : MonoBehaviour
     void Start()
     {
         discord = new Discord.Discord(1026417033409216522, (UInt64)CreateFlags.Default);
+        discord.GetActivityManager().ClearActivity(result =>
+        {
+            
+        });
         UpdateStatus("In Main Menu", "Idling", false);
     }
 
@@ -55,7 +59,7 @@ public class RichPresenseManager : MonoBehaviour
             },
             Timestamps =
             {
-                Start = keepCurrentTime ? DateTimeOffset.Now.ToUnixTimeMilliseconds() : currentActivity.Timestamps.Start
+                Start = keepCurrentTime ? currentActivity.Timestamps.Start : DateTimeOffset.Now.ToUnixTimeMilliseconds()
             }
         };
         currentActivity = activity;
