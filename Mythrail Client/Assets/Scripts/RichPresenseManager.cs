@@ -17,7 +17,6 @@ public class RichPresenseManager : MonoBehaviour
                 _singleton = value;
             else if (_singleton != value)
             {
-                Debug.Log($"{nameof(RichPresenseManager)} instance already exists, destroying duplicate!");
                 Destroy(value);
             }
         }
@@ -26,13 +25,24 @@ public class RichPresenseManager : MonoBehaviour
     private Discord.Discord discord;
     public Activity currentActivity;
 
+    private bool hasLoadedOnce = false;
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
         Singleton = this;
         SceneManager.sceneLoaded += (arg0, mode) =>
         {
-            Singleton = this;
+            if(hasLoadedOnce)
+            {
+                if (arg0.buildIndex == 0)
+                {
+                    Destroy(gameObject);
+                }
+            }
+            else
+            {
+                hasLoadedOnce = true;
+            }
         };
     }
 
@@ -48,6 +58,7 @@ public class RichPresenseManager : MonoBehaviour
 
     public void UpdateStatus(string details, string state, bool keepCurrentTime)
     {
+        if(Application.isEditor) return;
         var activityManager = discord.GetActivityManager();
         var activity = new Activity
         {

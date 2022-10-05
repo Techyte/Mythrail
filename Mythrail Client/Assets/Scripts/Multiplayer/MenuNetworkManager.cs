@@ -18,6 +18,7 @@ namespace MythrailEngine
         createMatch,
         joinPrivateMatch,
         getPlayers,
+        invites,
     }
     
     public enum GameServerToClientId : ushort
@@ -28,6 +29,7 @@ namespace MythrailEngine
         privateMatchNotFound,
         invalidName,
         playersResult,
+        invite,
     }
 
     public class MenuNetworkManager : MonoBehaviour
@@ -103,6 +105,8 @@ namespace MythrailEngine
         [SerializeField] private Button CreateBackButton;
         [SerializeField] private Button CreateComfirmButton;
 
+        [SerializeField] private Button SendInvitesButton;
+
         [SerializeField] private TMP_InputField privateMatchJoinCodeText;
 
         [SerializeField] private RectTransform privateMatchPopup;
@@ -168,17 +172,32 @@ namespace MythrailEngine
 
         private void OpenInviteScreen(List<ClientInfo> clientInfos)
         {
-            foreach (var client in clientInfos)
+            for (int i = 0; i < clientInfos.Count; i++)
             {
                 GameObject PlayerListObject = Instantiate(PlayerObject, PlayerHolders);
-                PlayerListObject.GetComponentInChildren<TextMeshProUGUI>().text = client.username;
-                PlayerListObject.GetComponentInChildren<Toggle>().onValueChanged.AddListener(ChangePlayerInviteStatus);
+                PlayerListObject.GetComponentInChildren<TextMeshProUGUI>().text = clientInfos[i].username;
+                PlayerListObject.GetComponentInChildren<Toggle>().onValueChanged.AddListener((result =>
+                {
+                    clientInfos[i].wantsToInvite = result;
+                }));
             }
-        }
-
-        private void ChangePlayerInviteStatus(bool newStatus)
-        {
             
+            SendInvitesButton.onClick.AddListener(() =>
+            {
+                List<ClientInfo> invitedClients = new List<ClientInfo>();
+                foreach (ClientInfo player in clientInfos)
+                {
+                    if (player.wantsToInvite)
+                    {
+                        invitedClients.Add(player);
+                    }
+                }
+                
+                Message message = Message.Create(MessageSendMode.reliable, ClientToGameServerId.invites);
+                message.AddClientInfos(invitedClients.ToArray());
+                message.AddUShort(Singleton.quickPort);
+                Client.Send(message);
+            });
         }
 
         private void OpenInviteQuestionScreen()
@@ -403,6 +422,23 @@ namespace MythrailEngine
             NotificationManager.Singleton.AddNotificationToQue(Singleton.PrivateMatchNotFoundImage, "Can't use that name", "A user on this server is already using that name, please try again with a different name");
         }
 
+        [SerializeField] private Sprite multiplayerImage;
+        
+        [MessageHandler((ushort)GameServerToClientId.invite)]
+        private static void Invited(Message message)
+        {
+            int index = NotificationManager.Singleton.AddNotificationToQue(Singleton.multiplayerImage,
+                "Invited To Game!", "Click here to join");
+
+            NotificationManager.Singleton.NewNotification += (o, e) =>
+            {
+                if (e.notificationIndex == index)
+                {
+                    
+                }
+            };
+        }
+
         private void CreateMatchButton(string name, string creator, string code, ushort port)
         {
             GameObject newMatchObj = Instantiate(MatchObject, MatchHolders);
@@ -479,6 +515,7 @@ namespace MythrailEngine
     {
         public ushort id;
         public string username;
+        public bool wantsToInvite;
 
         public ClientInfo(ushort id, string username)
         {

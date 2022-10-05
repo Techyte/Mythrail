@@ -111,6 +111,24 @@ namespace MythrailEngine
             return infos;
         }
 
+        public static Message AddClientInfos(this Message message, ClientInfo[] value) => Add(message, value);
+        
+        public static Message Add(this Message message, ClientInfo[] value)
+        {
+            ushort[] ids = new ushort[value.Length];
+            string[] usernames = new string[value.Length];
+            
+            for (int i = 0; i < value.Length; i++)
+            {
+                ids[i] = value[i].id;
+                usernames[i] = value[i].username;
+            }
+            
+            message.AddUShorts(ids);
+            message.AddStrings(usernames);
+            
+            return message;
+        }
         #endregion
     }
     

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -5,6 +6,18 @@ using System.Collections;
 
 namespace MythrailEngine
 {
+    public class NotificationCalledArgs : EventArgs
+    {
+        public int notificationIndex;
+        public GameObject notificationObject;
+
+        public NotificationCalledArgs(int notificationIndex, GameObject notificationObject)
+        {
+            this.notificationIndex = notificationIndex;
+            this.notificationObject = notificationObject;
+        }
+    }
+    
     public class NotificationManager : MonoBehaviour
     {
         private static NotificationManager _singleton;
@@ -31,7 +44,7 @@ namespace MythrailEngine
             };
         }
 
-        public List<NotificationData> que;
+        public Dictionary<int, NotificationData> que;
 
         public float NotificationStayTime = 5f;
         public float NotificationAnimationTime = .8f;
@@ -44,18 +57,22 @@ namespace MythrailEngine
 
         private bool canTakeNewNotifications = true;
 
+        public event EventHandler<NotificationCalledArgs> NewNotification;
+
         private void Start()
         {
-            que = new List<NotificationData>();
+            que = new Dictionary<int, NotificationData>();
             DontDestroyOnLoad(gameObject);
         }
 
-        public void AddNotificationToQue(Sprite logo, string title, string content)
+        private int currentNotificationIndex;
+        public int AddNotificationToQue(Sprite logo, string title, string content)
         {
             if(canTakeNewNotifications)
             {
-                NotificationData data = new NotificationData(logo, title, content);
-                que.Add(data);
+                currentNotificationIndex++;
+                NotificationData data = new NotificationData(logo, title, content, currentNotificationIndex);
+                que.Add(currentNotificationIndex, data);
 
                 if (que.Count == 1)
                 {
@@ -63,7 +80,10 @@ namespace MythrailEngine
                 }
 
                 StartCoroutine(Cooldown());
+                return currentNotificationIndex;
             }
+
+            return 0;
         }
 
         public void Next()
@@ -91,6 +111,7 @@ namespace MythrailEngine
             newNotification.logo.sprite = data.logo;
             newNotification.title.text = data.title;
             newNotification.content.text = data.content;
+            newNotification.index = data.index;
         }
     }
 
@@ -99,12 +120,14 @@ namespace MythrailEngine
         public Sprite logo;
         public string title;
         public string content;
+        public int index;
 
-        public NotificationData(Sprite logo, string title, string content)
+        public NotificationData(Sprite logo, string title, string content, int index)
         {
             this.logo = logo;
             this.title = title;
             this.content = content;
+            this.index = index;
         }
     }
 }

@@ -14,6 +14,7 @@ namespace MythrailEngine
         [SerializeField] private bool timeToGoBack;
         [SerializeField] private bool hasStartedCountdown;
         private float localLerpAdd;
+        public int index;
 
         private void Update()
         {
@@ -37,7 +38,7 @@ namespace MythrailEngine
 
             if (transform.position.x >= NotificationManager.Singleton.startPosObj.transform.position.x-1)
             {
-                NotificationManager.Singleton.que.RemoveAt(0);
+                NotificationManager.Singleton.que.Remove(index);
                 NotificationManager.Singleton.Next();
                 Destroy(gameObject);
             }

@@ -21,6 +21,7 @@ namespace Mythrail_Game_Server
         privateMatchNotFound,
         invalidName,
         playersResult,
+        invite,
     }
 
     public enum ClientToGameServerId : ushort
@@ -31,6 +32,7 @@ namespace Mythrail_Game_Server
         createMatch,
         joinPrivateMatch,
         getPlayers,
+        invites,
     }
 
     #endregion
@@ -129,6 +131,17 @@ namespace Mythrail_Game_Server
             message.AddUShort(port);
             Server.Send(message, toClientId);
         }
+
+        private void SendInvite(ushort fromId, ushort toId, ushort port)
+        {
+            ClientInfo info;
+            currentlyConnectedClients.TryGetValue(fromId, out info);
+            string username = info.username;
+            Message message = Message.Create(MessageSendMode.reliable, GameServerToClientId.invite);
+            message.AddString(username);
+            message.AddUShort(port);
+            Server.Send(message, toId);
+        }
         
         private Message AddMatchInfos()
         {
@@ -170,8 +183,6 @@ namespace Mythrail_Game_Server
             return code;
         }
 
-        #region Message Handlers
-
         private MatchCreationInfo CreateMatch(ushort creatorId, ushort maxPlayers, ushort minPlayers, string name,
             bool isPrivate)
         {
@@ -195,6 +206,8 @@ namespace Mythrail_Game_Server
 
             return new MatchCreationInfo(port, code);
         }
+
+        #region Message Handlers
 
         [MessageHandler((ushort)ClientToGameServerId.id)]
         private static void ReceiveConnecrId(ushort fromClientId, Message message)
@@ -274,8 +287,27 @@ namespace Mythrail_Game_Server
         private static void GetPlayersForInviting(ushort fromClientId, Message message)
         {
             Message resultMessage = Message.Create(MessageSendMode.reliable, GameServerToClientId.playersResult);
-            resultMessage.AddClientInfos(currentlyConnectedClients.Values.ToArray());
+            List<ClientInfo> infos = new List<ClientInfo>();
+            foreach (var info in currentlyConnectedClients.Values)
+            {
+                if (info.id != fromClientId)
+                {
+                    infos.Add(info);
+                }
+            }
+            resultMessage.AddClientInfos(infos.ToArray());
             Server.Send(resultMessage, fromClientId);
+        }
+
+        [MessageHandler((ushort)ClientToGameServerId.invites)]
+        private static void InvitePlayers(ushort fromClientId, Message message)
+        {
+            ClientInfo[] infos = message.GetClientInfos();
+            ushort port = message.GetUShort();
+            foreach (var client in infos)
+            {
+                _Program.SendInvite(fromClientId, client.id, port);
+            }
         }
 
         #endregion Message Handlers

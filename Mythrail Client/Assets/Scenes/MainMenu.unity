@@ -10580,8 +10580,9 @@ MonoBehaviour:
   MatchObject: {fileID: 8364882422335040266, guid: 55d8e49a0b7a0d7438391f15fdc02e82,
     type: 3}
   MatchHolders: {fileID: 1516710734}
-  PlayerObject: {fileID: 0}
-  PlayerHolders: {fileID: 0}
+  PlayerObject: {fileID: 5141471057859913697, guid: 5ee55b7035773704da52c579a1b911b1,
+    type: 3}
+  PlayerHolders: {fileID: 1956901146}
   connectionStatusText: {fileID: 445828384}
   usernameFeild: {fileID: 789310816}
   CreateScreen: {fileID: 1019143512}
@@ -10596,6 +10597,7 @@ MonoBehaviour:
   privateMatch: {fileID: 531519035}
   CreateBackButton: {fileID: 1220314278}
   CreateComfirmButton: {fileID: 212878256}
+  SendInvitesButton: {fileID: 2142556738}
   privateMatchJoinCodeText: {fileID: 384011082}
   privateMatchPopup: {fileID: 453923925}
   privateCodeText: {fileID: 1647508653}
@@ -10605,6 +10607,7 @@ MonoBehaviour:
   screenShakeAnimator: {fileID: 788463324}
   InviteScreen: {fileID: 2069126452}
   InviteQuestionPopup: {fileID: 2053520034}
+  multiplayerImage: {fileID: 21300000, guid: 1784c165f82beef44afc683862da9cd9, type: 3}
 --- !u!4 &1738739433
 Transform:
   m_ObjectHideFlags: 0
