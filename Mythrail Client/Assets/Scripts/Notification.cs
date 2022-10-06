@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +16,18 @@ namespace MythrailEngine
         [SerializeField] private bool hasStartedCountdown;
         private float localLerpAdd;
         public int index;
+
+        public int clickedHandlerMethods;
+
+        public event EventHandler Clicked;
+
+        private void Start()
+        {
+            GetComponent<Button>().onClick.AddListener(delegate
+            {
+                Clicked.Invoke(gameObject, EventArgs.Empty);
+            });
+        }
 
         private void Update()
         {
@@ -39,11 +52,12 @@ namespace MythrailEngine
             if (transform.position.x >= NotificationManager.Singleton.startPosObj.transform.position.x-1)
             {
                 NotificationManager.Singleton.que.Remove(index);
+                NotificationManager.Singleton.queIndexes.Remove(0);
                 NotificationManager.Singleton.Next();
                 Destroy(gameObject);
             }
         }
-
+        
         private IEnumerator WaitTimer()
         {
             yield return new WaitForSeconds(NotificationManager.Singleton.NotificationStayTime);

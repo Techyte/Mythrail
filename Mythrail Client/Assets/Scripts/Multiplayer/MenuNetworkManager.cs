@@ -178,7 +178,7 @@ namespace MythrailEngine
                 PlayerListObject.GetComponentInChildren<TextMeshProUGUI>().text = clientInfos[i].username;
                 PlayerListObject.GetComponentInChildren<Toggle>().onValueChanged.AddListener((result =>
                 {
-                    clientInfos[i].wantsToInvite = result;
+                    clientInfos[i-1].wantsToInvite = result;
                 }));
             }
             
@@ -200,7 +200,7 @@ namespace MythrailEngine
             });
         }
 
-        private void OpenInviteQuestionScreen()
+        public void OpenInviteQuestionScreen()
         {
             InviteScreen.SetActive(false);
             InviteQuestionPopup.SetActive(true);
@@ -383,6 +383,7 @@ namespace MythrailEngine
             {
                 Singleton.ShowPrivateMatchMessage(code);
                 Singleton.privateMatchPort = port;
+                Singleton.quickPort = port;
             }
             else
             {
@@ -428,13 +429,17 @@ namespace MythrailEngine
         private static void Invited(Message message)
         {
             int index = NotificationManager.Singleton.AddNotificationToQue(Singleton.multiplayerImage,
-                "Invited To Game!", "Click here to join");
+                $"Invited by {message.GetString()}", "Click here to join");
 
             NotificationManager.Singleton.NewNotification += (o, e) =>
             {
                 if (e.notificationIndex == index)
                 {
-                    
+                    e.notification.Clicked += (o, e) =>
+                    {
+                        Singleton.JoinMatch(message.GetUShort());
+                    };
+                    e.notification.clickedHandlerMethods++;
                 }
             };
         }

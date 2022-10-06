@@ -3661,6 +3661,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8173b3157602a99409781bee0d4e82db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  queIndexes: 
   NotificationStayTime: 2
   NotificationAnimationTime: 8
   NotificaionCooldown: 0.1
@@ -9422,7 +9423,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1738739432}
         m_TargetAssemblyTypeName: MythrailEngine.MenuNetworkManager, Assembly-CSharp
-        m_MethodName: JoinPrivateMatchFromCreate
+        m_MethodName: OpenInviteQuestionScreen
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10580,7 +10581,7 @@ MonoBehaviour:
   MatchObject: {fileID: 8364882422335040266, guid: 55d8e49a0b7a0d7438391f15fdc02e82,
     type: 3}
   MatchHolders: {fileID: 1516710734}
-  PlayerObject: {fileID: 5141471057859913697, guid: 5ee55b7035773704da52c579a1b911b1,
+  PlayerObject: {fileID: 8364882422335040266, guid: 5fdb486e0b7cea746bf26ceef8d81269,
     type: 3}
   PlayerHolders: {fileID: 1956901146}
   connectionStatusText: {fileID: 445828384}

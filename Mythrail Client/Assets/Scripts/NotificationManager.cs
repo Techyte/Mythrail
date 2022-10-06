@@ -9,12 +9,12 @@ namespace MythrailEngine
     public class NotificationCalledArgs : EventArgs
     {
         public int notificationIndex;
-        public GameObject notificationObject;
+        public Notification notification;
 
-        public NotificationCalledArgs(int notificationIndex, GameObject notificationObject)
+        public NotificationCalledArgs(int notificationIndex, Notification notification)
         {
             this.notificationIndex = notificationIndex;
-            this.notificationObject = notificationObject;
+            this.notification = notification;
         }
     }
     
@@ -45,6 +45,7 @@ namespace MythrailEngine
         }
 
         public Dictionary<int, NotificationData> que;
+        public List<int> queIndexes;
 
         public float NotificationStayTime = 5f;
         public float NotificationAnimationTime = .8f;
@@ -73,6 +74,7 @@ namespace MythrailEngine
                 currentNotificationIndex++;
                 NotificationData data = new NotificationData(logo, title, content, currentNotificationIndex);
                 que.Add(currentNotificationIndex, data);
+                queIndexes.Add(currentNotificationIndex);
 
                 if (que.Count == 1)
                 {
@@ -88,9 +90,9 @@ namespace MythrailEngine
 
         public void Next()
         {
-            if (que.Count != 0)
+            if (que.Count > 0)
             {
-                CreateNotification(que[0]);
+                CreateNotification(que[queIndexes[0]]);
             }
         }
 
@@ -112,6 +114,16 @@ namespace MythrailEngine
             newNotification.title.text = data.title;
             newNotification.content.text = data.content;
             newNotification.index = data.index;
+            StartCoroutine(EventInvoke(data, newNotification));
+        }
+
+        private IEnumerator EventInvoke(NotificationData data, Notification newNotification)
+        {
+            yield return new WaitForSeconds(.1f);
+            if (newNotification.clickedHandlerMethods != 0)
+            {
+                NewNotification.Invoke(gameObject, new NotificationCalledArgs(data.index, newNotification));   
+            }
         }
     }
 
