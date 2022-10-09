@@ -1,5 +1,5 @@
 using UnityEngine;
-using RiptideNetworking;
+using Riptide;
 using System.Collections.Generic;
 
 namespace MythrailEngine
@@ -105,7 +105,7 @@ namespace MythrailEngine
 
         private void SendWeaponInputs()
         {
-            Message message = Message.Create(MessageSendMode.unreliable, ClientToServerId.weaponInput);
+            Message message = Message.Create(MessageSendMode.Reliable, ClientToServerId.weaponInput);
             message.AddBools(weaponInputs, false);
             NetworkManager.Singleton.Client.Send(message);
         }

@@ -1,4 +1,4 @@
-using RiptideNetworking;
+using Riptide;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -51,7 +51,7 @@ public class GameLogic : MonoBehaviour
 
     private void SendReady()
     {
-        Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.gameStarted);
+        Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.gameStarted);
         NetworkManager.Singleton.Server.SendToAll(message);
     }
 
@@ -66,7 +66,7 @@ public class GameLogic : MonoBehaviour
 
             if (Singleton.gameHasStarted)
             {
-                Message readyMessage = Message.Create(MessageSendMode.reliable, ServerToClientId.gameStarted);
+                Message readyMessage = Message.Create(MessageSendMode.Reliable, ServerToClientId.gameStarted);
                 NetworkManager.Singleton.Server.Send(readyMessage, fromClientId);
             }
         }

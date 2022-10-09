@@ -1,4 +1,4 @@
-﻿using RiptideNetworking;
+﻿using Riptide;
 
 namespace Mythrail_Game_Server
 {

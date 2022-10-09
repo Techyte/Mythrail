@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-using RiptideNetworking;
+using Riptide;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
@@ -66,23 +66,23 @@ public class Player : MonoBehaviour
     private void SendSpawned()
     {
         Debug.LogError("Spawning local player");
-        NetworkManager.Singleton.Server.SendToAll(AddSpawnData(Message.Create(MessageSendMode.reliable, ServerToClientId.playerSpawned)));
+        NetworkManager.Singleton.Server.SendToAll(AddSpawnData(Message.Create(MessageSendMode.Reliable, ServerToClientId.playerSpawned)));
     }
 
     private void SendProxyPlayerSpawnInfo(ushort toClientId)
     {
         Debug.LogError("Spawning proxy player");
-        NetworkManager.Singleton.Server.Send(AddSpawnData(Message.Create(MessageSendMode.reliable, ServerToClientId.playerSpawned)), toClientId);
+        NetworkManager.Singleton.Server.Send(AddSpawnData(Message.Create(MessageSendMode.Reliable, ServerToClientId.playerSpawned)), toClientId);
     }
 
     private void SendLobbySpawned()
     {
-        NetworkManager.Singleton.Server.SendToAll(AddSpawnData(Message.Create(MessageSendMode.reliable, LobbyServerToClient.playerSpawned)));
+        NetworkManager.Singleton.Server.SendToAll(AddSpawnData(Message.Create(MessageSendMode.Reliable, LobbyServerToClient.playerSpawned)));
     }
 
     private void SendLobbyProxyPlayerSpawnInfo(ushort toClientId)
     {
-        NetworkManager.Singleton.Server.Send(AddSpawnData(Message.Create(MessageSendMode.reliable, LobbyServerToClient.playerSpawned)), toClientId);
+        NetworkManager.Singleton.Server.Send(AddSpawnData(Message.Create(MessageSendMode.Reliable, LobbyServerToClient.playerSpawned)), toClientId);
     }
 
     private Message AddSpawnData(Message message)
@@ -98,7 +98,7 @@ public class Player : MonoBehaviour
         currentHealth -= damage;
         Debug.LogError(Username);
 
-        Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.playerTookDamage);
+        Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.playerTookDamage);
         message.AddInt(Id);
         NetworkManager.Singleton.Server.SendToAll(message);
         
@@ -112,7 +112,7 @@ public class Player : MonoBehaviour
 
     private void SendHealth()
     {
-        Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.playerHealth);
+        Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.playerHealth);
         message.AddUShort(Id);
         message.AddUShort((ushort)currentHealth);
         message.AddUShort((ushort)maxHealth);
@@ -139,7 +139,7 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(0, 10, 0);
         currentHealth = maxHealth;
         
-        Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.playerDied);
+        Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.playerDied);
         message.AddUShort(Id);
         NetworkManager.Singleton.Server.SendToAll(message);
         SendHealth();
@@ -147,7 +147,7 @@ public class Player : MonoBehaviour
 
     private void SendKilled(ushort playerShotId, ushort killedPlayerId)
     {
-        Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.playerKilled);
+        Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.playerKilled);
         message.AddUShort(playerShotId);
         message.AddUShort(killedPlayerId);
         

@@ -18,14 +18,18 @@ namespace MythrailEngine
         public int index;
 
         public int clickedHandlerMethods;
-
         public event EventHandler Clicked;
+
+        public float stayTime = 2;
 
         private void Start()
         {
             GetComponent<Button>().onClick.AddListener(delegate
             {
-                Clicked.Invoke(gameObject, EventArgs.Empty);
+                if (clickedHandlerMethods > 0)
+                {
+                    Clicked.Invoke(gameObject, EventArgs.Empty);   
+                }
             });
         }
 
@@ -60,7 +64,7 @@ namespace MythrailEngine
         
         private IEnumerator WaitTimer()
         {
-            yield return new WaitForSeconds(NotificationManager.Singleton.NotificationStayTime);
+            yield return new WaitForSeconds(stayTime);
             timeToGoBack = true;
         }
     }

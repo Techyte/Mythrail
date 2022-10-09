@@ -1,4 +1,4 @@
-using RiptideNetworking;
+using Riptide;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -45,7 +45,7 @@ namespace MythrailEngine
 
         private void SendMovementInput()
         {
-            Message message = Message.Create(MessageSendMode.unreliable, ClientToServerId.movementInput);
+            Message message = Message.Create(MessageSendMode.Unreliable, ClientToServerId.movementInput);
             message.AddBools(movementInputs, false);
             message.AddVector3(camTransform.forward);
             NetworkManager.Singleton.Client.Send(message); 

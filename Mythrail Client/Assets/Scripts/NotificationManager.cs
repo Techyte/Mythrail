@@ -58,6 +58,7 @@ namespace MythrailEngine
 
         private bool canTakeNewNotifications = true;
 
+        public int newNotificationHanderMethods;
         public event EventHandler<NotificationCalledArgs> NewNotification;
 
         private void Start()
@@ -67,12 +68,12 @@ namespace MythrailEngine
         }
 
         private int currentNotificationIndex;
-        public int AddNotificationToQue(Sprite logo, string title, string content)
+        public int AddNotificationToQue(Sprite logo, string title, string content, float stayTime)
         {
             if(canTakeNewNotifications)
             {
                 currentNotificationIndex++;
-                NotificationData data = new NotificationData(logo, title, content, currentNotificationIndex);
+                NotificationData data = new NotificationData(logo, title, content, currentNotificationIndex, stayTime);
                 que.Add(currentNotificationIndex, data);
                 queIndexes.Add(currentNotificationIndex);
 
@@ -114,13 +115,14 @@ namespace MythrailEngine
             newNotification.title.text = data.title;
             newNotification.content.text = data.content;
             newNotification.index = data.index;
+            newNotification.stayTime = data.stayTime;
             StartCoroutine(EventInvoke(data, newNotification));
         }
 
         private IEnumerator EventInvoke(NotificationData data, Notification newNotification)
         {
             yield return new WaitForSeconds(.1f);
-            if (newNotification.clickedHandlerMethods != 0)
+            if (newNotificationHanderMethods > 0)
             {
                 NewNotification.Invoke(gameObject, new NotificationCalledArgs(data.index, newNotification));   
             }
@@ -133,13 +135,15 @@ namespace MythrailEngine
         public string title;
         public string content;
         public int index;
+        public float stayTime;
 
-        public NotificationData(Sprite logo, string title, string content, int index)
+        public NotificationData(Sprite logo, string title, string content, int index, float stayTime)
         {
             this.logo = logo;
             this.title = title;
             this.content = content;
             this.index = index;
+            this.stayTime = stayTime;
         }
     }
 }

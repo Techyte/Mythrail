@@ -1,4 +1,4 @@
-using RiptideNetworking;
+using Riptide;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -37,7 +37,7 @@ public class GunManager : MonoBehaviour
 
     private void SendLoadoutInfo()
     {
-        Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.loadoutInfo);
+        Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.loadoutInfo);
         
         message.AddUShort(player.Id);
         message.AddUShort(loadout[0]);
@@ -86,7 +86,7 @@ public class GunManager : MonoBehaviour
         if (canShoot)
         {
             StartCoroutine(ShootTimer());
-            Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.playerShot);
+            Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.playerShot);
             message.AddUShort(player.Id);
 
             Transform spawn = transform.Find("CamProxy");
@@ -134,7 +134,7 @@ public class GunManager : MonoBehaviour
 
     private void SendHitInformation(Vector3 position, Vector3 normal)
     {
-        Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.bulletHole);
+        Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.bulletHole);
         message.AddVector3(position);
         message.AddVector3(normal);
         NetworkManager.Singleton.Server.SendToAll(message);
@@ -147,7 +147,7 @@ public class GunManager : MonoBehaviour
         StartCoroutine(SwapInTimer());
         currentWeaponIndex = currentWeaponIndex == 0 ? 1 : 0;
 
-        Message message = Message.Create(MessageSendMode.reliable, ServerToClientId.swapWeapon);
+        Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.swapWeapon);
         message.AddUShort(player.Id);
         message.AddInt(currentWeaponIndex);
         NetworkManager.Singleton.Server.SendToAll(message);

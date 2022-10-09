@@ -1,4 +1,4 @@
-using RiptideNetworking;
+using Riptide;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -117,7 +117,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().buildIndex != 0)
         {
-            Message message = Message.Create(MessageSendMode.unreliable, ServerToClientId.playerMovement);
+            Message message = Message.Create(MessageSendMode.Unreliable, ServerToClientId.playerMovement);
             message.AddUShort(player.Id);
             message.AddUInt(NetworkManager.Singleton.CurrentTick);
             message.AddBool(didTeleport);
@@ -130,7 +130,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            Message message = Message.Create(MessageSendMode.unreliable, LobbyServerToClient.playerMovement);
+            Message message = Message.Create(MessageSendMode.Unreliable, LobbyServerToClient.playerMovement);
             message.AddUShort(player.Id);
             message.AddUInt(NetworkManager.Singleton.CurrentTick);
             message.AddBool(didTeleport);

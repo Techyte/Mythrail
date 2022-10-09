@@ -1,5 +1,5 @@
 using UnityEngine;
-using RiptideNetworking;
+using Riptide;
 using System;
 using UnityEngine.SceneManagement;
 
@@ -154,7 +154,7 @@ namespace MythrailEngine
 
         private void FixedUpdate()
         {
-            Client.Tick();
+            Client.Update();
             ServerTick++;
         }
 
@@ -187,13 +187,13 @@ namespace MythrailEngine
 
         private void GetIsInGameStatus()
         {
-            Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.isInGameRequest);
+            Message message = Message.Create(MessageSendMode.Reliable, ClientToServerId.isInGameRequest);
             Client.Send(message);
         }
 
         private void SendName()
         {
-            Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.name);
+            Message message = Message.Create(MessageSendMode.Reliable, ClientToServerId.name);
 
             username = !string.IsNullOrEmpty(JoinMatchInfo.username)? JoinMatchInfo.username : username;
             message.AddString(username);
@@ -237,6 +237,7 @@ namespace MythrailEngine
                         if(Player.LocalPlayer)
                         {
                             Ready();
+                            Debug.Log("Ready");
                         }
                         else
                         {
@@ -250,7 +251,7 @@ namespace MythrailEngine
         public void Ready()
         {
             PlayerReady = true;
-            Message message = Message.Create(MessageSendMode.reliable, ClientToServerId.ready);
+            Message message = Message.Create(MessageSendMode.Reliable, ClientToServerId.ready);
             Client.Send(message);
             Debug.Log("Ready");
             UIManager.Singleton.LoadingStatusDisplay.text = "Waiting for other players";

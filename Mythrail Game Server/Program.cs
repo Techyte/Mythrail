@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using RiptideNetworking;
-using RiptideNetworking.Utils;
+using Riptide;
+using Riptide.Utils;
 
 namespace Mythrail_Game_Server
 {
@@ -46,7 +45,7 @@ namespace Mythrail_Game_Server
         private static Server Server;
 
         private ushort port = 63231;
-        private ushort maxClientCount = 10;
+        private ushort maxClientCount = 100;
 
         private static List<MatchInfo> matches = new List<MatchInfo>();
 
@@ -66,7 +65,7 @@ namespace Mythrail_Game_Server
             Server.Start(port, maxClientCount);
             Server.ClientDisconnected += ClientDisconnected;
 
-            var ServerTickTimer = new Timer(ServerTick, null, 0, 25);
+            Timer ServerTickTimer = new Timer(ServerTick, null, 0, 25);
 
             if (Console.ReadLine() == "-stop")
                 StopServer(null, null);
@@ -86,13 +85,13 @@ namespace Mythrail_Game_Server
 
         private void ServerTick(object o)
         {
-            Server.Tick();
+            Server.Update();
         }
 
-        private void ClientDisconnected(object sender, ClientDisconnectedEventArgs e)
+        private void ClientDisconnected(object sender, ServerDisconnectedEventArgs e)
         {
-            if (currentlyConnectedClients.TryGetValue(e.Id, out ClientInfo clientInfo))
-                currentlyConnectedClients.Remove(e.Id);
+            if (currentlyConnectedClients.TryGetValue(e.Client.Id, out ClientInfo clientInfo))
+                currentlyConnectedClients.Remove(e.Client.Id);
         }
 
         private void SendMatches(ushort clientId)
@@ -111,7 +110,7 @@ namespace Mythrail_Game_Server
 
         private void SendMatchCreationConformation(ushort fromClientId, ushort port, bool isPrivate, string code)
         {
-            Message message = Message.Create(MessageSendMode.reliable, GameServerToClientId.createMatchSuccess);
+            Message message = Message.Create(MessageSendMode.Reliable, GameServerToClientId.createMatchSuccess);
             message.AddBool(isPrivate);
             message.AddString(code);
             message.AddUShort(port);
@@ -127,7 +126,7 @@ namespace Mythrail_Game_Server
 
         private void PrivateMatchFound(ushort toClientId, ushort port)
         {
-            Message message = Message.Create(MessageSendMode.reliable, GameServerToClientId.joinedPrivateMatch);
+            Message message = Message.Create(MessageSendMode.Reliable, GameServerToClientId.joinedPrivateMatch);
             message.AddUShort(port);
             Server.Send(message, toClientId);
         }
@@ -137,7 +136,7 @@ namespace Mythrail_Game_Server
             ClientInfo info;
             currentlyConnectedClients.TryGetValue(fromId, out info);
             string username = info.username;
-            Message message = Message.Create(MessageSendMode.reliable, GameServerToClientId.invite);
+            Message message = Message.Create(MessageSendMode.Reliable, GameServerToClientId.invite);
             message.AddString(username);
             message.AddUShort(port);
             Server.Send(message, toId);
@@ -145,7 +144,7 @@ namespace Mythrail_Game_Server
         
         private Message AddMatchInfos()
         {
-            Message message = Message.Create(MessageSendMode.reliable, GameServerToClientId.matches);
+            Message message = Message.Create(MessageSendMode.Reliable, GameServerToClientId.matches);
             List<MatchInfo> publicMatches = new List<MatchInfo>();
             foreach (var match in matches)
             {
@@ -251,7 +250,7 @@ namespace Mythrail_Game_Server
                     if (client.username == newUsername)
                     {
                         Message invalidUsernameMessage =
-                            Message.Create(MessageSendMode.reliable, GameServerToClientId.invalidName);
+                            Message.Create(MessageSendMode.Reliable, GameServerToClientId.invalidName);
                         Server.Send(invalidUsernameMessage, fromClientId);
                         return;
                     }
@@ -279,14 +278,14 @@ namespace Mythrail_Game_Server
                 }
             }
 
-            Message failedMessage = Message.Create(MessageSendMode.reliable, GameServerToClientId.privateMatchNotFound);
+            Message failedMessage = Message.Create(MessageSendMode.Reliable, GameServerToClientId.privateMatchNotFound);
             Server.Send(failedMessage, fromClientId);
         }
 
         [MessageHandler((ushort)ClientToGameServerId.getPlayers)]
         private static void GetPlayersForInviting(ushort fromClientId, Message message)
         {
-            Message resultMessage = Message.Create(MessageSendMode.reliable, GameServerToClientId.playersResult);
+            Message resultMessage = Message.Create(MessageSendMode.Reliable, GameServerToClientId.playersResult);
             List<ClientInfo> infos = new List<ClientInfo>();
             foreach (var info in currentlyConnectedClients.Values)
             {

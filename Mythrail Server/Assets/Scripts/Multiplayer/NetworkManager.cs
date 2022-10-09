@@ -1,10 +1,9 @@
 using System;
-using System.Collections;
 using UnityEngine;
-using RiptideNetworking;
-using RiptideNetworking.Utils;
+using Riptide;
 using System.Net;
 using System.Net.Sockets;
+using Riptide.Utils;
 using TMPro;
 using UnityEngine.SceneManagement;
 
@@ -194,7 +193,7 @@ public class NetworkManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Server.Tick();
+        Server.Update();
 
         if (CurrentTick % 200 == 0)
         {
@@ -213,7 +212,7 @@ public class NetworkManager : MonoBehaviour
 
     private void SendLobbyReady()
     {
-        Message message = Message.Create(MessageSendMode.reliable, LobbyServerToClient.ready);
+        Message message = Message.Create(MessageSendMode.Reliable, LobbyServerToClient.ready);
         message.AddBool(Singleton.isPrivate);
         message.AddUShort((ushort)Server.ClientCount);
         message.AddUShort(Server.MaxClientCount);
@@ -226,9 +225,9 @@ public class NetworkManager : MonoBehaviour
         Server.Stop();
     }
 
-    private void PlayerLeft(object sender, ClientDisconnectedEventArgs e)
+    private void PlayerLeft(object sender, ServerDisconnectedEventArgs e)
     {
-        if (Player.list.TryGetValue(e.Id, out Player player))
+        if (Player.list.TryGetValue(e.Client.Id, out Player player))
         {
             if (SceneManager.GetActiveScene().buildIndex == 1 && !player.isGameReady)
             {
@@ -258,7 +257,7 @@ public class NetworkManager : MonoBehaviour
 
     private void SendSync()
     {
-        Message message = Message.Create(MessageSendMode.unreliable, ServerToClientId.sync);
+        Message message = Message.Create(MessageSendMode.Unreliable, ServerToClientId.sync);
         message.AddUInt(CurrentTick);
 
         Server.SendToAll(message);
@@ -266,7 +265,7 @@ public class NetworkManager : MonoBehaviour
 
     private void SendLobbySync()
     {
-        Message message = Message.Create(MessageSendMode.unreliable, LobbyServerToClient.sync);
+        Message message = Message.Create(MessageSendMode.Unreliable, LobbyServerToClient.sync);
         message.AddUInt(CurrentTick);
 
         Server.SendToAll(message);
@@ -275,7 +274,7 @@ public class NetworkManager : MonoBehaviour
     [MessageHandler((ushort)ClientToServerId.isInGameRequest)]
     private static void IsInGameRequest(ushort fromClientId, Message message)
     {
-        Message resaultMessage = Message.Create(MessageSendMode.reliable, ServerToClientId.isInGameResult);
+        Message resaultMessage = Message.Create(MessageSendMode.Reliable, ServerToClientId.isInGameResult);
         resaultMessage.AddBool(SceneManager.GetActiveScene().buildIndex == 1);
         resaultMessage.AddBool(Singleton.isPrivate);
         resaultMessage.AddUShort((ushort)Singleton.Server.ClientCount);
