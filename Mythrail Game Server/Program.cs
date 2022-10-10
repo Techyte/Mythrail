@@ -176,7 +176,7 @@ namespace Mythrail_Game_Server
             {
                 int randValue = random.Next(0, 26);
                 char letter = Convert.ToChar(randValue + 65);
-                code = code + letter;
+                code += letter;
             }
 
             return code;
@@ -268,13 +268,10 @@ namespace Mythrail_Game_Server
             Console.WriteLine(codeKey);
             foreach (MatchInfo match in matches)
             {
-                if (match.isPrivate)
+                if (match.code == codeKey)
                 {
-                    if (match.code == codeKey)
-                    {
-                        _Program.PrivateMatchFound(fromClientId, match.port);
-                        return;
-                    }
+                    _Program.PrivateMatchFound(fromClientId, match.port);
+                    return;
                 }
             }
 

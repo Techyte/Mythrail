@@ -76,7 +76,7 @@ namespace MythrailEngine
 
         [SerializeField] private string ip;
         [SerializeField] private ushort port;
-        private static string username = "TestTechyte";
+        private static string username = "Guest";
         
         [Space]
 
@@ -110,6 +110,7 @@ namespace MythrailEngine
         [SerializeField] private TMP_InputField privateMatchJoinCodeText;
 
         [SerializeField] private RectTransform privateMatchPopup;
+        [SerializeField] private TextMeshProUGUI matchCreatePopupTitle;
         [SerializeField] private TextMeshProUGUI privateCodeText;
         [SerializeField] private TextMeshProUGUI privateCodeURLText;
 
@@ -338,7 +339,7 @@ namespace MythrailEngine
             Client.Disconnect();
         }
 
-        private void ShowPrivateMatchMessage(string code)
+        private void ShowPrivateMatchMessage(string code, bool isPrivate)
         {
             privateMatchPopup.gameObject.SetActive(true);
             privateCodeText.text = code;
@@ -349,6 +350,8 @@ namespace MythrailEngine
             privateMatch.interactable = false;
             CreateBackButton.interactable = false;
             CreateComfirmButton.interactable = false;
+
+            Singleton.matchCreatePopupTitle.text = isPrivate ? "PRIVATE MATCH CREATED" : "PUBLIC MATCH CREATED";
 
             privateCodeURLText.text = "mythrail://" + code;
         }
@@ -368,7 +371,7 @@ namespace MythrailEngine
                 Singleton.CreateMatchButton(matchInfos[i].name, matchInfos[i].creatorName, matchInfos[i].code, matchInfos[i].port);
             }
         }
-
+        
         private ushort quickPort;
         [MessageHandler((ushort)GameServerToClientId.createMatchSuccess)]
         private static void CreateMatchSuccess(Message message)
@@ -377,16 +380,8 @@ namespace MythrailEngine
             string code = message.GetString();
             ushort port = message.GetUShort();
             
-            if (isPrivate)
-            {
-                Singleton.ShowPrivateMatchMessage(code);
-                Singleton.quickPort = port;
-            }
-            else
-            {
-                Singleton.quickPort = port;
-                Singleton.OpenInviteQuestionScreen();
-            }
+            Singleton.ShowPrivateMatchMessage(code, isPrivate);
+            Singleton.quickPort = port;
         }
 
         public void JoinMatchWithoutInviting()

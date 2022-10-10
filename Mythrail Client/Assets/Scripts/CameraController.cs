@@ -73,17 +73,17 @@ namespace MythrailEngine
 
         private void ToggleCursorMode()
         {
-            Cursor.visible = !Cursor.visible;
-            
             if (Cursor.lockState == CursorLockMode.None)
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 pauseScreen.SetActive(false);
+                Cursor.visible = false;
             }
             else
             {
                 Cursor.lockState = CursorLockMode.None;
                 pauseScreen.SetActive(true);
+                Cursor.visible = true;
             }
         }
 
