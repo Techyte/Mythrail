@@ -1,0 +1,21 @@
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\Mythrail_Game_Server.exe
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\Mythrail_Game_Server.pdb
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\System.Data.Common.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\System.Diagnostics.StackTrace.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\System.Diagnostics.Tracing.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\System.Globalization.Extensions.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\System.IO.Compression.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\System.Net.Http.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\System.Net.Sockets.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\System.Runtime.Serialization.Primitives.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\System.Security.Cryptography.Algorithms.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\System.Security.SecureString.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\System.Threading.Overlapped.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\System.Xml.XPath.XDocument.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\RiptideNetworking.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\bin\Release\RiptideNetworking.xml
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\obj\Release\Mythrail Game Server.csproj.AssemblyReference.cache
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\obj\Release\Mythrail Game Server.csproj.CoreCompileInputs.cache
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\obj\Release\Mythrail Game Server.csproj.CopyComplete
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\obj\Release\Mythrail_Game_Server.exe
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\Mythrail Game Server\obj\Release\Mythrail_Game_Server.pdb

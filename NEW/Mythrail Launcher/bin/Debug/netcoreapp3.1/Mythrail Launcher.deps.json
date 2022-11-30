@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "Mythrail Launcher/1.0.0": {
+        "runtime": {
+          "Mythrail Launcher.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Mythrail Launcher/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
