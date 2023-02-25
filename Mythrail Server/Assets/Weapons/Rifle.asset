@@ -9,16 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7edea2c1e8291b43adc32a0b60005b3, type: 3}
-  m_Name: Pistol
+  m_Script: {fileID: 11500000, guid: 376252c55fba3d04b953a073be898584, type: 3}
+  m_Name: Rifle
   m_EditorClassIdentifier: 
-  name: Pistol
-  distance: 50
-  prefab: {fileID: 6248459779612292772, guid: b804bf71ceee3e64cbbfea90fbae775e, type: 3}
-  damage: 5
-  reloadTime: 0
-  fireRate: 0.2
-  bloom: 10
+  name: Rifle
+  damage: 15
+  distance: 100
+  fireRate: 0.5
+  reloadRate: 0.9
+  swapInRate: 0.9
+  bloom: 2
   recoil: 6
   kickBack: 0.1
-  aimSpeed: 5

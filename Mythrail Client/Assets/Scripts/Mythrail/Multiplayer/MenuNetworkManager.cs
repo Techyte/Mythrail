@@ -453,7 +453,7 @@ namespace Mythrail.Multiplayer
             JoinMatchInfo.port = port;
             JoinMatchInfo.username = username;
             
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene("Lobby");
         }
 
         public void CreateMatch()

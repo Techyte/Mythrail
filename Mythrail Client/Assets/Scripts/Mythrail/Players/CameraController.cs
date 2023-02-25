@@ -99,8 +99,7 @@ namespace Mythrail.Players
             pauseScreen.SetActive(true);
             Player.list.Clear();
             NetworkManager.Singleton.Client.Disconnect();
-            Destroy(NetworkManager.Singleton.gameObject);
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene("MainMenu");
         }
     }
 

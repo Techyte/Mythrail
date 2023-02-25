@@ -44,7 +44,7 @@ namespace Mythrail.Game
 
         private void LoadedGame(Scene scene, LoadSceneMode loadSceneMode)
         {
-            if(scene.buildIndex == 2)
+            if(scene.name == "BattleFeild")
             {
                 UIHealthBar = GameObject.Find("Health").GetComponentsInChildren<Image>()[1].transform;
                 loadingScreen = GameObject.Find("Loading");

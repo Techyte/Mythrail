@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 1482400325114277971}
   - component: {fileID: 7873808616693741178}
   m_Layer: 0
-  m_Name: Rifel
+  m_Name: Rifle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

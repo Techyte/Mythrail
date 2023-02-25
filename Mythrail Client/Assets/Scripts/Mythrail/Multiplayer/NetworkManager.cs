@@ -111,7 +111,7 @@ namespace Mythrail.Multiplayer
 
         private void CheckForMainMenu(Scene scene, LoadSceneMode loadSceneMode)
         {
-            if (SceneManager.GetActiveScene().buildIndex == 2)
+            if (SceneManager.GetActiveScene().name == "BattleFeild")
             {
                 BufferCamera = GameObject.Find("Buffer Camera");
             }
@@ -131,6 +131,12 @@ namespace Mythrail.Multiplayer
             Client.ClientConnected += ClientConnected;
 
             ServerTick = 2;
+
+            SceneManager.sceneLoaded += (scene, mode) =>
+            {
+                if(scene.name == "MainMenu")
+                    Destroy(Singleton.gameObject);
+            };
             
             Connect();
         }
@@ -166,7 +172,7 @@ namespace Mythrail.Multiplayer
             Cursor.lockState = CursorLockMode.None;
             Player.list.Clear();
             Client.Disconnect();
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene("MainMenu");
         }
 
         private void Connect()
@@ -218,7 +224,7 @@ namespace Mythrail.Multiplayer
             Cursor.lockState = CursorLockMode.None;
             Player.list.Clear();
             Client.Disconnect();
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene("MainMenu");
         }
 
         public static bool hasBeenReadyOnce;
@@ -320,7 +326,7 @@ namespace Mythrail.Multiplayer
 
         private void LoadGame()
         {
-            SceneManager.LoadScene(2);
+            SceneManager.LoadScene("BattleFeild");
             Player.list.Clear();
             Singleton.SendName();
         }
