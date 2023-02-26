@@ -148,11 +148,12 @@ public class NetworkManager : MonoBehaviour
             portText.text = port.ToString();
             readyPlayersText = GameObject.Find("ReadyPlayers").GetComponent<TextMeshProUGUI>();
             totalPlayersText = GameObject.Find("TotalPlayers").GetComponent<TextMeshProUGUI>();
-            spawnPoints = new List<Transform>();
-            foreach (Transform spawnPoint in GameObject.Find("SpawnPoints").transform)
-            {
-                spawnPoints.Add(spawnPoint);
-            }
+        }
+        
+        spawnPoints = new List<Transform>();
+        foreach (Transform spawnPoint in GameObject.Find("SpawnPoints").transform)
+        {
+            spawnPoints.Add(spawnPoint);
         }
     }
 

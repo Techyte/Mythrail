@@ -10,7 +10,7 @@ namespace Mythrail.Game
         {
             if(target)
             {
-                transform.LookAt(transform.position + target.forward);
+                transform.LookAt(target);
             }
         }
     }

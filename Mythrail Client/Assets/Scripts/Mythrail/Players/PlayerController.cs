@@ -31,7 +31,7 @@ namespace Mythrail.Players
                     movementInputs[3] = true;
                 if (Input.GetKey(KeyCode.Space))
                     movementInputs[4] = true;
-                if (Input.GetKey(KeyCode.LeftControl) && SceneManager.GetActiveScene().buildIndex != 1)
+                if (Input.GetKey(KeyCode.LeftControl) && SceneManager.GetActiveScene().name != "Lobby")
                     movementInputs[6] = true;
             }
         }

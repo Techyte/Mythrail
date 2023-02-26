@@ -130,6 +130,36 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7378609414270649860, guid: 6bd522aa794ebd342b51d6968bcadc10,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7378609414270649860, guid: 6bd522aa794ebd342b51d6968bcadc10,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7378609414427827974, guid: 6bd522aa794ebd342b51d6968bcadc10,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7378609414427827974, guid: 6bd522aa794ebd342b51d6968bcadc10,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7378609414427827974, guid: 6bd522aa794ebd342b51d6968bcadc10,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 401
+      objectReference: {fileID: 0}
+    - target: {fileID: 7378609414427827974, guid: 6bd522aa794ebd342b51d6968bcadc10,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -43.72
+      objectReference: {fileID: 0}
     - target: {fileID: 7378609415046342529, guid: 6bd522aa794ebd342b51d6968bcadc10,
         type: 3}
       propertyPath: m_Pivot.x

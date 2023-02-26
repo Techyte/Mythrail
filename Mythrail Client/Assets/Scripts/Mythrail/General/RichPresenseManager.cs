@@ -1,29 +1,16 @@
 using System;
 using Discord;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Mythrail.General
 {
     public class RichPresenseManager : MonoBehaviour
     {
-        private static RichPresenseManager _singleton;
-        public static RichPresenseManager Singleton
-        {
-            get => _singleton;
-            private set
-            {
-                if (_singleton == null)
-                    _singleton = value;
-                else if (_singleton != value)
-                {
-                    Destroy(value);
-                }
-            }
-        }
+        public static RichPresenseManager Singleton;
         
         private Discord.Discord discord;
         public Activity currentActivity;
+        
         private void Awake()
         {
             Singleton = this;
@@ -36,7 +23,6 @@ namespace Mythrail.General
             {
                 
             });
-            UpdateStatus("In Main Menu", "Idling", false);
         }
     
         public void UpdateStatus(string details, string state, bool keepCurrentTime)

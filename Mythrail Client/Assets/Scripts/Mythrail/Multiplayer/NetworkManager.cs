@@ -3,6 +3,7 @@ using Riptide;
 using System;
 using Mythrail.Game;
 using Mythrail.General;
+using Mythrail.Menu;
 using Mythrail.Players;
 using UnityEngine.SceneManagement;
 

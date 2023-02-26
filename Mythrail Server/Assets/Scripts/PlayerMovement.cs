@@ -10,6 +10,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask ground;
     public Transform camProxy;
     [SerializeField] private float movementSpeed = 5f;
+    [SerializeField] private float runMultiplier = 1.3f;
+    [SerializeField] private float crouchMultiplier = .5f;
     [SerializeField] private float jumpHeight = 7f;
     [SerializeField] private float gravity;
 
@@ -26,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform defaultCameraPos;
 
     [SerializeField] private bool canJump = true;
-    public bool camMove;
+    public bool canMove = true;
 
     [SerializeField] private bool[] inputs = new bool[6];
 
@@ -59,33 +61,57 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move(Vector2 inputDirection, bool jump, bool sprint, bool isCrouching)
     {
-        inputDirection.Normalize();
-        transform.rotation = FlattenQuaternion(camProxy.rotation);
-        
-        _forwardVelocity = inputDirection.y * movementSpeed;
-        _sidewaysVelocity = inputDirection.x * movementSpeed;
-
-        Vector3 direction = new Vector3(_sidewaysVelocity, 0, _forwardVelocity);
-        direction = Vector3.ClampMagnitude(direction, movementSpeed);
-
-        if (_controller.isGrounded && jump)
+        if(canMove)
         {
-            _verticalVelocity = jumpHeight;
+            inputDirection.Normalize();
+            transform.rotation = FlattenQuaternion(camProxy.rotation);
+
+            _forwardVelocity = inputDirection.y * movementSpeed;
+            _sidewaysVelocity = inputDirection.x * movementSpeed;
+
+            if (sprint && !isCrouching)
+            {
+                _forwardVelocity *= runMultiplier;
+                _sidewaysVelocity *= runMultiplier;
+            }
+
+            if (isCrouching)
+            {
+                _forwardVelocity *= crouchMultiplier;
+                _sidewaysVelocity *= crouchMultiplier;
+                camProxy.position = crouchingCameraPos.position;
+                defaultModel.SetActive(false);
+                crouchingModel.SetActive(true);
+            }
+            else
+            {
+                camProxy.position = defaultCameraPos.position;
+                defaultModel.SetActive(true);
+                crouchingModel.SetActive(false);
+            }
+
+            Vector3 direction = new Vector3(_sidewaysVelocity, 0, _forwardVelocity);
+            direction = Vector3.ClampMagnitude(direction, movementSpeed);
+
+            if (_controller.isGrounded && jump && canJump)
+            {
+                _verticalVelocity = jumpHeight;
+            }
+
+            _verticalVelocity -= gravity * Time.deltaTime;
+            direction.y = _verticalVelocity;
+
+            direction = transform.TransformDirection(direction);
+
+            _controller.Move(direction * Time.deltaTime);
+
+            if (transform.position.y <= -15)
+            {
+                player.Died();
+            }
+
+            SendMovement();
         }
-
-        _verticalVelocity -= gravity * Time.deltaTime;
-        direction.y = _verticalVelocity;
-
-        direction = transform.TransformDirection(direction);
-
-        _controller.Move(direction * Time.deltaTime);
-
-        if (transform.position.y <= -15)
-        {
-            player.Died();
-        }
-
-        SendMovement();
     }
     
     private Quaternion FlattenQuaternion(Quaternion quaternion)

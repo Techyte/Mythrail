@@ -98,10 +98,13 @@ public class GunManager : MonoBehaviour
                 if(hit.transform.gameObject.CompareTag("Player"))
                 {
                     Player hitPlayer = hit.transform.gameObject.GetComponent<Player>();
-                    hitPlayer.TakeDamage(guns[loadout[currentWeaponIndex]].damage, player.Id);
+                    if(hitPlayer.Id != player.Id)
+                    {
+                        hitPlayer.TakeDamage(guns[loadout[currentWeaponIndex]].damage, player.Id);
+                    }
                 }
             }
-            Debug.DrawLine(spawn.position, spawn.forward, Color.red, 10);
+            Debug.DrawRay(spawn.position, bloomDirection, Color.red, 10);
 
             message.AddFloat(guns[loadout[currentWeaponIndex]].recoil);
             message.AddFloat(guns[loadout[currentWeaponIndex]].kickBack);

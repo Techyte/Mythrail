@@ -44,6 +44,9 @@ public class Player : MonoBehaviour
 
         player.currentHealth = player.maxHealth;
 
+        Transform spawnPoint = NetworkManager.Singleton.GetRandomSpawnPoint();
+        player.transform.position = spawnPoint.position;
+        
         if (SceneManager.GetActiveScene().buildIndex == 0)
         {
             player.SendLobbySpawned();
@@ -54,8 +57,6 @@ public class Player : MonoBehaviour
         }
         else
         {
-            Transform spawnPoint = NetworkManager.Singleton.GetRandomSpawnPoint();
-            player.transform.position = spawnPoint.position;
             player.SendSpawned();
             foreach (Player otherPlayer in list.Values)
             {
@@ -118,24 +119,16 @@ public class Player : MonoBehaviour
         NetworkManager.Singleton.Server.SendToAll(message);
     }
 
-    private IEnumerator RespawnTimer()
-    {
-        movement.camMove = false;
-        yield return new WaitForSeconds(respawnDelay);
-        Debug.Log("Respawned");
-    }
-
     private void PlayerDied(ushort playerThatShotId, ushort killedPlayerId)
     {
         SendKilled(playerThatShotId, killedPlayerId);
-        StartCoroutine(RespawnTimer());
         Died();
     }
 
     public void Died()
     {   
         rb.velocity = Vector3.zero;
-        transform.position = new Vector3(0, 10, 0);
+        transform.position = NetworkManager.Singleton.GetRandomSpawnPoint().position;
         currentHealth = maxHealth;
         
         Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.playerDied);

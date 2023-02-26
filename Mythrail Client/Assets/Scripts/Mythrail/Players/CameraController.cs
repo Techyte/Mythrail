@@ -26,7 +26,7 @@ namespace Mythrail.Players
             if (Input.GetKeyDown(KeyCode.Escape))
                 ToggleCursorMode();
             
-            if(SceneManager.GetActiveScene().buildIndex == 1)
+            if(SceneManager.GetActiveScene().name == "Lobby")
             {
                 if (LobbyPlayer.LocalPlayer)
                 {

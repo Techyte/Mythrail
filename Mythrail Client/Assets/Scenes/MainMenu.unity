@@ -994,8 +994,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1738739432}
-        m_TargetAssemblyTypeName: MythrailEngine.MenuNetworkManager, Assembly-CSharp
+      - m_Target: {fileID: 1738739434}
+        m_TargetAssemblyTypeName: MenuUIManager, Assembly-CSharp
         m_MethodName: CreateMatch
         m_Mode: 1
         m_Arguments:
@@ -1493,8 +1493,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1738739432}
-        m_TargetAssemblyTypeName: MythrailEngine.MenuNetworkManager, Assembly-CSharp
+      - m_Target: {fileID: 1738739434}
+        m_TargetAssemblyTypeName: MenuUIManager, Assembly-CSharp
         m_MethodName: CopyPrivateMatchCode
         m_Mode: 1
         m_Arguments:
@@ -2212,6 +2212,98 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &382182348
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 382182349}
+  - component: {fileID: 382182351}
+  - component: {fileID: 382182350}
+  - component: {fileID: 382182352}
+  m_Layer: 5
+  m_Name: Back
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &382182349
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382182348}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 531519034}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 1.4518, y: 0}
+  m_SizeDelta: {x: 163.2548, y: 30}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &382182350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382182348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.23921569, g: 0.36078432, b: 0.60784316, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &382182351
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382182348}
+  m_CullTransparentMesh: 1
+--- !u!114 &382182352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382182348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.16862746, g: 0.16862746, b: 0.16862746, a: 0.5}
+  m_EffectDistance: {x: 0, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &384011080
 GameObject:
   m_ObjectHideFlags: 0
@@ -2475,6 +2567,7 @@ GameObject:
   - component: {fileID: 403344591}
   - component: {fileID: 403344593}
   - component: {fileID: 403344592}
+  - component: {fileID: 403344594}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -2496,11 +2589,11 @@ RectTransform:
   m_Children:
   - {fileID: 1886482178}
   m_Father: {fileID: 531519034}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 10, y: -10}
+  m_AnchoredPosition: {x: 12.9, y: -10}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &403344592
@@ -2516,14 +2609,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.3529412}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2541,6 +2634,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 403344590}
   m_CullTransparentMesh: 1
+--- !u!114 &403344594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 403344590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.16862746, g: 0.16862746, b: 0.16862746, a: 0.5}
+  m_EffectDistance: {x: 0, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1 &404903987
 GameObject:
   m_ObjectHideFlags: 0
@@ -2739,7 +2847,7 @@ GameObject:
   m_Component:
   - component: {fileID: 453923925}
   m_Layer: 5
-  m_Name: Private Match Popup
+  m_Name: Match Creation Popup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3464,6 +3572,7 @@ RectTransform:
   m_LocalScale: {x: 2.4938, y: 2.4938, z: 2.4938}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 382182349}
   - {fileID: 403344591}
   - {fileID: 2024257052}
   m_Father: {fileID: 1019143513}
@@ -5260,8 +5369,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1738739432}
-        m_TargetAssemblyTypeName: MythrailEngine.MenuNetworkManager, Assembly-CSharp
+      - m_Target: {fileID: 1738739434}
+        m_TargetAssemblyTypeName: MenuUIManager, Assembly-CSharp
         m_MethodName: CopyPrivateMatchURL
         m_Mode: 1
         m_Arguments:
@@ -6944,8 +7053,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1738739432}
-        m_TargetAssemblyTypeName: MythrailEngine.MenuNetworkManager, Assembly-CSharp
+      - m_Target: {fileID: 1738739434}
+        m_TargetAssemblyTypeName: MenuUIManager, Assembly-CSharp
         m_MethodName: OpenJoinPrivateMatchScreen
         m_Mode: 1
         m_Arguments:
@@ -7011,7 +7120,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 131}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1060098624
@@ -7960,8 +8069,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1738739432}
-        m_TargetAssemblyTypeName: MythrailEngine.MenuNetworkManager, Assembly-CSharp
+      - m_Target: {fileID: 1738739434}
+        m_TargetAssemblyTypeName: MenuUIManager, Assembly-CSharp
         m_MethodName: OpenMainScreen
         m_Mode: 1
         m_Arguments:
@@ -9500,8 +9609,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1738739432}
-        m_TargetAssemblyTypeName: MythrailEngine.MenuNetworkManager, Assembly-CSharp
+      - m_Target: {fileID: 1738739434}
+        m_TargetAssemblyTypeName: MenuUIManager, Assembly-CSharp
         m_MethodName: OpenInviteQuestionScreen
         m_Mode: 1
         m_Arguments:
@@ -10158,8 +10267,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1738739432}
-        m_TargetAssemblyTypeName: MythrailEngine.MenuNetworkManager, Assembly-CSharp
+      - m_Target: {fileID: 1738739434}
+        m_TargetAssemblyTypeName: MenuUIManager, Assembly-CSharp
         m_MethodName: OpenMainScreen
         m_Mode: 1
         m_Arguments:
@@ -10636,6 +10745,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1738739433}
   - component: {fileID: 1738739432}
+  - component: {fileID: 1738739434}
   m_Layer: 0
   m_Name: MenuNetworkManager
   m_TagString: Untagged
@@ -10657,38 +10767,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ip: 192.168.1.37
   port: 63231
-  MatchObject: {fileID: 8364882422335040266, guid: 55d8e49a0b7a0d7438391f15fdc02e82,
-    type: 3}
-  MatchHolders: {fileID: 1516710734}
-  PlayerObject: {fileID: 8364882422335040266, guid: 5fdb486e0b7cea746bf26ceef8d81269,
-    type: 3}
-  PlayerHolders: {fileID: 1956901146}
-  connectionStatusText: {fileID: 445828384}
-  usernameFeild: {fileID: 789310816}
-  CreateScreen: {fileID: 1019143512}
-  JoinPrivateMatchScreen: {fileID: 294861758}
-  MainScreen: {fileID: 1615917538}
-  maxPlayerCountSlider: {fileID: 1476908581}
-  maxPlayerDisplay: {fileID: 24827480}
-  minPlayerCountSlider: {fileID: 748156083}
-  minPlayerDisplay: {fileID: 209677125}
-  matchName: {fileID: 610315032}
-  matchMap: {fileID: 675988235}
-  privateMatch: {fileID: 531519035}
-  CreateBackButton: {fileID: 1220314278}
-  CreateComfirmButton: {fileID: 212878256}
-  SendInvitesButton: {fileID: 2142556738}
-  privateMatchJoinCodeText: {fileID: 384011082}
-  privateMatchPopup: {fileID: 453923925}
-  matchCreatePopupTitle: {fileID: 247435660}
-  privateCodeText: {fileID: 1647508653}
-  privateCodeURLText: {fileID: 552473372}
-  PrivateMatchNotFoundImage: {fileID: 21300000, guid: b2a6dc8998799474381415fb9d5a693a,
-    type: 3}
-  screenShakeAnimator: {fileID: 788463324}
-  InviteScreen: {fileID: 2069126452}
-  InviteQuestionPopup: {fileID: 2053520034}
-  multiplayerImage: {fileID: 21300000, guid: 1784c165f82beef44afc683862da9cd9, type: 3}
+  uiManager: {fileID: 1738739434}
+  quickPort: 0
 --- !u!4 &1738739433
 Transform:
   m_ObjectHideFlags: 0
@@ -10704,6 +10784,50 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1738739434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1738739431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a4e89080774caa46912e9fdbf562a09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectionStatusText: {fileID: 445828384}
+  matchObject: {fileID: 8364882422335040266, guid: 55d8e49a0b7a0d7438391f15fdc02e82,
+    type: 3}
+  playerObject: {fileID: 8364882422335040266, guid: 5fdb486e0b7cea746bf26ceef8d81269,
+    type: 3}
+  privateMatchNotFoundImage: {fileID: 21300000, guid: b2a6dc8998799474381415fb9d5a693a,
+    type: 3}
+  multiplayerImage: {fileID: 21300000, guid: 1784c165f82beef44afc683862da9cd9, type: 3}
+  matchHolder: {fileID: 1516710734}
+  usernameField: {fileID: 789310816}
+  createScreen: {fileID: 1019143512}
+  joinFromCodeScreen: {fileID: 294861758}
+  mainScreen: {fileID: 1615917538}
+  createBackButton: {fileID: 1220314278}
+  maxPlayerCountSlider: {fileID: 1476908581}
+  maxPlayerDisplay: {fileID: 24827480}
+  minPlayerCountSlider: {fileID: 748156083}
+  minPlayerDisplay: {fileID: 209677125}
+  matchName: {fileID: 610315032}
+  matchMap: {fileID: 675988235}
+  privateMatch: {fileID: 531519035}
+  createConfirmButton: {fileID: 212878256}
+  matchPopup: {fileID: 453923925}
+  matchCreatePopupTitle: {fileID: 247435660}
+  matchCodeText: {fileID: 1647508653}
+  privateCodeURLText: {fileID: 552473372}
+  invitePlayersQuestionPopup: {fileID: 2053520034}
+  inviteScreen: {fileID: 2069126452}
+  playerHolders: {fileID: 756375442}
+  sendInvitesButton: {fileID: 1217090045}
+  privateMatchJoinCodeText: {fileID: 384011082}
+  screenShakeAnimator: {fileID: 788463324}
 --- !u!1 &1746461236
 GameObject:
   m_ObjectHideFlags: 0
@@ -11239,8 +11363,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1738739432}
-        m_TargetAssemblyTypeName: MythrailEngine.MenuNetworkManager, Assembly-CSharp
+      - m_Target: {fileID: 1738739434}
+        m_TargetAssemblyTypeName: MenuUIManager, Assembly-CSharp
         m_MethodName: OpenCreateScreen
         m_Mode: 1
         m_Arguments:
@@ -11353,7 +11477,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: 20}
+  m_SizeDelta: {x: 15, y: 15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1886482179
 MonoBehaviour:
@@ -11368,7 +11492,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.23921569, g: 0.36078432, b: 0.60784316, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -11660,8 +11784,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1738739432}
-        m_TargetAssemblyTypeName: MythrailEngine.MenuNetworkManager, Assembly-CSharp
+      - m_Target: {fileID: 1738739434}
+        m_TargetAssemblyTypeName: MenuUIManager, Assembly-CSharp
         m_MethodName: JoinPrivateMatch
         m_Mode: 1
         m_Arguments:
@@ -11754,7 +11878,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 531519034}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -11790,8 +11914,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -11808,8 +11932,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16
-  m_fontSizeBase: 16
+  m_fontSize: 15
+  m_fontSizeBase: 15
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

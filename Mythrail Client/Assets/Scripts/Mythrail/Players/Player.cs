@@ -99,8 +99,8 @@ namespace Mythrail.Players
 
             if (!IsLocal)
             { 
-                camTransform.forward = forward;
-                camTransform.rotation = FlattenQuaternion(camTransform.rotation);
+                transform.forward = forward;
+                transform.rotation = FlattenQuaternion(transform.rotation);
             }
             
             if (isCrouching)
