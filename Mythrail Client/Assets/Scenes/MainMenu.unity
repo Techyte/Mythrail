@@ -10954,6 +10954,7 @@ MonoBehaviour:
     type: 3}
   privateMatchNotFoundImage: {fileID: 21300000, guid: b2a6dc8998799474381415fb9d5a693a,
     type: 3}
+  tickImage: {fileID: 21300000, guid: bcd7a67c230d0704ca7ed01a05457cb7, type: 3}
   multiplayerImage: {fileID: 21300000, guid: 1784c165f82beef44afc683862da9cd9, type: 3}
   matchHolder: {fileID: 1516710734}
   usernameField: {fileID: 789310816}

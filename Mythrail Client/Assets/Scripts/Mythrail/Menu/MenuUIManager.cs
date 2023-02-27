@@ -20,6 +20,7 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private GameObject matchObject;
     [SerializeField] private GameObject playerObject;
     [SerializeField] private Sprite privateMatchNotFoundImage;
+    [SerializeField] private Sprite tickImage;
     [SerializeField] private Sprite multiplayerImage;
     [Space]
     
@@ -92,6 +93,7 @@ public class MenuUIManager : MonoBehaviour
     {
         connectionStatusText.text = "Server Shut Down";
         OpenMainScreen();
+        NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "Disconnected", "Connection to the Mythrail servers was lost", 2);
     }
 
     private void UpdateMinMax()
@@ -103,7 +105,7 @@ public class MenuUIManager : MonoBehaviour
     public void Connected()
     {
         connectionStatusText.text = "Connected";
-        NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.", 2);
+        NotificationManager.Singleton.QueNotification(tickImage, "Connected", "Connected to the Mythrail serves.", 2);
     }
 
     public void LoadUsername(string username)
@@ -189,7 +191,7 @@ public class MenuUIManager : MonoBehaviour
 
     private void NotConnected()
     {
-        NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "No Connection", "You are not connected to the Mythrail servers", 2);
+        NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "No Connection", "You are not connected to the Mythrail servers.", 2);
         ShakeScreen();
     }
 
