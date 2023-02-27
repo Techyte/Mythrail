@@ -196,7 +196,7 @@ namespace Mythrail_Game_Server
              string code = GenerateGameCode();
              Console.WriteLine(isPrivate.ToString());
              matchProcess.StartInfo.Arguments =
-                 $"port:{port.ToString()} maxPlayers:{maxPlayers.ToString()} minPlayers:{minPlayers.ToString()} isPrivate:{isPrivate.ToString()}";
+                 $"port:{port.ToString()} maxPlayers:{maxPlayers.ToString()} minPlayers:{minPlayers.ToString()} isPrivate:{isPrivate.ToString()} code:{code}";
         
              matchProcess.Start();
         
@@ -267,7 +267,6 @@ namespace Mythrail_Game_Server
          private static void JoinPrivateMatch(ushort fromClientId, Message message)
          {
              string codeKey = message.GetString();
-             Console.WriteLine(codeKey);
              foreach (MatchInfo match in matches)
              {
                  if (match.code == codeKey)

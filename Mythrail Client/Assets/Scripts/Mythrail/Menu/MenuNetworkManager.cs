@@ -113,9 +113,16 @@ namespace Mythrail.Menu
             Client = new Client();
             Client.Connected += ClientConnected;
             Client.ConnectionFailed += uiManager.ConnectionFailed;
-            Singleton.Client.Connect($"{ip}:{port}");
+            Client.Disconnected += uiManager.Disconnected;
+            Connect();
             
             RichPresenseManager.Singleton.UpdateStatus("In Main Menu", "Idling", false);
+        }
+
+        public void Connect()
+        {
+            Singleton.Client.Connect($"{ip}:{port}");
+            uiManager.Connecting();
         }
 
         private void SendInitialServerInfo()
@@ -133,7 +140,6 @@ namespace Mythrail.Menu
 
         public void OnUsernameFieldChanged(string newUsername)
         {
-            username = newUsername;
             SaveUsername(newUsername);
             uiManager.SendUpdatedUsername(newUsername);
         }

@@ -81,6 +81,9 @@ namespace Mythrail.Game
 
         public void NewUpdate(uint tick, bool isTeliport, Vector3 position)
         {
+            if (IsInfinite(position))
+                return;
+            
             if (tick <= NetworkManager.Singleton.InterpolationTick)
                 return; 
 
@@ -95,6 +98,17 @@ namespace Mythrail.Game
 
             futureTransformUpdates.Add(new TransformUpdate(tick, isTeliport, position));
         }
-    }
 
+        public bool IsInfinite(Vector3 position)
+        {
+            if (float.IsNegativeInfinity(position.x) || float.IsPositiveInfinity(position.x))
+                return true;
+            if (float.IsNegativeInfinity(position.y) || float.IsPositiveInfinity(position.y))
+                return true;
+            if (float.IsNegativeInfinity(position.z) || float.IsPositiveInfinity(position.z))
+                return true;
+
+            return false;
+        }
+    }
 }

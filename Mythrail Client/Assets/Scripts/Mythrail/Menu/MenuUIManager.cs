@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using Mythrail.Menu;
 using Mythrail.Multiplayer;
 using Mythrail.Notifications;
@@ -79,7 +80,18 @@ public class MenuUIManager : MonoBehaviour
     {
         maxPlayerCountSlider.onValueChanged.AddListener(delegate { UpdateMinMax(); });
         minPlayerCountSlider.onValueChanged.AddListener(delegate { UpdateMinMax(); });
+        Connecting();
+    }
+
+    public void Connecting()
+    {
         connectionStatusText.text = "Connecting...";
+    }
+
+    public void Disconnected(object o, DisconnectedEventArgs e)
+    {
+        connectionStatusText.text = "Server Shut Down";
+        OpenMainScreen();
     }
 
     private void UpdateMinMax()
@@ -91,6 +103,7 @@ public class MenuUIManager : MonoBehaviour
     public void Connected()
     {
         connectionStatusText.text = "Connected";
+        NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.", 2);
     }
 
     public void LoadUsername(string username)
@@ -101,7 +114,9 @@ public class MenuUIManager : MonoBehaviour
     public void SendUpdatedUsername(string newUsername)
     {
         if(newUsername == MenuNetworkManager.username) return;
-            
+        
+        Debug.Log("updating username");
+        
         if (string.IsNullOrEmpty(newUsername))
         {
             NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.", 2);
@@ -125,10 +140,16 @@ public class MenuUIManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(MenuNetworkManager.username))
         {
-            NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.", 2);
-            ShakeScreen();
+            UsernameEmpty();
             return;
         }
+
+        if (!MenuNetworkManager.Singleton.Client.IsConnected)
+        {
+            NotConnected();
+            return;
+        }
+        
         createScreen.SetActive(true);
         mainScreen.SetActive(false);
         joinFromCodeScreen.SetActive(false);
@@ -145,13 +166,31 @@ public class MenuUIManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(MenuNetworkManager.username))
         {
-            NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.", 2);
-            ShakeScreen();
+            UsernameEmpty();
             return;
         }
+
+        if (!MenuNetworkManager.Singleton.Client.IsConnected)
+        {
+            NotConnected();
+            return;
+        }
+        
         createScreen.SetActive(false);
         mainScreen.SetActive(false);
         joinFromCodeScreen.SetActive(true);
+    }
+
+    private void UsernameEmpty()
+    {
+        NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.", 2);
+        ShakeScreen();
+    }
+
+    private void NotConnected()
+    {
+        NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "No Connection", "You are not connected to the Mythrail servers", 2);
+        ShakeScreen();
     }
 
     public void EnableInviteScreen(List<ClientInfo> clientInfos)
@@ -184,7 +223,7 @@ public class MenuUIManager : MonoBehaviour
                     invitedClients.Add(player);
                 }
             }
-                
+            
             Message message = Message.Create(MessageSendMode.Reliable, ClientToGameServerId.invites);
             message.AddClientInfos(invitedClients.ToArray());
             message.AddUShort(MenuNetworkManager.Singleton.quickPort);
@@ -276,7 +315,7 @@ public class MenuUIManager : MonoBehaviour
     public void JoinPrivateMatch()
     {
         Message message = Message.Create(MessageSendMode.Reliable, ClientToGameServerId.joinPrivateMatch);
-        message.AddString(privateMatchJoinCodeText.text);
+        message.AddString(privateMatchJoinCodeText.text.ToUpper());
         MenuNetworkManager.Singleton.Client.Send(message);
     }
 
@@ -299,5 +338,11 @@ public class MenuUIManager : MonoBehaviour
         {
             MenuNetworkManager.Singleton.JoinMatch(port);
         };
+    }
+
+    public void RefreshConnection()
+    {
+        MenuNetworkManager.Singleton.Connect();
+        OpenMainScreen();
     }
 }

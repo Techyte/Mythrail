@@ -101,6 +101,8 @@ namespace Mythrail.Multiplayer
         private bool isPrivate;
         private ushort maxClientCount;
         private ushort clientCount;
+
+        public string code;
         
         private void Awake()
         {
@@ -295,6 +297,7 @@ namespace Mythrail.Multiplayer
             Singleton.isPrivate = message.GetBool();
             ushort clientCount = message.GetUShort();
             Singleton.maxClientCount = message.GetUShort();
+            Singleton.code = message.GetString();
             if (isInGame)
             {
                 Singleton.LoadGame();

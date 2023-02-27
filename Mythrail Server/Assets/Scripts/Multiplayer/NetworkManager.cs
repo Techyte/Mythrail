@@ -90,6 +90,8 @@ public class NetworkManager : MonoBehaviour
     private float emptyLobbyTimerCurrent;
 
     private bool isPrivate;
+
+    public string code;
     
     private void Awake()
     {
@@ -118,6 +120,10 @@ public class NetworkManager : MonoBehaviour
             {
                 string[] splitArg = args[i].Split(":");
                 isPrivate = bool.Parse(splitArg[1]);
+            }else if (args[i].StartsWith("code"))
+            {
+                string[] splitArg = args[i].Split(":");
+                code = splitArg[1];
             }
         }
 
@@ -294,6 +300,7 @@ public class NetworkManager : MonoBehaviour
         resaultMessage.AddBool(Singleton.isPrivate);
         resaultMessage.AddUShort((ushort)Singleton.Server.ClientCount);
         resaultMessage.AddUShort(Singleton.Server.MaxClientCount);
+        resaultMessage.AddString(Singleton.code);
         Singleton.Server.Send(resaultMessage, fromClientId);
     }
 }

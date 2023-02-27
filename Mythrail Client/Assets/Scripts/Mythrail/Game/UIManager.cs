@@ -1,3 +1,4 @@
+using Mythrail.Multiplayer;
 using Mythrail.Players;
 using UnityEngine;
 using TMPro;
@@ -34,6 +35,7 @@ namespace Mythrail.Game
         public TextMeshProUGUI HUDUsernameDisplay;
         public TextMeshProUGUI LoadingStatusDisplay;
         public TextMeshProUGUI GunName;
+        public Button CodeDisplay;
 
         private void Awake()
         {
@@ -54,6 +56,9 @@ namespace Mythrail.Game
                 LoadingStatusDisplay = GameObject.Find("Loading...").GetComponent<TextMeshProUGUI>();
                 GunName = GameObject.Find("GunName").GetComponent<TextMeshProUGUI>();
             }
+            CodeDisplay = GameObject.Find("CodeDisplay").GetComponent<Button>();
+            CodeDisplay.GetComponentInChildren<TextMeshProUGUI>().text = NetworkManager.Singleton.code;
+            CodeDisplay.onClick.AddListener(CopyCode);
         }
 
         private void Update()
@@ -68,6 +73,11 @@ namespace Mythrail.Game
             UIHealthBar.localScale = Vector3.Lerp(UIHealthBar.localScale, new Vector3(healthRatio, 1, 1), Time.deltaTime * 8f);
 
             UIHealthBar.GetComponent<Image>().color = Player.LocalPlayer.currentHealth <= 10 ? Color.red : Color.green;
+        }
+
+        public void CopyCode()
+        {
+            GUIUtility.systemCopyBuffer = NetworkManager.Singleton.code;
         }
     }
 
