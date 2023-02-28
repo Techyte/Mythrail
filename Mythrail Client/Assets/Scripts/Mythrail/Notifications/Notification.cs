@@ -63,7 +63,6 @@ namespace Mythrail.Notifications
 
                 if (transform.position.x >= NotificationManager.Singleton.startPosObj.transform.position.x - 1)
                 {
-                    Debug.Log("Destroying");
                     Destroy(gameObject);
                 }
             }

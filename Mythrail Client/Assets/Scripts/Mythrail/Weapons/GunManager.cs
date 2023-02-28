@@ -36,7 +36,7 @@ namespace Mythrail.Weapons
             
             if (!player.IsLocal) return;
             
-            if (Player.LocalPlayer.playerController.canMove)
+            if (Player.LocalPlayer.playerController.canMove && Cursor.lockState == CursorLockMode.Locked)
             {
                 if (Input.GetMouseButton(0))
                 {

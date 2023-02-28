@@ -46,12 +46,7 @@ namespace Mythrail.Players
 
         private void OnApplicationFocus(bool hasFocus)
         {
-            if (hasFocus)
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                pauseScreen.SetActive(false);
-            }
-            else
+            if (!hasFocus)
             {
                 Cursor.lockState = CursorLockMode.None;
                 pauseScreen.SetActive(true);

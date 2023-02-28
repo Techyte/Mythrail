@@ -6,18 +6,6 @@ using System.Collections;
 
 namespace Mythrail.Notifications
 {
-    public class NotificationCalledArgs : EventArgs
-    {
-        public int notificationIndex;
-        public Notification notification;
-
-        public NotificationCalledArgs(int notificationIndex, Notification notification)
-        {
-            this.notificationIndex = notificationIndex;
-            this.notification = notification;
-        }
-    }
-    
     public class NotificationManager : MonoBehaviour
     {
         public static NotificationManager Singleton;
@@ -61,7 +49,6 @@ namespace Mythrail.Notifications
         {
             if (!_currentNotification && _queue.Count > 0)
             {
-                Debug.Log("displaying new");
                 Notification next = _queue.Dequeue();
                 _currentNotification = next;
                 next.Enable();

@@ -126,15 +126,21 @@ public class Player : MonoBehaviour
     }
 
     public void Died()
-    {   
-        rb.velocity = Vector3.zero;
-        transform.position = NetworkManager.Singleton.GetRandomSpawnPoint().position;
-        currentHealth = maxHealth;
+    {
+        Respawn();
         
         Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.playerDied);
         message.AddUShort(Id);
         NetworkManager.Singleton.Server.SendToAll(message);
         SendHealth();
+    }
+
+    private void Respawn()
+    {
+        rb.velocity = Vector3.zero;
+        //transform.position = NetworkManager.Singleton.GetRandomSpawnPoint().position;
+        transform.position = Vector3.zero;
+        currentHealth = maxHealth;
     }
 
     private void SendKilled(ushort playerShotId, ushort killedPlayerId)

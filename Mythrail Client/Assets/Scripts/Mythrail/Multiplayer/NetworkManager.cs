@@ -4,6 +4,7 @@ using System;
 using Mythrail.Game;
 using Mythrail.General;
 using Mythrail.Menu;
+using Mythrail.Notifications;
 using Mythrail.Players;
 using UnityEngine.SceneManagement;
 
@@ -97,6 +98,10 @@ namespace Mythrail.Multiplayer
         [SerializeField] private GameObject BufferCamera;
 
         [SerializeField] private bool PlayerReady;
+        [Space] 
+        [SerializeField] private Sprite kickedImage;
+
+        [SerializeField] private Sprite xImage;
 
         private bool isPrivate;
         private ushort maxClientCount;
@@ -134,12 +139,6 @@ namespace Mythrail.Multiplayer
             Client.ClientConnected += ClientConnected;
 
             ServerTick = 2;
-
-            SceneManager.sceneLoaded += (scene, mode) =>
-            {
-                if(scene.name == "MainMenu")
-                    Destroy(Singleton.gameObject);
-            };
             
             Connect();
         }
@@ -175,6 +174,7 @@ namespace Mythrail.Multiplayer
             Cursor.lockState = CursorLockMode.None;
             Player.list.Clear();
             Client.Disconnect();
+            NotificationManager.Singleton.QueNotification(xImage, "Could not connect", "The match does not exist or something went wrong.", 2);
             SceneManager.LoadScene("MainMenu");
         }
 
@@ -227,6 +227,8 @@ namespace Mythrail.Multiplayer
             Cursor.lockState = CursorLockMode.None;
             Player.list.Clear();
             Client.Disconnect();
+            Debug.Log("we think the server disconnected us");
+            NotificationManager.Singleton.QueNotification(kickedImage, "Kicked from match", "The match server shut down and you were kicked.", 2);
             SceneManager.LoadScene("MainMenu");
         }
 
