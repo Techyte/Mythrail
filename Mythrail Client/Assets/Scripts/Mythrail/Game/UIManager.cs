@@ -55,10 +55,10 @@ namespace Mythrail.Game
                 HUDUsernameDisplay = GameObject.Find("UsernameText").GetComponent<TextMeshProUGUI>();
                 LoadingStatusDisplay = GameObject.Find("Loading...").GetComponent<TextMeshProUGUI>();
                 GunName = GameObject.Find("GunName").GetComponent<TextMeshProUGUI>();
+                CodeDisplay = GameObject.Find("CodeDisplay").GetComponent<Button>();
+                CodeDisplay.GetComponentInChildren<TextMeshProUGUI>().text = NetworkManager.Singleton.code;
+                CodeDisplay.onClick.AddListener(CopyCode);
             }
-            CodeDisplay = GameObject.Find("CodeDisplay").GetComponent<Button>();
-            CodeDisplay.GetComponentInChildren<TextMeshProUGUI>().text = NetworkManager.Singleton.code;
-            CodeDisplay.onClick.AddListener(CopyCode);
         }
 
         private void Update()

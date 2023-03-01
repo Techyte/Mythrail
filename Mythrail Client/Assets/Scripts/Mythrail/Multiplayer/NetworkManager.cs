@@ -119,9 +119,13 @@ namespace Mythrail.Multiplayer
 
         private void CheckForMainMenu(Scene scene, LoadSceneMode loadSceneMode)
         {
-            if (SceneManager.GetActiveScene().name == "BattleFeild")
+            if (scene.name == "BattleFeild")
             {
                 BufferCamera = GameObject.Find("Buffer Camera");
+            }
+            else if(scene.name == "MainMenu")
+            {
+                Destroy(gameObject);
             }
         }
 
