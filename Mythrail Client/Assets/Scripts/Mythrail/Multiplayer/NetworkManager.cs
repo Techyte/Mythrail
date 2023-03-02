@@ -117,16 +117,22 @@ namespace Mythrail.Multiplayer
             DontDestroyOnLoad(gameObject);
         }
 
+        public void Disconnect()
+        {
+            Client.Disconnect();
+        }
+
         private void CheckForMainMenu(Scene scene, LoadSceneMode loadSceneMode)
         {
             if (scene.name == "BattleFeild")
             {
                 BufferCamera = GameObject.Find("Buffer Camera");
             }
-            else if(scene.name == "MainMenu")
-            {
-                Destroy(gameObject);
-            }
+        }
+
+        public void SelfDestruct()
+        {
+            Destroy(gameObject);
         }
 
         private void Start()
@@ -177,9 +183,8 @@ namespace Mythrail.Multiplayer
         {
             Cursor.lockState = CursorLockMode.None;
             Player.list.Clear();
-            Client.Disconnect();
             NotificationManager.Singleton.QueNotification(xImage, "Could not connect", "The match does not exist or something went wrong.", 2);
-            SceneManager.LoadScene("MainMenu");
+            ObjectLoaderManager.LoadMainMenu();
         }
 
         private void Connect()
@@ -233,7 +238,7 @@ namespace Mythrail.Multiplayer
             Client.Disconnect();
             Debug.Log("we think the server disconnected us");
             NotificationManager.Singleton.QueNotification(kickedImage, "Kicked from match", "The match server shut down and you were kicked.", 2);
-            SceneManager.LoadScene("MainMenu");
+            ObjectLoaderManager.LoadMainMenu();
         }
 
         public static bool hasBeenReadyOnce;

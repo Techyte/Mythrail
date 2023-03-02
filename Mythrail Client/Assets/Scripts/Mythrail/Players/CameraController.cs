@@ -1,3 +1,4 @@
+using Mythrail.General;
 using Mythrail.Multiplayer;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -93,8 +94,7 @@ namespace Mythrail.Players
             Cursor.lockState = CursorLockMode.None;
             pauseScreen.SetActive(true);
             Player.list.Clear();
-            NetworkManager.Singleton.Client.Disconnect();
-            SceneManager.LoadScene("MainMenu");
+            ObjectLoaderManager.LoadMainMenu();
         }
     }
 
