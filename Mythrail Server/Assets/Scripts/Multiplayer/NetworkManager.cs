@@ -141,9 +141,12 @@ public class NetworkManager : MonoBehaviour
         SceneManager.sceneLoaded += UpdateReferences;
     }
 
-    public Transform GetRandomSpawnPoint()
+    public Vector3 GetRandomSpawnPoint()
     {
-        return spawnPoints[Random.Range(0, spawnPoints.Count)];
+        Vector3 spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)].position;
+        Debug.Log($"We chose {spawnPoint}");
+        
+        return spawnPoint;
     }
 
     private void UpdateReferences(Scene scene, LoadSceneMode loadSceneMode)

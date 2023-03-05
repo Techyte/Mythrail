@@ -16,7 +16,6 @@ public class Player : MonoBehaviour
 
     [SerializeField] private PlayerMovement movement;
     [SerializeField] private GunManager gunManager;
-    [SerializeField] private Rigidbody rb;
 
     public int currentHealth;
     public int maxHealth;
@@ -30,11 +29,6 @@ public class Player : MonoBehaviour
         list.Remove(Id);
     }
 
-    private void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
-
     public static void Spawn(ushort id, string username)
     {
         Player player = Instantiate(GameLogic.Singleton.PlayerPrefab, new Vector3(0f, 10f, 0f), Quaternion.identity).GetComponent<Player>();
@@ -44,8 +38,8 @@ public class Player : MonoBehaviour
 
         player.currentHealth = player.maxHealth;
 
-        Transform spawnPoint = NetworkManager.Singleton.GetRandomSpawnPoint();
-        player.transform.position = spawnPoint.position;
+        Vector3 spawnPoint = NetworkManager.Singleton.GetRandomSpawnPoint();
+        player.transform.position = spawnPoint;
         
         if (SceneManager.GetActiveScene().buildIndex == 0)
         {
@@ -110,6 +104,22 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void TakeEditorDamage(int damage)
+    {
+        currentHealth -= damage;
+
+        Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.playerTookDamage);
+        message.AddInt(Id);
+        NetworkManager.Singleton.Server.SendToAll(message);
+        
+        SendHealth();
+
+        if (currentHealth <= 0)
+        {
+            Died();
+        }
+    }
+
     private void SendHealth()
     {
         Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.playerHealth);
@@ -137,9 +147,11 @@ public class Player : MonoBehaviour
 
     private void Respawn()
     {
-        rb.velocity = Vector3.zero;
-        //transform.position = NetworkManager.Singleton.GetRandomSpawnPoint().position;
-        transform.position = Vector3.zero;
+        Vector3 spawnPoint = NetworkManager.Singleton.GetRandomSpawnPoint();
+        Debug.Log($"We received {spawnPoint}");
+        transform.position = spawnPoint;
+        Debug.Log($"We ended up in {transform.position}");
+            
         currentHealth = maxHealth;
     }
 
