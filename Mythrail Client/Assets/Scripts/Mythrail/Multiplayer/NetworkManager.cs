@@ -33,6 +33,7 @@ namespace Mythrail.Multiplayer
         playerHealth,
         gameStarted,
         isInGameResult,
+        regularCam,
     }
 
     public enum ClientToServerId : ushort
@@ -240,7 +241,7 @@ namespace Mythrail.Multiplayer
             NotificationManager.Singleton.QueNotification(kickedImage, "Kicked from match", "The match server shut down and you were kicked.", 2);
             ObjectLoaderManager.LoadMainMenu();
         }
-
+        
         public static bool hasBeenReadyOnce;
         private void SetTick(ushort serverTick)
         {

@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using Riptide;
 using System.Collections.Generic;
@@ -20,7 +19,11 @@ public class Player : MonoBehaviour
     public int currentHealth;
     public int maxHealth;
 
-    [SerializeField] private float respawnDelay = 5f;
+    public bool respawning;
+
+    public float RespawnDelay => respawnDelay;
+
+    [SerializeField] private int respawnDelay = 5;
 
     public bool isGameReady;
 
@@ -141,6 +144,7 @@ public class Player : MonoBehaviour
         
         Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.playerDied);
         message.AddUShort(Id);
+        message.AddInt(respawnDelay);
         NetworkManager.Singleton.Server.SendToAll(message);
         SendHealth();
     }
@@ -148,9 +152,8 @@ public class Player : MonoBehaviour
     private void Respawn()
     {
         Vector3 spawnPoint = NetworkManager.Singleton.GetRandomSpawnPoint();
-        Debug.Log($"We received {spawnPoint}");
         transform.position = spawnPoint;
-        Debug.Log($"We ended up in {transform.position}");
+        movement.StartRespawnDelay();
             
         currentHealth = maxHealth;
     }

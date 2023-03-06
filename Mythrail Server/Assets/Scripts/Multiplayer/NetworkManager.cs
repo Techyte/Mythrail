@@ -24,6 +24,7 @@ public enum ServerToClientId : ushort
     playerHealth,
     gameStarted,
     isInGameResult,
+    regularCam,
 }
 
 public enum ClientToServerId : ushort
@@ -144,7 +145,6 @@ public class NetworkManager : MonoBehaviour
     public Vector3 GetRandomSpawnPoint()
     {
         Vector3 spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)].position;
-        Debug.Log($"We chose {spawnPoint}");
         
         return spawnPoint;
     }

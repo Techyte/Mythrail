@@ -1,3 +1,4 @@
+using System.Collections;
 using Riptide;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -61,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move(Vector2 inputDirection, bool jump, bool sprint, bool isCrouching)
     {
-        if(canMove)
+        if(canMove && !player.respawning)
         {
             inputDirection.Normalize();
             transform.rotation = FlattenQuaternion(camProxy.rotation);
@@ -112,6 +113,27 @@ public class PlayerMovement : MonoBehaviour
 
             SendMovement();
         }
+    }
+
+    public void StartRespawnDelay()
+    {
+        StartCoroutine(RespawnDelay());
+    }
+
+    private IEnumerator RespawnDelay()
+    {
+        canMove = false;
+        player.respawning = true;
+        yield return new WaitForSeconds(player.RespawnDelay);
+        canMove = true;
+        player.respawning = false;
+        SendRespawned();
+    }
+
+    private void SendRespawned()
+    {
+        Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.regularCam);
+        NetworkManager.Singleton.Server.Send(message, player.Id);
     }
     
     private Quaternion FlattenQuaternion(Quaternion quaternion)

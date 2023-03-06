@@ -1,3 +1,6 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using Mythrail.Multiplayer;
 using Mythrail.Players;
 using UnityEngine;
@@ -36,6 +39,12 @@ namespace Mythrail.Game
         public TextMeshProUGUI LoadingStatusDisplay;
         public TextMeshProUGUI GunName;
         public Button CodeDisplay;
+        public GameObject RespawningScreen;
+        public GameObject PlayScreen;
+        public TextMeshProUGUI CountdownText;
+        public Button RespawnButton;
+
+        private int countdown;
 
         private void Awake()
         {
@@ -58,7 +67,44 @@ namespace Mythrail.Game
                 CodeDisplay = GameObject.Find("CodeDisplay").GetComponent<Button>();
                 CodeDisplay.GetComponentInChildren<TextMeshProUGUI>().text = NetworkManager.Singleton.code;
                 CodeDisplay.onClick.AddListener(CopyCode);
+                RespawningScreen = GameObject.Find("RespawnScreen");
+                PlayScreen = GameObject.Find("PlayScreen");
+                CountdownText = GameObject.Find("CountdownText").GetComponent<TextMeshProUGUI>();
+                RespawnButton = GameObject.Find("RespawnButton").GetComponent<Button>();
+                RespawnButton.onClick.AddListener(Respawn);
             }
+        }
+
+        public void CanRespawn()
+        {
+            RespawnButton.interactable = true;
+            CountdownText.text = "CAN RESPAWN";
+        }
+
+        public void OpenRespawnScreen(int countdownTime)
+        {
+            PlayScreen.SetActive(false);
+            RespawningScreen.SetActive(true);
+            CountdownText.text = $"RESPAWNING IN {countdownTime}";
+            countdown = countdownTime;
+            StartCoroutine(CountDown());
+        }
+
+        private IEnumerator CountDown()
+        {
+            int initialCountdown = countdown;
+            
+            for (int i = initialCountdown; i > 0; i--)
+            {
+                yield return new WaitForSeconds(1);
+                countdown--;
+                CountdownText.text = $"RESPAWNING IN {i}";
+            }
+        }
+
+        public void Respawn()
+        {
+            
         }
 
         private void Update()

@@ -202,8 +202,21 @@ namespace Mythrail.Players
         private void Died()
         {
             deaths++;
-            if (this != LocalPlayer) return;
-            UpdateKillsAndDeaths();
+            SetPlayerDeadModel();
+            if (this != LocalPlayer)
+            {
+                UpdateKillsAndDeaths();
+            }
+        }
+
+        private void ShowRespawnScreen()
+        {
+            // TODO: show respawn screen
+        }
+
+        private void SetPlayerDeadModel()
+        {
+            // TODO: set player dea model
         }
 
         private void UpdateKillsAndDeaths()
@@ -274,6 +287,12 @@ namespace Mythrail.Players
         {
             if (list.TryGetValue(message.GetUShort(), out Player player))
                 player.NewHealth(message.GetUShort(), message.GetUShort());
+        }
+
+        [MessageHandler((ushort)ServerToClientId.regularCam)]
+        private static void RegularCam(Message message)
+        {
+            // TODO: return to regular camera
         }
     }
 }
