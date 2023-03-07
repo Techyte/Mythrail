@@ -24,6 +24,7 @@ public enum ServerToClientId : ushort
     playerHealth,
     gameStarted,
     isInGameResult,
+    playerCanRespawn,
     regularCam,
 }
 
@@ -34,6 +35,7 @@ public enum ClientToServerId : ushort
     weaponInput,
     ready,
     isInGameRequest,
+    playerWantsToRespawn,
 }
 
 public enum LobbyServerToClient : ushort

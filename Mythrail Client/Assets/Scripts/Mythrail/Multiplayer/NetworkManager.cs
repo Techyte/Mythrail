@@ -33,6 +33,7 @@ namespace Mythrail.Multiplayer
         playerHealth,
         gameStarted,
         isInGameResult,
+        playerCanRespawn,
         regularCam,
     }
 
@@ -43,6 +44,7 @@ namespace Mythrail.Multiplayer
         weaponInput,
         ready,
         isInGameRequest,
+        playerWantsToRespawn,
     }
     
     public class NetworkManager : MonoBehaviour

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using Riptide;
 using System.Collections.Generic;
@@ -140,7 +141,7 @@ public class Player : MonoBehaviour
 
     public void Died()
     {
-        Respawn();
+        StartRespawn();
         
         Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.playerDied);
         message.AddUShort(Id);
@@ -149,13 +150,25 @@ public class Player : MonoBehaviour
         SendHealth();
     }
 
+    private void StartRespawn()
+    {
+        movement.StartRespawnDelay();
+    }
+
     private void Respawn()
     {
         Vector3 spawnPoint = NetworkManager.Singleton.GetRandomSpawnPoint();
         transform.position = spawnPoint;
-        movement.StartRespawnDelay();
-            
         currentHealth = maxHealth;
+        movement.canMove = true;
+        respawning = false;
+        SendRegularCam();
+    }
+
+    private void SendRegularCam()
+    {
+        Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.regularCam);
+        NetworkManager.Singleton.Server.Send(message, Id);
     }
 
     private void SendKilled(ushort playerShotId, ushort killedPlayerId)
@@ -197,6 +210,15 @@ public class Player : MonoBehaviour
         if (list.TryGetValue(fromClientId, out Player player))
         {
             player.GunManager.SetInputs(message.GetBools(4));
+        }
+    }
+
+    [MessageHandler((ushort)ClientToServerId.playerWantsToRespawn)]
+    private static void PlayerWantsToRespawn(ushort fromClientId, Message message)
+    {
+        if (list.TryGetValue(fromClientId, out Player player))
+        {
+            player.Respawn();
         }
     }
 }

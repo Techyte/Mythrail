@@ -125,14 +125,12 @@ public class PlayerMovement : MonoBehaviour
         canMove = false;
         player.respawning = true;
         yield return new WaitForSeconds(player.RespawnDelay);
-        canMove = true;
-        player.respawning = false;
-        SendRespawned();
+        SendCanRespawn();
     }
 
-    private void SendRespawned()
+    private void SendCanRespawn()
     {
-        Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.regularCam);
+        Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.playerCanRespawn);
         NetworkManager.Singleton.Server.Send(message, player.Id);
     }
     

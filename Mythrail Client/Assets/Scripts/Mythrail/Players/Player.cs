@@ -40,6 +40,8 @@ namespace Mythrail.Players
         private int kills;
         private int deaths;
 
+        public bool respawning;
+
         private Vector3 NewPosition;
 
         public PlayerController playerController;
@@ -48,6 +50,8 @@ namespace Mythrail.Players
 
         [SerializeField] private GameObject crouchingModel;
         [SerializeField] private GameObject defaultModel;
+
+        public CameraController _cameraController => GetComponentInChildren<CameraController>();
 
         [SerializeField] private Transform crouchingCameraPos;
         [SerializeField] private Transform defaultCameraPos;
@@ -199,19 +203,22 @@ namespace Mythrail.Players
             UpdateKillsAndDeaths();
         }
 
-        private void Died()
+        private void Died(int respawnDelay)
         {
+            Debug.Log("Died");
+            respawning = true;
             deaths++;
             SetPlayerDeadModel();
-            if (this != LocalPlayer)
+            if (this == LocalPlayer)
             {
                 UpdateKillsAndDeaths();
+                ShowRespawnScreen(respawnDelay);
             }
         }
 
-        private void ShowRespawnScreen()
+        private void ShowRespawnScreen(int respawnDelay)
         {
-            // TODO: show respawn screen
+            UIManager.Singleton.OpenRespawnScreen(respawnDelay);
         }
 
         private void SetPlayerDeadModel()
@@ -279,7 +286,7 @@ namespace Mythrail.Players
         private static void PlayerDied(Message message)
         {
             if(list.TryGetValue(message.GetUShort(), out Player player))
-                player.Died();
+                player.Died(message.GetInt());
         }
 
         [MessageHandler((ushort)ServerToClientId.playerHealth)]
@@ -289,10 +296,10 @@ namespace Mythrail.Players
                 player.NewHealth(message.GetUShort(), message.GetUShort());
         }
 
-        [MessageHandler((ushort)ServerToClientId.regularCam)]
+        [MessageHandler((ushort)ServerToClientId.playerCanRespawn)]
         private static void RegularCam(Message message)
         {
-            // TODO: return to regular camera
+            UIManager.Singleton.CanRespawn();
         }
     }
 }

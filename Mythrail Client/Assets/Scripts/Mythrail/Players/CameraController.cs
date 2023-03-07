@@ -1,5 +1,4 @@
 using Mythrail.General;
-using Mythrail.Multiplayer;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,6 +10,7 @@ namespace Mythrail.Players
         [SerializeField] private float sensitivity = 100f;
         [SerializeField] private float clampAngle = 85f;
 
+        public bool canPause = true;
         [SerializeField] private GameObject pauseScreen;
 
         private float verticalRotation;
@@ -47,7 +47,7 @@ namespace Mythrail.Players
 
         private void OnApplicationFocus(bool hasFocus)
         {
-            if (!hasFocus)
+            if (!hasFocus && canPause)
             {
                 Cursor.lockState = CursorLockMode.None;
                 pauseScreen.SetActive(true);
@@ -68,19 +68,22 @@ namespace Mythrail.Players
             player.rotation = Quaternion.Euler(0f, horizontalRotation, 0f);
         }
 
-        private void ToggleCursorMode()
+        public void ToggleCursorMode()
         {
-            if (Cursor.lockState == CursorLockMode.None)
+            if(canPause)
             {
-                Cursor.lockState = CursorLockMode.Locked;
-                pauseScreen.SetActive(false);
-                Cursor.visible = false;
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.None;
-                pauseScreen.SetActive(true);
-                Cursor.visible = true;
+                if (Cursor.lockState == CursorLockMode.None)
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    pauseScreen.SetActive(false);
+                    Cursor.visible = false;
+                }
+                else
+                {
+                    Cursor.lockState = CursorLockMode.None;
+                    pauseScreen.SetActive(true);
+                    Cursor.visible = true;
+                }
             }
         }
 

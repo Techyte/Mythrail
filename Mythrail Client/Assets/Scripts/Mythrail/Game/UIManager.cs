@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Mythrail.Multiplayer;
 using Mythrail.Players;
+using Riptide;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
@@ -43,6 +44,7 @@ namespace Mythrail.Game
         public GameObject PlayScreen;
         public TextMeshProUGUI CountdownText;
         public Button RespawnButton;
+        public GameObject PauseScreen;
 
         private int countdown;
 
@@ -71,18 +73,31 @@ namespace Mythrail.Game
                 PlayScreen = GameObject.Find("PlayScreen");
                 CountdownText = GameObject.Find("CountdownText").GetComponent<TextMeshProUGUI>();
                 RespawnButton = GameObject.Find("RespawnButton").GetComponent<Button>();
+                PauseScreen = GameObject.Find("PauseMenu");
                 RespawnButton.onClick.AddListener(Respawn);
+                RespawningScreen.SetActive(false);
             }
         }
+
+        private bool serverSaidWeCanRespawn;
 
         public void CanRespawn()
         {
             RespawnButton.interactable = true;
             CountdownText.text = "CAN RESPAWN";
+            serverSaidWeCanRespawn = true;
+            Debug.Log("Can respawn, server said so");
         }
 
         public void OpenRespawnScreen(int countdownTime)
         {
+            Debug.Log("Respawn Screen opening");
+            
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            
+            
+            Player.LocalPlayer._cameraController.canPause = false;
             PlayScreen.SetActive(false);
             RespawningScreen.SetActive(true);
             CountdownText.text = $"RESPAWNING IN {countdownTime}";
@@ -94,17 +109,27 @@ namespace Mythrail.Game
         {
             int initialCountdown = countdown;
             
-            for (int i = initialCountdown; i > 0; i--)
+            for (int i = initialCountdown-1; i > 0; i--)
             {
-                yield return new WaitForSeconds(1);
-                countdown--;
-                CountdownText.text = $"RESPAWNING IN {i}";
+                if(!serverSaidWeCanRespawn){
+                    yield return new WaitForSeconds(1);
+                    countdown--;
+                    CountdownText.text = $"RESPAWNING IN {i}";
+                }
+                else
+                {
+                    break;
+                }
             }
+            Debug.Log("Can respawn, client said so");
         }
 
         public void Respawn()
         {
-            
+            Message message = Message.Create(MessageSendMode.Reliable, ClientToServerId.playerWantsToRespawn);
+            NetworkManager.Singleton.Client.Send(message);
+            Player.LocalPlayer._cameraController.canPause = true;
+            Player.LocalPlayer._cameraController.ToggleCursorMode();
         }
 
         private void Update()
