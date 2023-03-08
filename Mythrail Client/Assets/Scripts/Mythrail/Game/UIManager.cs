@@ -89,17 +89,24 @@ namespace Mythrail.Game
             Debug.Log("Can respawn, server said so");
         }
 
+        public void Respawned()
+        {
+            Player.LocalPlayer._cameraController.canPause = true;
+            Player.LocalPlayer._cameraController.ToggleCursorMode();
+        }
+
         public void OpenRespawnScreen(int countdownTime)
         {
             Debug.Log("Respawn Screen opening");
             
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-            
-            
             Player.LocalPlayer._cameraController.canPause = false;
+            
             PlayScreen.SetActive(false);
             RespawningScreen.SetActive(true);
+            PauseScreen.SetActive(false);
+            
             CountdownText.text = $"RESPAWNING IN {countdownTime}";
             countdown = countdownTime;
             StartCoroutine(CountDown());
@@ -128,8 +135,7 @@ namespace Mythrail.Game
         {
             Message message = Message.Create(MessageSendMode.Reliable, ClientToServerId.playerWantsToRespawn);
             NetworkManager.Singleton.Client.Send(message);
-            Player.LocalPlayer._cameraController.canPause = true;
-            Player.LocalPlayer._cameraController.ToggleCursorMode();
+            Debug.Log("Pressed Respawn");
         }
 
         private void Update()

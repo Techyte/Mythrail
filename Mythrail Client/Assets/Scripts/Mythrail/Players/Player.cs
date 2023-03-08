@@ -297,9 +297,15 @@ namespace Mythrail.Players
         }
 
         [MessageHandler((ushort)ServerToClientId.playerCanRespawn)]
-        private static void RegularCam(Message message)
+        private static void PlayerCanRespawn(Message message)
         {
             UIManager.Singleton.CanRespawn();
+        }
+
+        [MessageHandler((ushort)ServerToClientId.regularCam)]
+        private static void RegularCam(Message message)
+        {
+            UIManager.Singleton.Respawned();
         }
     }
 }
