@@ -131,11 +131,9 @@ public class MenuUIManager : MonoBehaviour
         if(newUsername == MenuNetworkManager.username) return;
         
         Debug.Log("updating username");
-        
-        if (string.IsNullOrEmpty(newUsername))
+
+        if (!UsernameAcceptable(newUsername))
         {
-            NotificationManager.QueNotification(privateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.", 2);
-            ShakeScreen();
             return;
         }
 
@@ -146,6 +144,17 @@ public class MenuUIManager : MonoBehaviour
         MenuNetworkManager.Singleton.Client.Send(message);
     }
 
+    public bool UsernameAcceptable(string newUsername)
+    {
+        if (string.IsNullOrEmpty(newUsername))
+        {
+            UsernameEmpty();
+            return false;
+        }
+
+        return true;
+    }
+
     public void ConnectionFailed(object o, EventArgs args)
     {
         connectionStatusText.text = "Connection Failed!";
@@ -154,11 +163,21 @@ public class MenuUIManager : MonoBehaviour
 
     public void OpenCreateScreen()
     {
-        if (string.IsNullOrEmpty(MenuNetworkManager.username))
+        if (!UsernameAcceptable(MenuNetworkManager.username))
         {
-            UsernameEmpty();
+            Debug.Log("username not acceptable");
             return;
         }
+        
+        Debug.Log("username acceptable");
+        
+        if (!UsernameAcceptable(usernameField.text))
+        {
+            Debug.Log("username field not acceptable");
+            return;
+        }
+        
+        Debug.Log("username field acceptable");
 
         if (!MenuNetworkManager.Singleton.Client.IsConnected)
         {
