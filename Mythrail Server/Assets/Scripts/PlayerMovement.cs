@@ -19,6 +19,8 @@ public class PlayerMovement : MonoBehaviour
     private float _verticalRotation;
 
     private float _forwardVelocity, _sidewaysVelocity, _verticalVelocity;
+
+    public CharacterController Controller => _controller;
     
     private CharacterController _controller;
 
@@ -104,7 +106,7 @@ public class PlayerMovement : MonoBehaviour
 
             direction = transform.TransformDirection(direction);
 
-            _controller.Move(direction * Time.deltaTime);
+            MovePlayer(direction);
 
             if (transform.position.y <= -15)
             {
@@ -112,6 +114,15 @@ public class PlayerMovement : MonoBehaviour
             }
 
             SendMovement();
+        }
+    }
+
+    private void MovePlayer(Vector3 direction)
+    {
+        if (direction.magnitude > 0)
+        {
+            Debug.Log("Moved");
+            _controller.Move(direction * Time.deltaTime);   
         }
     }
 

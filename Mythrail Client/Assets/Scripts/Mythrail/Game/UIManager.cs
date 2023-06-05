@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Mythrail.Multiplayer;
 using Mythrail.Players;
 using Riptide;
@@ -44,7 +43,7 @@ namespace Mythrail.Game
         public GameObject PlayScreen;
         public TextMeshProUGUI CountdownText;
         public Button RespawnButton;
-        public GameObject PauseScreen;
+        public TextMeshProUGUI PingText;
 
         private int countdown;
 
@@ -57,6 +56,7 @@ namespace Mythrail.Game
 
         private void LoadedGame(Scene scene, LoadSceneMode loadSceneMode)
         {
+            SetPingText();
             if(scene.name == "BattleFeild")
             {
                 UIHealthBar = GameObject.Find("Health").GetComponentsInChildren<Image>()[1].transform;
@@ -73,9 +73,46 @@ namespace Mythrail.Game
                 PlayScreen = GameObject.Find("PlayScreen");
                 CountdownText = GameObject.Find("CountdownText").GetComponent<TextMeshProUGUI>();
                 RespawnButton = GameObject.Find("RespawnButton").GetComponent<Button>();
-                PauseScreen = GameObject.Find("PauseMenu");
                 RespawnButton.onClick.AddListener(Respawn);
                 RespawningScreen.SetActive(false);
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            SetPingText();
+        }
+
+        private void SetPingText()
+        {
+            if (PingText)
+            {
+                if(PingText.isActiveAndEnabled)
+                {
+                    PingText.text = "Ping: " + NetworkManager.Singleton.Client.Connection.RTT;
+                    return;
+                }
+            }
+
+            if (SceneManager.GetActiveScene().name == "Lobby")
+            {
+                if(LobbyPlayer.LocalPlayer)
+                {
+                    if(Cursor.lockState != CursorLockMode.Locked)
+                    {
+                        PingText = GameObject.Find("PingText").GetComponent<TextMeshProUGUI>();
+                    }
+                }
+            }
+            else
+            {
+                if(Player.LocalPlayer)
+                {
+                    if(Cursor.lockState != CursorLockMode.Locked)
+                    {
+                        PingText = GameObject.Find("PingText").GetComponent<TextMeshProUGUI>();
+                    }
+                }   
             }
         }
 
@@ -93,6 +130,8 @@ namespace Mythrail.Game
         {
             Player.LocalPlayer._cameraController.canPause = true;
             Player.LocalPlayer._cameraController.ToggleCursorMode();
+            RespawningScreen.SetActive(false);
+            PlayScreen.SetActive(true);
         }
 
         public void OpenRespawnScreen(int countdownTime)
@@ -105,7 +144,6 @@ namespace Mythrail.Game
             
             PlayScreen.SetActive(false);
             RespawningScreen.SetActive(true);
-            PauseScreen.SetActive(false);
             
             CountdownText.text = $"RESPAWNING IN {countdownTime}";
             countdown = countdownTime;

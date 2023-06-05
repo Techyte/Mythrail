@@ -6358,7 +6358,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ip: 127.0.0.1
-  port: 52135
+  port: 56242
   username: Guest
   TickDivergenceTolerance: 1
   LobbyLoadingScreen: {fileID: 738323054}
@@ -6429,7 +6429,7 @@ MonoBehaviour:
   PlayScreen: {fileID: 0}
   CountdownText: {fileID: 0}
   RespawnButton: {fileID: 0}
-  PauseScreen: {fileID: 0}
+  PingText: {fileID: 0}
 --- !u!1 &1865213740
 GameObject:
   m_ObjectHideFlags: 0

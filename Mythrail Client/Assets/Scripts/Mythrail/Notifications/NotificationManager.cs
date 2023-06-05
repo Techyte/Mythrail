@@ -32,7 +32,7 @@ namespace Mythrail.Notifications
             _queue = new Queue<Notification>();
         }
 
-        public Notification QueNotification(Sprite logo, string title, string content, float stayTime)
+        private Notification queNotification(Sprite logo, string title, string content, float stayTime)
         {
             Notification notification = Instantiate(notificationSRC, startPosObj.transform.position, Quaternion.identity, transform).GetComponent<Notification>();
             notification.logo.sprite = logo;
@@ -43,6 +43,16 @@ namespace Mythrail.Notifications
             _queue.Enqueue(notification);
             
             return notification;
+        }
+
+        public static Notification QueNotification(Sprite logo, string title, string content, float stayTime)
+        {
+            if (Singleton)
+            {
+                return Singleton.queNotification(logo, title, content, stayTime);   
+            }
+
+            return null;
         }
 
         private void Update()

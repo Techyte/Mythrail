@@ -116,7 +116,7 @@ namespace Mythrail.Menu
             Client.Disconnected += uiManager.Disconnected;
             Connect();
             
-            RichPresenseManager.Singleton.UpdateStatus("In Main Menu", "Idling", false);
+            RichPresenseManager.UpdateStatus("In Main Menu", "Idling", false);
         }
 
         public void Connect()

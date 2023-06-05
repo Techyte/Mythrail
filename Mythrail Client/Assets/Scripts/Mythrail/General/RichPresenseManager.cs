@@ -25,7 +25,7 @@ namespace Mythrail.General
             });
         }
     
-        public void UpdateStatus(string details, string state, bool keepCurrentTime)
+        private void updateStatus(string details, string state, bool keepCurrentTime)
         {
             if(Application.isEditor) return;
             var activityManager = discord.GetActivityManager();
@@ -54,6 +54,14 @@ namespace Mythrail.General
                     Debug.LogError("Discord status failed");
                 }
             });
+        }
+
+        public static void UpdateStatus(string details, string state, bool keepCurrentTime)
+        {
+            if (Singleton)
+            {
+                Singleton.updateStatus(details, state, keepCurrentTime);
+            }
         }
     
         private void OnApplicationQuit()

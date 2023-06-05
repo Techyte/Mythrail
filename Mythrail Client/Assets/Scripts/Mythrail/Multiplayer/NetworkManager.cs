@@ -161,12 +161,12 @@ namespace Mythrail.Multiplayer
             if(!Singleton.isPrivate)
             {
                 clientCount++;
-                RichPresenseManager.Singleton.UpdateStatus("In Game",
+                RichPresenseManager.UpdateStatus("In Game",
                     $"Game ({clientCount} of {maxClientCount})", false);
             }
             else
             {
-                RichPresenseManager.Singleton.UpdateStatus("In Game",
+                RichPresenseManager.UpdateStatus("In Game",
                     $"Private Match", false);
             }
         }
@@ -186,7 +186,7 @@ namespace Mythrail.Multiplayer
         {
             Cursor.lockState = CursorLockMode.None;
             Player.list.Clear();
-            NotificationManager.Singleton.QueNotification(xImage, "Could not connect", "The match does not exist or something went wrong.", 2);
+            NotificationManager.QueNotification(xImage, "Could not connect", "The match does not exist or something went wrong.", 2);
             ObjectLoaderManager.LoadMainMenu();
         }
 
@@ -238,9 +238,8 @@ namespace Mythrail.Multiplayer
             
             Cursor.lockState = CursorLockMode.None;
             Player.list.Clear();
-            Client.Disconnect();
             Debug.Log("we think the server disconnected us");
-            NotificationManager.Singleton.QueNotification(kickedImage, "Kicked from match", "The match server shut down and you were kicked.", 2);
+            NotificationManager.QueNotification(kickedImage, "Kicked from match", "The match server shut down and you were kicked.", 2);
             ObjectLoaderManager.LoadMainMenu();
         }
         
@@ -294,12 +293,12 @@ namespace Mythrail.Multiplayer
             
             if(!Singleton.isPrivate)
             {
-                RichPresenseManager.Singleton.UpdateStatus("In Game",
+                RichPresenseManager.UpdateStatus("In Game",
                     $"Battlefield ({clientCount} of {Singleton.maxClientCount})", false);
             }
             else
             {
-                RichPresenseManager.Singleton.UpdateStatus("In Game",
+                RichPresenseManager.UpdateStatus("In Game",
                     "Private Match", false);
             }
         }
@@ -317,12 +316,12 @@ namespace Mythrail.Multiplayer
                 Singleton.LoadGame();
                 if(!Singleton.isPrivate)
                 {
-                    RichPresenseManager.Singleton.UpdateStatus("In Game",
+                    RichPresenseManager.UpdateStatus("In Game",
                         $"Game ({clientCount} of {Singleton.maxClientCount})", false);
                 }
                 else
                 {
-                    RichPresenseManager.Singleton.UpdateStatus("In Game",
+                    RichPresenseManager.UpdateStatus("In Game",
                         "Private Match", false);
                 }
             }
@@ -331,12 +330,12 @@ namespace Mythrail.Multiplayer
                 Singleton.SendName();
                 if(!Singleton.isPrivate)
                 {
-                    RichPresenseManager.Singleton.UpdateStatus("In Lobby",
+                    RichPresenseManager.UpdateStatus("In Lobby",
                         $"Waiting ({clientCount} of {Singleton.maxClientCount})", false);
                 }
                 else
                 {
-                    RichPresenseManager.Singleton.UpdateStatus("In Lobby",
+                    RichPresenseManager.UpdateStatus("In Lobby",
                         "Private Match", false);
                 }
             }

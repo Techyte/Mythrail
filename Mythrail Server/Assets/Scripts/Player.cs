@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using Riptide;
@@ -158,11 +159,26 @@ public class Player : MonoBehaviour
     private void Respawn()
     {
         Vector3 spawnPoint = NetworkManager.Singleton.GetRandomSpawnPoint();
-        transform.position = spawnPoint;
+        telePos = spawnPoint;
         currentHealth = maxHealth;
         movement.canMove = true;
         respawning = false;
         SendRegularCam();
+    }
+    
+    Vector3 telePos = Vector3.zero;
+
+    private void LateUpdate()
+    {
+        movement.Controller.enabled = false;
+        
+        if (telePos != Vector3.zero)
+        {
+            transform.position = new Vector3(telePos.x, telePos.y, telePos.z);
+            telePos = Vector3.zero;
+        }
+
+        movement.Controller.enabled = true;
     }
 
     private void SendRegularCam()

@@ -70,7 +70,7 @@ namespace Mythrail.Players
 
         public void ToggleCursorMode()
         {
-            if(canPause)
+            if (canPause)
             {
                 if (Cursor.lockState == CursorLockMode.None)
                 {
@@ -83,7 +83,13 @@ namespace Mythrail.Players
                     Cursor.lockState = CursorLockMode.None;
                     pauseScreen.SetActive(true);
                     Cursor.visible = true;
-                }
+                }   
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.None;
+                pauseScreen.SetActive(false);
+                Cursor.visible = true;
             }
         }
 

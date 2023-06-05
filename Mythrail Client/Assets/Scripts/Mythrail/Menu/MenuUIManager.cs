@@ -12,8 +12,9 @@ using UnityEngine.UI;
 
 public class MenuUIManager : MonoBehaviour
 {
-    [Header("Connection Status Text")]
+    [Header("Persistant")]
     [SerializeField] private TextMeshProUGUI connectionStatusText;
+    [SerializeField] private TextMeshProUGUI pingText;
     [Space]
     
     [Header("Prefabs")]
@@ -83,6 +84,17 @@ public class MenuUIManager : MonoBehaviour
         maxPlayerCountSlider.onValueChanged.AddListener(delegate { UpdateMinMax(); });
         minPlayerCountSlider.onValueChanged.AddListener(delegate { UpdateMinMax(); });
         Connecting();
+        SetPingText();
+    }
+
+    private void FixedUpdate()
+    {
+        SetPingText();
+    }
+
+    private void SetPingText()
+    {
+        pingText.text = "Ping: " + MenuNetworkManager.Singleton.Client.Connection.RTT;
     }
 
     public void Connecting()
@@ -94,7 +106,7 @@ public class MenuUIManager : MonoBehaviour
     {
         connectionStatusText.text = "Server Shut Down";
         OpenMainScreen();
-        NotificationManager.Singleton.QueNotification(disconnectedImage, "Disconnected", "Connection to the Mythrail servers was lost", 2);
+        NotificationManager.QueNotification(disconnectedImage, "Disconnected", "Connection to the Mythrail servers was lost", 2);
     }
 
     private void UpdateMinMax()
@@ -106,7 +118,7 @@ public class MenuUIManager : MonoBehaviour
     public void Connected()
     {
         connectionStatusText.text = "Connected";
-        NotificationManager.Singleton.QueNotification(connectedImage, "Connected", "Connected to the Mythrail serves.", 2);
+        NotificationManager.QueNotification(connectedImage, "Connected", "Connected to the Mythrail serves.", 2);
     }
 
     public void LoadUsername(string username)
@@ -122,7 +134,7 @@ public class MenuUIManager : MonoBehaviour
         
         if (string.IsNullOrEmpty(newUsername))
         {
-            NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.", 2);
+            NotificationManager.QueNotification(privateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.", 2);
             ShakeScreen();
             return;
         }
@@ -137,7 +149,7 @@ public class MenuUIManager : MonoBehaviour
     public void ConnectionFailed(object o, EventArgs args)
     {
         connectionStatusText.text = "Connection Failed!";
-        NotificationManager.Singleton.QueNotification(disconnectedImage, "Failed To Connect", "Connection to the Mythrail servers could not be established.", 2);
+        NotificationManager.QueNotification(disconnectedImage, "Failed To Connect", "Connection to the Mythrail servers could not be established.", 2);
     }
 
     public void OpenCreateScreen()
@@ -187,13 +199,13 @@ public class MenuUIManager : MonoBehaviour
 
     private void UsernameEmpty()
     {
-        NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.", 2);
+        NotificationManager.QueNotification(privateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.", 2);
         ShakeScreen();
     }
 
     private void NotConnected()
     {
-        NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "No Connection", "You are not connected to the Mythrail servers.", 2);
+        NotificationManager.QueNotification(privateMatchNotFoundImage, "No Connection", "You are not connected to the Mythrail servers.", 2);
         ShakeScreen();
     }
 
@@ -273,14 +285,14 @@ public class MenuUIManager : MonoBehaviour
     public void MatchNotFound()
     {
         OpenMainScreen();
-        NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "Incorrect Code", "This is not the game you are looking for...", 2);
+        NotificationManager.QueNotification(privateMatchNotFoundImage, "Incorrect Code", "This is not the game you are looking for...", 2);
         ShakeScreen();
     }
 
     public void InvalidUsername()
     {
         usernameField.text = "";
-        NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "Can't use that name", "A user on this server is already using that name, please try again with a different name", 2);
+        NotificationManager.QueNotification(privateMatchNotFoundImage, "Can't use that name", "A user on this server is already using that name, please try again with a different name", 2);
     }
 
     public void CreateMatchButton(string name, string creator, string code, ushort port)
@@ -303,7 +315,7 @@ public class MenuUIManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(matchName.text))
         {
-            NotificationManager.Singleton.QueNotification(privateMatchNotFoundImage, "Name empty", "The match name you enter cannot be empty, please try again.", 2);
+            NotificationManager.QueNotification(privateMatchNotFoundImage, "Name empty", "The match name you enter cannot be empty, please try again.", 2);
             ShakeScreen();
             return;
         }
@@ -335,7 +347,7 @@ public class MenuUIManager : MonoBehaviour
 
     public void InvitedBy(string name, ushort port)
     {
-        Notification notification = NotificationManager.Singleton.QueNotification(multiplayerImage,
+        Notification notification = NotificationManager.QueNotification(multiplayerImage,
             $"Invited by {name}", "Click here to join", 5);
 
         notification.Clicked += (o, e) =>
