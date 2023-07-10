@@ -188,15 +188,19 @@ namespace Mythrail_Game_Server
          {
              Process matchProcess = new Process();
              matchProcess.EnableRaisingEvents = true;
-             matchProcess.StartInfo.FileName =
-                 Directory.GetCurrentDirectory() + @"\Match Application\Mythrail Server.exe";
+
+             string dir = Directory.GetCurrentDirectory() + "\"/Match Application/Mythrail Server.exe\"";
+             matchProcess.StartInfo.FileName = "wine";
         
              ushort port = FreeTcpPort();
              string code = GenerateGameCode();
-             Console.WriteLine(isPrivate.ToString());
              matchProcess.StartInfo.Arguments =
-                 $"port:{port.ToString()} maxPlayers:{maxPlayers.ToString()} minPlayers:{minPlayers.ToString()} isPrivate:{isPrivate.ToString()} code:{code}";
-        
+                 $"{dir} -batchmode -nographics port:{port.ToString()} maxPlayers:{maxPlayers.ToString()} minPlayers:{minPlayers.ToString()} isPrivate:{isPrivate.ToString()} code:{code}";
+             
+             Console.WriteLine(matchProcess.StartInfo.FileName);
+
+             matchProcess.StartInfo.UseShellExecute = false;
+             
              matchProcess.Start();
         
              MatchInfo newMatch = new MatchInfo(name, currentlyConnectedClients[creatorId].username, matchProcess, port,

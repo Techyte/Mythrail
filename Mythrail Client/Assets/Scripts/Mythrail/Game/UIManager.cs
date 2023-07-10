@@ -144,6 +144,9 @@ namespace Mythrail.Game
             
             PlayScreen.SetActive(false);
             RespawningScreen.SetActive(true);
+            RespawnButton.interactable = false;
+
+            serverSaidWeCanRespawn = false;
             
             CountdownText.text = $"RESPAWNING IN {countdownTime}";
             countdown = countdownTime;
@@ -154,11 +157,14 @@ namespace Mythrail.Game
         {
             int initialCountdown = countdown;
             
+            Debug.Log(initialCountdown);
+            Debug.Log(countdown);
+            
             for (int i = initialCountdown-1; i > 0; i--)
             {
                 if(!serverSaidWeCanRespawn){
                     yield return new WaitForSeconds(1);
-                    countdown--;
+                    Debug.Log(i);
                     CountdownText.text = $"RESPAWNING IN {i}";
                 }
                 else
