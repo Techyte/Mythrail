@@ -57,6 +57,7 @@ namespace Mythrail.Game
         private void LoadedGame(Scene scene, LoadSceneMode loadSceneMode)
         {
             SetPingText();
+            Debug.Log("loaded");
             if(scene.name == "BattleFeild")
             {
                 UIHealthBar = GameObject.Find("Health").GetComponentsInChildren<Image>()[1].transform;
@@ -66,15 +67,19 @@ namespace Mythrail.Game
                 HUDUsernameDisplay = GameObject.Find("UsernameText").GetComponent<TextMeshProUGUI>();
                 LoadingStatusDisplay = GameObject.Find("Loading...").GetComponent<TextMeshProUGUI>();
                 GunName = GameObject.Find("GunName").GetComponent<TextMeshProUGUI>();
-                CodeDisplay = GameObject.Find("CodeDisplay").GetComponent<Button>();
-                CodeDisplay.GetComponentInChildren<TextMeshProUGUI>().text = NetworkManager.Singleton.code;
-                CodeDisplay.onClick.AddListener(CopyCode);
                 RespawningScreen = GameObject.Find("RespawnScreen");
                 PlayScreen = GameObject.Find("PlayScreen");
                 CountdownText = GameObject.Find("CountdownText").GetComponent<TextMeshProUGUI>();
                 RespawnButton = GameObject.Find("RespawnButton").GetComponent<Button>();
                 RespawnButton.onClick.AddListener(Respawn);
                 RespawningScreen.SetActive(false);
+            }
+
+            if (scene.name != "MainMenu")
+            {
+                CodeDisplay = GameObject.Find("CodeDisplay").GetComponent<Button>();
+                CodeDisplay.GetComponentInChildren<TextMeshProUGUI>().text = NetworkManager.Singleton.code;
+                CodeDisplay.onClick.AddListener(CopyCode);   
             }
         }
 

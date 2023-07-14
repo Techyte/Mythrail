@@ -84,6 +84,11 @@ namespace Mythrail.Menu
 
         public static List<GameObject> _matchButtons = new List<GameObject>();
 
+        public List<Invite> Invites => invites;
+        private List<Invite> invites = new List<Invite>();
+
+        public List<GameObject> currentInviteObjs = new List<GameObject>();
+
         public void GetCurrentPlayers()
         {
             Message message = Message.Create(MessageSendMode.Reliable, ClientToGameServerId.getPlayers);
@@ -94,6 +99,28 @@ namespace Mythrail.Menu
         private static void PlayersResult(Message message)
         {
             Singleton.uiManager.EnableInviteScreen(message.GetClientInfos().ToList());
+        }
+
+        public void UpdateInvites()
+        {
+            List<Invite> toBeRemoved = new List<Invite>();
+
+            for (int i = 0; i < invites.Count; i++)
+            {
+                var timeSinceCreation = DateTime.Now.Subtract(invites[i].creationTime);
+
+                Debug.Log(timeSinceCreation.TotalSeconds);
+                
+                if (timeSinceCreation.TotalSeconds > 30)
+                {
+                    toBeRemoved.Add(invites[i]);
+                }
+            }
+
+            for (int i = 0; i < toBeRemoved.Count; i++)
+            {
+                invites.Remove(toBeRemoved[i]);
+            }
         }
 
         private void Awake()
@@ -248,7 +275,13 @@ namespace Mythrail.Menu
         [MessageHandler((ushort)GameServerToClientId.invite)]
         private static void Invited(Message message)
         {
-            Singleton.uiManager.InvitedBy(message.GetString(), message.GetUShort());
+            string username = message.GetString();
+            ushort port = message.GetUShort();
+            string code = message.GetString();
+            string name = message.GetString();
+            
+            Singleton.uiManager.InvitedBy(username, port);
+            Singleton.invites.Add(new Invite(port, code, username, name));
         }
 
         public void JoinMatch(ushort port)
@@ -281,6 +314,24 @@ namespace Mythrail.Menu
         {
             this.id = id;
             this.username = username;
+        }
+    }
+
+    public class Invite
+    {
+        public ushort port;
+        public string username;
+        public string matchName;
+        public string code;
+        public DateTime creationTime;
+
+        public Invite(ushort port, string code, string username, string matchName)
+        {
+            this.port = port;
+            this.code = code;
+            this.username = username;
+            this.matchName = matchName;
+            creationTime = DateTime.Now;
         }
     }
 }

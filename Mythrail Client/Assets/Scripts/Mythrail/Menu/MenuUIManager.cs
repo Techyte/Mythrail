@@ -35,9 +35,10 @@ public class MenuUIManager : MonoBehaviour
     [Space]
     
     [Header("Tabs")]
+    [SerializeField] private GameObject mainScreen;
     [SerializeField] private GameObject createScreen;
     [SerializeField] private GameObject joinFromCodeScreen;
-    [SerializeField] private GameObject mainScreen;
+    [SerializeField] private GameObject invitesScreen;
     [Space]
     
     [Header("Tab Navigation")]
@@ -60,6 +61,11 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI matchCreatePopupTitle;
     [SerializeField] private TextMeshProUGUI matchCodeText;
     [SerializeField] private TextMeshProUGUI privateCodeURLText;
+    [Space] 
+    
+    [Header("Invites Screen")] 
+    [SerializeField] private GameObject inviteDisplay;
+    [SerializeField] private Transform invitesHolder;
     [Space]
     
     [Header("Invite Players Question Popup")]
@@ -163,31 +169,13 @@ public class MenuUIManager : MonoBehaviour
 
     public void OpenCreateScreen()
     {
-        if (!UsernameAcceptable(MenuNetworkManager.username))
-        {
-            Debug.Log("username not acceptable");
+        if (!CanMoveMenu())
             return;
-        }
-        
-        Debug.Log("username acceptable");
-        
-        if (!UsernameAcceptable(usernameField.text))
-        {
-            Debug.Log("username field not acceptable");
-            return;
-        }
-        
-        Debug.Log("username field acceptable");
-
-        if (!MenuNetworkManager.Singleton.Client.IsConnected)
-        {
-            NotConnected();
-            return;
-        }
         
         createScreen.SetActive(true);
         mainScreen.SetActive(false);
         joinFromCodeScreen.SetActive(false);
+        invitesScreen.SetActive(false);
     }
 
     public void OpenMainScreen()
@@ -195,25 +183,78 @@ public class MenuUIManager : MonoBehaviour
         createScreen.SetActive(false);
         mainScreen.SetActive(true);
         joinFromCodeScreen.SetActive(false);
+        invitesScreen.SetActive(false);
     }
 
     public void OpenJoinPrivateMatchScreen()
     {
-        if (string.IsNullOrEmpty(MenuNetworkManager.username))
-        {
-            UsernameEmpty();
+        if (!CanMoveMenu())
             return;
+
+        createScreen.SetActive(false);
+        mainScreen.SetActive(false);
+        joinFromCodeScreen.SetActive(true);
+        invitesScreen.SetActive(false);
+    }
+
+    public void OpenInviteScreen()
+    {
+        if (!CanMoveMenu())
+            return;
+        
+        createScreen.SetActive(false);
+        mainScreen.SetActive(false);
+        joinFromCodeScreen.SetActive(false);
+        invitesScreen.SetActive(true);
+        UpdateInvites();
+    }
+
+    private void UpdateInvites()
+    {
+        MenuNetworkManager.Singleton.UpdateInvites();
+        
+        List<Invite> invites = MenuNetworkManager.Singleton.Invites;
+
+        for (int i = 0; i < invites.Count; i++)
+        {
+            GameObject newInviteObj = Instantiate(inviteDisplay, invitesHolder);
+
+            newInviteObj.transform.Find("MatchName").GetComponent<TextMeshProUGUI>().text = invites[i].matchName;
+            newInviteObj.transform.Find("Username").GetComponent<TextMeshProUGUI>().text = invites[i].username;
+            newInviteObj.transform.Find("Code").GetComponent<TextMeshProUGUI>().text = invites[i].code;
+            
+            int newI = i;
+            newInviteObj.GetComponent<Button>().onClick.AddListener(delegate
+            {
+                MenuNetworkManager.Singleton.JoinMatch(invites[newI].port);
+            });
+            
+            MenuNetworkManager.Singleton.currentInviteObjs.Add(newInviteObj);
         }
+    }
+
+    private bool CanMoveMenu()
+    {
+        if (!UsernameAcceptable(MenuNetworkManager.username))
+        {
+            Debug.Log("username not acceptable");
+            return false;
+        }
+        
+        if (!UsernameAcceptable(usernameField.text))
+        {
+            Debug.Log("username field not acceptable");
+            return false;
+        }
+        
 
         if (!MenuNetworkManager.Singleton.Client.IsConnected)
         {
             NotConnected();
-            return;
+            return false;
         }
-        
-        createScreen.SetActive(false);
-        mainScreen.SetActive(false);
-        joinFromCodeScreen.SetActive(true);
+
+        return true;
     }
 
     private void UsernameEmpty()
@@ -320,7 +361,7 @@ public class MenuUIManager : MonoBehaviour
 
         newMatchObj.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = name;
         newMatchObj.transform.Find("Creator").GetComponent<TextMeshProUGUI>().text = creator;
-        newMatchObj.transform.Find("Port").GetComponent<TextMeshProUGUI>().text = code;
+        newMatchObj.transform.Find("Code").GetComponent<TextMeshProUGUI>().text = code;
             
         newMatchObj.GetComponent<Button>().onClick.AddListener(delegate
         {
