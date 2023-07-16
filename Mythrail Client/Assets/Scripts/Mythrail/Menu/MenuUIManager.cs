@@ -66,6 +66,8 @@ public class MenuUIManager : MonoBehaviour
     [Header("Invites Screen")] 
     [SerializeField] private GameObject inviteDisplay;
     [SerializeField] private Transform invitesHolder;
+    public float InviteExpireTime => inviteExpireTime;
+    [SerializeField] private float inviteExpireTime = 30f;
     [Space]
     
     [Header("Invite Players Question Popup")]
@@ -215,6 +217,11 @@ public class MenuUIManager : MonoBehaviour
         
         List<Invite> invites = MenuNetworkManager.Singleton.Invites;
 
+        for (int i = 0; i < MenuNetworkManager.Singleton.currentInviteObjs.Count; i++)
+        {
+            Destroy(MenuNetworkManager.Singleton.currentInviteObjs[i]);
+        }
+
         for (int i = 0; i < invites.Count; i++)
         {
             GameObject newInviteObj = Instantiate(inviteDisplay, invitesHolder);
@@ -230,6 +237,17 @@ public class MenuUIManager : MonoBehaviour
             });
             
             MenuNetworkManager.Singleton.currentInviteObjs.Add(newInviteObj);
+        }
+    }
+
+    public void InviteExpired()
+    {
+        Debug.Log("Invite Expired");
+        Debug.Log(invitesScreen.activeSelf);
+        if (invitesScreen.activeSelf)
+        {
+            Debug.Log("Updating Invites");
+            UpdateInvites();
         }
     }
 

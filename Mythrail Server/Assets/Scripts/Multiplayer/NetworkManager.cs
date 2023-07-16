@@ -26,6 +26,7 @@ public enum ServerToClientId : ushort
     isInGameResult,
     playerCanRespawn,
     regularCam,
+    LobbyCountdown,
 }
 
 public enum ClientToServerId : ushort
@@ -195,17 +196,35 @@ public class NetworkManager : MonoBehaviour
             else if(Server.ClientCount < minPlayerCount)
             {
                 isCountingDown = false;
+                if(Server.ClientCount > 0)
+                    SendLobbyStillWaiting();
             }
             
             if (isCountingDown)
             {
                 currentReadCountdown -= Time.deltaTime;
+                SendLobbyCountDown(((int)currentReadCountdown).ToString());
                 if (currentReadCountdown <= 0)
                 {
                     SendLobbyReady();
                 }
             }   
         }
+    }
+
+    private void SendLobbyCountDown(string text)
+    {
+        Message message = Message.Create(MessageSendMode.Unreliable, ServerToClientId.LobbyCountdown);
+        message.AddString(text);
+        Server.SendToAll(message);
+    }
+
+    private void SendLobbyStillWaiting()
+    {
+        Debug.Log("lobby still waiting");
+        Message message = Message.Create(MessageSendMode.Unreliable, ServerToClientId.LobbyCountdown);
+        message.AddString("NEED MORE PLAYERS");
+        Server.SendToAll(message);
     }
 
     static int FreeTcpPort()

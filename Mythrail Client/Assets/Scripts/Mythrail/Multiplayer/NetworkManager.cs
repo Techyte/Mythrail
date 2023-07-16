@@ -6,6 +6,7 @@ using Mythrail.General;
 using Mythrail.Menu;
 using Mythrail.Notifications;
 using Mythrail.Players;
+using Riptide.Utils;
 using UnityEngine.SceneManagement;
 
 namespace Mythrail.Multiplayer
@@ -35,6 +36,7 @@ namespace Mythrail.Multiplayer
         isInGameResult,
         playerCanRespawn,
         regularCam,
+        LobbyCountdown,
     }
 
     public enum ClientToServerId : ushort
@@ -111,7 +113,7 @@ namespace Mythrail.Multiplayer
         private ushort clientCount;
 
         public string code;
-        
+
         private void Awake()
         {
             Singleton = this;
@@ -142,7 +144,7 @@ namespace Mythrail.Multiplayer
         {
             LoadingScreen.SetActive(true);
 
-            //RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
+            RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 
             Client = new Client();
             Client.Connected += DidConnect;
@@ -238,8 +240,6 @@ namespace Mythrail.Multiplayer
             
             Cursor.lockState = CursorLockMode.None;
             Player.list.Clear();
-            Debug.Log("we think the server disconnected us");
-            NotificationManager.QueNotification(kickedImage, "Kicked from match", "The match server shut down and you were kicked.", 2);
             ObjectLoaderManager.LoadMainMenu();
         }
         
@@ -310,7 +310,9 @@ namespace Mythrail.Multiplayer
             Singleton.isPrivate = message.GetBool();
             ushort clientCount = message.GetUShort();
             Singleton.maxClientCount = message.GetUShort();
-            Singleton.code = message.GetString();
+            string code = message.GetString();
+            Singleton.code = code;
+            Singleton.gameObject.GetComponent<UIManager>().SetCode();
             if (isInGame)
             {
                 Singleton.LoadGame();
@@ -361,6 +363,12 @@ namespace Mythrail.Multiplayer
             Singleton.BufferCamera.SetActive(false);
             Player.LocalPlayer.playerController.canMove = true;
             UIManager.Singleton.loadingScreen.SetActive(false);
+        }
+
+        [MessageHandler((ushort)ServerToClientId.LobbyCountdown)]
+        private static void LobbyCountdown(Message message)
+        {
+            Singleton.GetComponent<UIManager>().SetStartingText((int.Parse(message.GetString())+1).ToString());
         }
     }
 }

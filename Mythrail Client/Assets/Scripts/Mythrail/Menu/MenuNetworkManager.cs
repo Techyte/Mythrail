@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Timers;
 using Mythrail.General;
 using Mythrail.Multiplayer;
 using UnityEngine;
@@ -78,10 +80,11 @@ namespace Mythrail.Menu
         [SerializeField] private ushort port;
         public static string username = "Guest";
 
-        [Space] 
+        [Space]
         
         [SerializeField] private MenuUIManager uiManager;
 
+        public MenuUIManager UiManager => uiManager;
         public static List<GameObject> _matchButtons = new List<GameObject>();
 
         public List<Invite> Invites => invites;
@@ -107,11 +110,7 @@ namespace Mythrail.Menu
 
             for (int i = 0; i < invites.Count; i++)
             {
-                var timeSinceCreation = DateTime.Now.Subtract(invites[i].creationTime);
-
-                Debug.Log(timeSinceCreation.TotalSeconds);
-                
-                if (timeSinceCreation.TotalSeconds > 30)
+                if (invites[i].expired)
                 {
                     toBeRemoved.Add(invites[i]);
                 }
@@ -281,7 +280,17 @@ namespace Mythrail.Menu
             string name = message.GetString();
             
             Singleton.uiManager.InvitedBy(username, port);
-            Singleton.invites.Add(new Invite(port, code, username, name));
+
+            Invite invite = new Invite(port, code, username, name);
+            
+            Singleton.invites.Add(invite);
+            Singleton.StartCoroutine(Singleton.InviteTimer(invite));
+        }
+
+        private IEnumerator InviteTimer(Invite invite)
+        {
+            yield return new WaitForSeconds(uiManager.InviteExpireTime);
+            invite.Expire();
         }
 
         public void JoinMatch(ushort port)
@@ -323,7 +332,7 @@ namespace Mythrail.Menu
         public string username;
         public string matchName;
         public string code;
-        public DateTime creationTime;
+        public bool expired;
 
         public Invite(ushort port, string code, string username, string matchName)
         {
@@ -331,7 +340,14 @@ namespace Mythrail.Menu
             this.code = code;
             this.username = username;
             this.matchName = matchName;
-            creationTime = DateTime.Now;
+        }
+
+        public void Expire()
+        {
+            Debug.Log("Expired");
+            expired = true;
+            MenuNetworkManager.Singleton.UpdateInvites();
+            MenuNetworkManager.Singleton.UiManager.InviteExpired();
         }
     }
 }

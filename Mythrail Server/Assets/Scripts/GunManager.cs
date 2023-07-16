@@ -100,7 +100,10 @@ public class GunManager : MonoBehaviour
                     Player hitPlayer = hit.transform.gameObject.GetComponent<Player>();
                     if(hitPlayer.Id != player.Id)
                     {
-                        hitPlayer.TakeDamage(guns[loadout[currentWeaponIndex]].damage, player.Id);
+                        if(!hitPlayer.respawning)
+                        {
+                            hitPlayer.TakeDamage(guns[loadout[currentWeaponIndex]].damage, player.Id);
+                        }
                     }
                 }
             }

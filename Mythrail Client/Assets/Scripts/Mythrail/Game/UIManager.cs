@@ -44,6 +44,7 @@ namespace Mythrail.Game
         public TextMeshProUGUI CountdownText;
         public Button RespawnButton;
         public TextMeshProUGUI PingText;
+        public TextMeshProUGUI StartingText;
 
         private int countdown;
 
@@ -57,7 +58,6 @@ namespace Mythrail.Game
         private void LoadedGame(Scene scene, LoadSceneMode loadSceneMode)
         {
             SetPingText();
-            Debug.Log("loaded");
             if(scene.name == "BattleFeild")
             {
                 UIHealthBar = GameObject.Find("Health").GetComponentsInChildren<Image>()[1].transform;
@@ -73,14 +73,25 @@ namespace Mythrail.Game
                 RespawnButton = GameObject.Find("RespawnButton").GetComponent<Button>();
                 RespawnButton.onClick.AddListener(Respawn);
                 RespawningScreen.SetActive(false);
+                SetCode();
             }
+        }
 
-            if (scene.name != "MainMenu")
+        public void SetCode()
+        {
+            Debug.Log($"setting code: {NetworkManager.Singleton.code}");
+            if (SceneManager.GetActiveScene().name != "MainMenu")
             {
+                Debug.Log(NetworkManager.Singleton.code);
                 CodeDisplay = GameObject.Find("CodeDisplay").GetComponent<Button>();
                 CodeDisplay.GetComponentInChildren<TextMeshProUGUI>().text = NetworkManager.Singleton.code;
                 CodeDisplay.onClick.AddListener(CopyCode);   
             }
+        }
+
+        public void SetStartingText(string text)
+        {
+            StartingText.text = text;
         }
 
         private void FixedUpdate()

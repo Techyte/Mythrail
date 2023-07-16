@@ -8,3 +8,13 @@ C:\Users\Mr. Monster\Documents\Coding\MGS\Mythrail Game Server\obj\Debug\Mythrai
 C:\Users\Mr. Monster\Documents\Coding\MGS\Mythrail Game Server\bin\Debug\RiptideNetworking.dll
 C:\Users\Mr. Monster\Documents\Coding\MGS\Mythrail Game Server\bin\Debug\RiptideNetworking.xml
 C:\Users\Mr. Monster\Documents\Coding\MGS\Mythrail Game Server\obj\Debug\Mythrail Game Server.csproj.CopyComplete
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\MGS\Mythrail Game Server\bin\Debug\Mythrail_Game_Server.exe
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\MGS\Mythrail Game Server\bin\Debug\Mythrail_Game_Server.pdb
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\MGS\Mythrail Game Server\bin\Debug\RiptideNetworking.dll
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\MGS\Mythrail Game Server\bin\Debug\RiptideNetworking.xml
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\MGS\Mythrail Game Server\obj\Debug\Mythrail Game Server.csproj.AssemblyReference.cache
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\MGS\Mythrail Game Server\obj\Debug\Mythrail Game Server.csproj.SuggestedBindingRedirects.cache
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\MGS\Mythrail Game Server\obj\Debug\Mythrail Game Server.csproj.CoreCompileInputs.cache
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\MGS\Mythrail Game Server\obj\Debug\Mythrail Game Server.csproj.CopyComplete
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\MGS\Mythrail Game Server\obj\Debug\Mythrail_Game_Server.exe
+C:\Users\Mr. Monster\Documents\Coding\Unity\Unity Projects\Mythrail Collection\MGS\Mythrail Game Server\obj\Debug\Mythrail_Game_Server.pdb

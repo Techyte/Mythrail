@@ -121,7 +121,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (direction.magnitude > 0)
         {
-            Debug.Log("Moved");
             _controller.Move(direction * Time.deltaTime);   
         }
     }

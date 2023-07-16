@@ -162,6 +162,7 @@ public class Player : MonoBehaviour
         movement.canMove = true;
         respawning = false;
         SendRegularCam();
+        SendHealth();
     }
     
     Vector3 telePos = Vector3.zero;
