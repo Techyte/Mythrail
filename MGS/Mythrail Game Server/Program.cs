@@ -49,6 +49,8 @@ namespace Mythrail_Game_Server
         
          private static List<MatchInfo> matches = new List<MatchInfo>();
 
+         private bool isRunning;
+
         public static void Main()
         {
             _Program = new Program();
@@ -57,30 +59,30 @@ namespace Mythrail_Game_Server
 
          private void Start()
          {
-             AppDomain.CurrentDomain.ProcessExit += StopServer;
-        
              RiptideLogger.Initialize(Console.Write, Console.Write, Console.Write, Console.Write, false);
-        
+             isRunning = true;
+             
+             new Thread(new ThreadStart(Loop)).Start();
+             
+             Console.WriteLine("Press enter to stop the server at any time.");
+             Console.ReadLine();
+
+             isRunning = false;
+
+             Console.ReadLine();
+         }
+
+         private void Loop()
+         {
              Server = new Server();
              Server.Start(port, maxClientCount);
              Server.ClientDisconnected += ClientDisconnected;
-        
+             
              int interval = 16;
-             while (true)
+             while (isRunning)
              {
                  ServerTick();
-                 Thread.Sleep(new TimeSpan(0, 0, 0, 0, interval));
-             }
-         }
-
-         
-         private void StopServer(object sender, EventArgs e)
-         {
-             Server.Stop();
-             Console.WriteLine("Server stopped");
-             foreach (var match in matches)
-             {
-                 match.process.Kill();
+                 Thread.Sleep(interval);
              }
          }
         
@@ -225,8 +227,6 @@ namespace Mythrail_Game_Server
              string code = GenerateGameCode();
              matchProcess.StartInfo.Arguments =
                  $"-batchmode -nographics port:{port.ToString()} maxPlayers:{maxPlayers.ToString()} minPlayers:{minPlayers.ToString()} isPrivate:{isPrivate.ToString()} code:{code}";
-
-             matchProcess.StartInfo.UseShellExecute = false;
              
              matchProcess.Start();
         

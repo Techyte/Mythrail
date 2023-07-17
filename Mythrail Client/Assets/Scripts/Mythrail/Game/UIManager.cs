@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Mythrail.Multiplayer;
 using Mythrail.Players;
@@ -65,7 +64,7 @@ namespace Mythrail.Game
                 KillsText = GameObject.Find("KillCounter").GetComponent<TextMeshProUGUI>();
                 DeathsText = GameObject.Find("DeathCounter").GetComponent<TextMeshProUGUI>();
                 HUDUsernameDisplay = GameObject.Find("UsernameText").GetComponent<TextMeshProUGUI>();
-                LoadingStatusDisplay = GameObject.Find("Loading...").GetComponent<TextMeshProUGUI>();
+                LoadingStatusDisplay = GameObject.Find("LoadingText").GetComponent<TextMeshProUGUI>();
                 GunName = GameObject.Find("GunName").GetComponent<TextMeshProUGUI>();
                 RespawningScreen = GameObject.Find("RespawnScreen");
                 PlayScreen = GameObject.Find("PlayScreen");

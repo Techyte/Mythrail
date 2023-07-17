@@ -223,7 +223,7 @@ namespace Mythrail.Players
 
         private void SetPlayerDeadModel()
         {
-            // TODO: set player dea model
+            // TODO: set player dead model
         }
 
         private void UpdateKillsAndDeaths()

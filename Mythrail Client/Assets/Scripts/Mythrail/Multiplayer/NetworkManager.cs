@@ -256,7 +256,6 @@ namespace Mythrail.Multiplayer
                     {
                         if(Player.LocalPlayer)
                         {
-                            Ready();
                             Debug.Log("Ready");
                         }
                         else
@@ -274,7 +273,7 @@ namespace Mythrail.Multiplayer
             Message message = Message.Create(MessageSendMode.Reliable, ClientToServerId.ready);
             Client.Send(message);
             Debug.Log("Ready");
-            UIManager.Singleton.LoadingStatusDisplay.text = "Waiting for other players";
+                UIManager.Singleton.LoadingStatusDisplay.text = "WAITING";
         }
 
         [MessageHandler((ushort)LobbyServerToClient.sync)]

@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using Mythrail.Menu;
 using Mythrail.Multiplayer;
 using Mythrail.Notifications;
@@ -34,13 +33,6 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private TMP_InputField usernameField;
     [Space]
     
-    [Header("Tabs")]
-    [SerializeField] private GameObject mainScreen;
-    [SerializeField] private GameObject createScreen;
-    [SerializeField] private GameObject joinFromCodeScreen;
-    [SerializeField] private GameObject invitesScreen;
-    [Space]
-    
     [Header("Tab Navigation")]
     [SerializeField] private Button createBackButton;
     [Space]
@@ -66,6 +58,7 @@ public class MenuUIManager : MonoBehaviour
     [Header("Invites Screen")] 
     [SerializeField] private GameObject inviteDisplay;
     [SerializeField] private Transform invitesHolder;
+    [SerializeField] private GameObject invitesScreen;
     public float InviteExpireTime => inviteExpireTime;
     [SerializeField] private float inviteExpireTime = 30f;
     [Space]
@@ -113,7 +106,7 @@ public class MenuUIManager : MonoBehaviour
     public void Disconnected(object o, DisconnectedEventArgs e)
     {
         connectionStatusText.text = "Server Shut Down";
-        OpenMainScreen();
+        TabManager.Singleton.OpenMain();
         NotificationManager.QueNotification(disconnectedImage, "Disconnected", "Connection to the Mythrail servers was lost", 2);
     }
 
@@ -169,49 +162,7 @@ public class MenuUIManager : MonoBehaviour
         NotificationManager.QueNotification(disconnectedImage, "Failed To Connect", "Connection to the Mythrail servers could not be established.", 2);
     }
 
-    public void OpenCreateScreen()
-    {
-        if (!CanMoveMenu())
-            return;
-        
-        createScreen.SetActive(true);
-        mainScreen.SetActive(false);
-        joinFromCodeScreen.SetActive(false);
-        invitesScreen.SetActive(false);
-    }
-
-    public void OpenMainScreen()
-    {
-        createScreen.SetActive(false);
-        mainScreen.SetActive(true);
-        joinFromCodeScreen.SetActive(false);
-        invitesScreen.SetActive(false);
-    }
-
-    public void OpenJoinPrivateMatchScreen()
-    {
-        if (!CanMoveMenu())
-            return;
-
-        createScreen.SetActive(false);
-        mainScreen.SetActive(false);
-        joinFromCodeScreen.SetActive(true);
-        invitesScreen.SetActive(false);
-    }
-
-    public void OpenInviteScreen()
-    {
-        if (!CanMoveMenu())
-            return;
-        
-        createScreen.SetActive(false);
-        mainScreen.SetActive(false);
-        joinFromCodeScreen.SetActive(false);
-        invitesScreen.SetActive(true);
-        UpdateInvites();
-    }
-
-    private void UpdateInvites()
+    public void UpdateInvites()
     {
         MenuNetworkManager.Singleton.UpdateInvites();
         
@@ -242,16 +193,13 @@ public class MenuUIManager : MonoBehaviour
 
     public void InviteExpired()
     {
-        Debug.Log("Invite Expired");
-        Debug.Log(invitesScreen.activeSelf);
         if (invitesScreen.activeSelf)
         {
-            Debug.Log("Updating Invites");
             UpdateInvites();
         }
     }
 
-    private bool CanMoveMenu()
+    public bool CanMoveMenu()
     {
         if (!UsernameAcceptable(MenuNetworkManager.username))
         {
@@ -289,7 +237,6 @@ public class MenuUIManager : MonoBehaviour
 
     public void EnableInviteScreen(List<ClientInfo> clientInfos)
     {
-        createScreen.SetActive(false);
         invitePlayersQuestionPopup.SetActive(false);
         inviteScreen.SetActive(true);
         OpenInviteScreen(clientInfos);
@@ -362,7 +309,7 @@ public class MenuUIManager : MonoBehaviour
 
     public void MatchNotFound()
     {
-        OpenMainScreen();
+        TabManager.Singleton.OpenMain();
         NotificationManager.QueNotification(privateMatchNotFoundImage, "Incorrect Code", "This is not the game you are looking for...", 2);
         ShakeScreen();
     }
@@ -437,6 +384,6 @@ public class MenuUIManager : MonoBehaviour
     public void RefreshConnection()
     {
         MenuNetworkManager.Singleton.Connect();
-        OpenMainScreen();
+        TabManager.Singleton.OpenMain();
     }
 }
