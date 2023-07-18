@@ -33,8 +33,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -138, y: -42.72}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: -45, y: -45}
+  m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 1, y: 1}
 --- !u!1 &7378609414427827975
 GameObject:
@@ -69,8 +69,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 249, y: -42.72}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 401, y: -43.72}
+  m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 1, y: 1}
 --- !u!1 &7378609415046342542
 GameObject:
@@ -107,7 +107,7 @@ RectTransform:
   - {fileID: 7378609414427827974}
   - {fileID: 7378609414270649860}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -131,7 +131,9 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -187,12 +189,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8173b3157602a99409781bee0d4e82db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  queIndexes: 
-  NotificationStayTime: 2
   NotificationAnimationTime: 8
-  NotificaionCooldown: 0.1
   startPosObj: {fileID: 7378609414427827975}
   endPosObj: {fileID: 7378609414270649861}
   notificationSRC: {fileID: 176078388061689037, guid: 77cbc9e8416a6f742aa29054bfdeaa2b,
     type: 3}
-  newNotificationHanderMethods: 0

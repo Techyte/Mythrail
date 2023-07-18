@@ -3,7 +3,7 @@ using Riptide;
 using System;
 using Mythrail.Game;
 using Mythrail.General;
-using Mythrail.Menu;
+using Mythrail.MainMenu;
 using Mythrail.Notifications;
 using Mythrail.Players;
 using Riptide.Utils;

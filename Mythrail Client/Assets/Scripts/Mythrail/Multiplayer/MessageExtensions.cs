@@ -1,4 +1,4 @@
-using Mythrail.Menu;
+using Mythrail.MainMenu;
 using Riptide;
 using UnityEngine;
 
@@ -97,24 +97,24 @@ namespace Mythrail.Multiplayer
             return infos;
         }
 
-        public static ClientInfo[] GetClientInfos(this Message message)
+        public static ClientInviteInfo[] GetClientInfos(this Message message)
         {
             ushort[] ids = message.GetUShorts();
             string[] usernames = message.GetStrings();
             
-            ClientInfo[] infos = new ClientInfo[ids.Length];
+            ClientInviteInfo[] infos = new ClientInviteInfo[ids.Length];
 
             for (int i = 0; i < ids.Length; i++)
             {
-                infos[i] = new ClientInfo(ids[i], usernames[i]);
+                infos[i] = new ClientInviteInfo(ids[i], usernames[i]);
             }
 
             return infos;
         }
 
-        public static Message AddClientInfos(this Message message, ClientInfo[] value) => Add(message, value);
+        public static Message AddClientInfos(this Message message, ClientInviteInfo[] value) => Add(message, value);
         
-        public static Message Add(this Message message, ClientInfo[] value)
+        public static Message Add(this Message message, ClientInviteInfo[] value)
         {
             ushort[] ids = new ushort[value.Length];
             string[] usernames = new string[value.Length];

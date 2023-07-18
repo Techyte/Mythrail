@@ -78,10 +78,8 @@ namespace Mythrail.Game
 
         public void SetCode()
         {
-            Debug.Log($"setting code: {NetworkManager.Singleton.code}");
             if (SceneManager.GetActiveScene().name != "MainMenu")
             {
-                Debug.Log(NetworkManager.Singleton.code);
                 CodeDisplay = GameObject.Find("CodeDisplay").GetComponent<Button>();
                 CodeDisplay.GetComponentInChildren<TextMeshProUGUI>().text = NetworkManager.Singleton.code;
                 CodeDisplay.onClick.AddListener(CopyCode);   
