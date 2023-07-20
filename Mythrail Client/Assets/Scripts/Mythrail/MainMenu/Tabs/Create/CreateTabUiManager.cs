@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mythrail.MainMenu.Tabs.Invites;
 using Mythrail.Multiplayer;
 using Mythrail.Notifications;
 using Riptide;
@@ -95,7 +96,7 @@ namespace Mythrail.MainMenu.Tabs.Create
                 
                 PlayerListObject.GetComponentInChildren<Toggle>().onValueChanged.AddListener(result =>
                 {
-                    clientInfos[index-1].wantsToInvite = result;
+                    clientInfos[index].wantsToInvite = result;
                 });
             }
             

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,19 @@ namespace Mythrail.MainMenu.Tabs
     
         [SerializeField] private GameObject tabObject;
         [SerializeField] private Button tabButton;
+
+        private void Start()
+        {
+            if(TabManager.Singleton.Tabs[0] != this)
+            {
+                tabButton.onClick.AddListener(delegate { Opened(); });
+            }
+        }
+
+        protected virtual void Opened()
+        {
+            
+        }
 
         private void Update()
         {

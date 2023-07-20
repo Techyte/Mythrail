@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class rotatetotate : MonoBehaviour {
 
     private RectTransform rectComponent;
     private Image imageComp;
-    private bool up = false;
 
     public float rotateSpeed = 200f;
 

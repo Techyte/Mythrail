@@ -25,12 +25,16 @@ public class TabManager : MonoBehaviour
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip pressedClip;
 
+    public List<Tab> Tabs => tabs;
+
     private void Awake()
     {
         Singleton = this;
+        
+        SetButtons();
     }
 
-    private void Start()
+    private void SetButtons()
     {
         for (int i = 0; i < tabs.Count; i++)
         {
@@ -40,7 +44,6 @@ public class TabManager : MonoBehaviour
 
                 int index = i;
 
-                Debug.Log(i);
                 info.TabButton.onClick.AddListener(delegate { OpenTab(index); });
             }
         }
@@ -56,10 +59,24 @@ public class TabManager : MonoBehaviour
         DisableAllTabs();
         tabs[index].TabObject.SetActive(true);
     }
+    
+    public void OpenTab(int index, bool checkCanMoveMenu)
+    {
+        if(checkCanMoveMenu)
+        {
+            if (!MenuNetworkManager.Singleton.UiManager.CanMoveMenu())
+                return;
+        }
+        
+        PlaySound();
+        
+        DisableAllTabs();
+        tabs[index].TabObject.SetActive(true);
+    }
 
     public void OpenMain()
     {
-        OpenTab(0);
+        OpenTab(0, false);
     }
 
     private void PlaySound()

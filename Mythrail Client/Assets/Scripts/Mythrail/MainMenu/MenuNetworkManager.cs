@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using Mythrail.General;
-using Mythrail.Multiplayer;
 using UnityEngine;
 using Riptide;
 using Riptide.Utils;
@@ -84,30 +80,6 @@ namespace Mythrail.MainMenu
         [SerializeField] private MenuUIManager uiManager;
 
         public MenuUIManager UiManager => uiManager;
-        public static List<GameObject> _matchButtons = new List<GameObject>();
-
-        public List<Invite> Invites => invites;
-        private List<Invite> invites = new List<Invite>();
-
-        public List<GameObject> currentInviteObjs = new List<GameObject>();
-
-        public void UpdateInvites()
-        {
-            List<Invite> toBeRemoved = new List<Invite>();
-
-            for (int i = 0; i < invites.Count; i++)
-            {
-                if (invites[i].expired)
-                {
-                    toBeRemoved.Add(invites[i]);
-                }
-            }
-
-            for (int i = 0; i < toBeRemoved.Count; i++)
-            {
-                invites.Remove(toBeRemoved[i]);
-            }
-        }
 
         private void Awake()
         {
@@ -142,12 +114,6 @@ namespace Mythrail.MainMenu
         {
             Message message = Message.Create(MessageSendMode.Reliable, ClientToGameServerId.id);
             message.AddString(username);
-            Singleton.Client.Send(message);
-        }
-
-        public void RequestMatches()
-        {
-            Message message = Message.Create(MessageSendMode.Reliable, ClientToGameServerId.requestMatches);
             Singleton.Client.Send(message);
         }
 
@@ -192,6 +158,12 @@ namespace Mythrail.MainMenu
             uiManager.Connected();
         }
 
+        private void RequestMatches()
+        {
+            Message message = Message.Create(MessageSendMode.Reliable, ClientToGameServerId.requestMatches);
+            Client.Send(message);
+        }
+
         private void FixedUpdate()
         {
             if (Client != null)
@@ -206,45 +178,10 @@ namespace Mythrail.MainMenu
             Client.Disconnect();
         }
 
-        [MessageHandler((ushort)GameServerToClientId.joinedPrivateMatch)]
-        private static void PrivateMatchJoinSuccess(Message message)
-        {
-            Singleton.JoinMatch(message.GetUShort());
-        }
-
-        [MessageHandler((ushort)GameServerToClientId.privateMatchNotFound)]
-        private static void PrivateMatchNotFound(Message message)
-        {
-            Singleton.uiManager.MatchNotFound();
-        }
-
         [MessageHandler((ushort)GameServerToClientId.invalidName)]
         private static void InvalidName(Message message)
         {
             Singleton.uiManager.InvalidUsername();
-        }
-
-        
-        [MessageHandler((ushort)GameServerToClientId.invite)]
-        private static void Invited(Message message)
-        {
-            string username = message.GetString();
-            ushort port = message.GetUShort();
-            string code = message.GetString();
-            string name = message.GetString();
-            
-            Singleton.uiManager.InvitedBy(username, port);
-
-            Invite invite = new Invite(port, code, username, name);
-            
-            Singleton.invites.Add(invite);
-            Singleton.StartCoroutine(Singleton.InviteTimer(invite));
-        }
-
-        private IEnumerator InviteTimer(Invite invite)
-        {
-            yield return new WaitForSeconds(uiManager.InviteExpireTime);
-            invite.Expire();
         }
 
         public void JoinMatch(ushort port)
@@ -260,43 +197,5 @@ namespace Mythrail.MainMenu
     {
         public static ushort port;
         public static string username;
-    }
-
-    public class ClientInviteInfo
-    {
-        public ushort id;
-        public string username;
-        public bool wantsToInvite;
-
-        public ClientInviteInfo(ushort id, string username)
-        {
-            this.id = id;
-            this.username = username;
-        }
-    }
-
-    public class Invite
-    {
-        public ushort port;
-        public string username;
-        public string matchName;
-        public string code;
-        public bool expired;
-
-        public Invite(ushort port, string code, string username, string matchName)
-        {
-            this.port = port;
-            this.code = code;
-            this.username = username;
-            this.matchName = matchName;
-        }
-
-        public void Expire()
-        {
-            Debug.Log("Expired");
-            expired = true;
-            MenuNetworkManager.Singleton.UpdateInvites();
-            MenuNetworkManager.Singleton.UiManager.InviteExpired();
-        }
     }
 }
