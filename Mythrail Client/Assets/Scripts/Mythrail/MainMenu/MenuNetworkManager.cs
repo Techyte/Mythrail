@@ -13,7 +13,7 @@ namespace Mythrail.MainMenu
         updateUsername,
         requestMatches,
         createMatch,
-        joinPrivateMatch,
+        joinMatch,
         getPlayers,
         invites,
     }
@@ -22,8 +22,8 @@ namespace Mythrail.MainMenu
     {
         matches = 100,
         createMatchSuccess,
-        joinedPrivateMatch,
-        privateMatchNotFound,
+        joinedMatch,
+        matchNotFound,
         invalidName,
         playersResult,
         invite,
@@ -119,7 +119,6 @@ namespace Mythrail.MainMenu
 
         public void OnUsernameFieldChanged(string newUsername)
         {
-            SaveUsername(newUsername);
             uiManager.SendUpdatedUsername(newUsername);
         }
 
@@ -135,11 +134,6 @@ namespace Mythrail.MainMenu
             uiManager.LoadUsername(username);
         }
 
-        private void SaveUsername(string newUsername)
-        {
-            PlayerPrefs.SetString("Username", newUsername);
-        }
-
         private void ClientConnected(object sender, EventArgs e)
         {
             string[] args = Environment.GetCommandLineArgs();
@@ -148,7 +142,7 @@ namespace Mythrail.MainMenu
             {
                 string[] urlPeices = args[1].Split("//");
                 
-                Message message = Message.Create(MessageSendMode.Reliable, ClientToGameServerId.joinPrivateMatch);
+                Message message = Message.Create(MessageSendMode.Reliable, ClientToGameServerId.joinMatch);
                 message.AddString(urlPeices[1].Remove(urlPeices[1].Length - 1, 1));
                 Client.Send(message);
             }

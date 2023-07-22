@@ -36,13 +36,13 @@ namespace Mythrail.MainMenu.Tabs.Join
 
         public void MatchNotFound()
         {
-            NotificationManager.QueNotification(privateMatchNotFoundImage, "Incorrect Code", "This is not the game you are looking for...", 2);
+            NotificationManager.Singleton.CreateNotification(privateMatchNotFoundImage, "Incorrect Code", "This is not the game you are looking for...", 2);
             MenuUIManager.instance.ShakeScreen();
         }
 
         public void JoinMatch()
         {
-            Message message = Message.Create(MessageSendMode.Reliable, ClientToGameServerId.joinPrivateMatch);
+            Message message = Message.Create(MessageSendMode.Reliable, ClientToGameServerId.joinMatch);
             message.AddString(privateMatchJoinCodeText.text.ToUpper());
             MenuNetworkManager.Singleton.Client.Send(message);
         }

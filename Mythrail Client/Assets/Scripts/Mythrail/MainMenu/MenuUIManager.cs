@@ -60,13 +60,13 @@ public class MenuUIManager : MonoBehaviour
     {
         connectionStatusText.text = "SERVER SHUT DOWN";
         TabManager.Singleton.OpenMain();
-        NotificationManager.QueNotification(disconnectedImage, "Disconnected", "Connection to the Mythrail servers was lost", 2);
+        NotificationManager.Singleton.CreateNotification(disconnectedImage, "Disconnected", "Connection to the Mythrail servers was lost", 2);
     }
 
     public void Connected()
     {
         connectionStatusText.text = "CONNECTED";
-        NotificationManager.QueNotification(connectedImage, "Connected", "Connected to the Mythrail serves.", 2);
+        NotificationManager.Singleton.CreateNotification(connectedImage, "Connected", "Connected to the Mythrail serves.", 2);
     }
 
     public void LoadUsername(string username)
@@ -82,14 +82,22 @@ public class MenuUIManager : MonoBehaviour
 
         if (!UsernameAcceptable(newUsername))
         {
+            usernameField.text = MenuNetworkManager.username;
             return;
         }
+        
+        SaveUsername(newUsername);
 
         MenuNetworkManager.username = newUsername;
             
         Message message = Message.Create(MessageSendMode.Reliable, ClientToGameServerId.updateUsername);
         message.AddString(MenuNetworkManager.username);
         MenuNetworkManager.Singleton.Client.Send(message);
+    }
+
+    private void SaveUsername(string newUsername)
+    {
+        PlayerPrefs.SetString("Username", newUsername);
     }
 
     public bool UsernameAcceptable(string newUsername)
@@ -106,7 +114,7 @@ public class MenuUIManager : MonoBehaviour
     public void ConnectionFailed(object o, EventArgs args)
     {
         connectionStatusText.text = "CONNECTION FAILED";
-        NotificationManager.QueNotification(disconnectedImage, "Failed To Connect", "Connection to the Mythrail servers could not be established.", 2);
+        NotificationManager.Singleton.CreateNotification(disconnectedImage, "Failed To Connect", "Connection to the Mythrail servers could not be established.", 2);
     }
 
     public bool CanMoveMenu()
@@ -135,13 +143,13 @@ public class MenuUIManager : MonoBehaviour
 
     private void UsernameEmpty()
     {
-        NotificationManager.QueNotification(privateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.", 2);
+        NotificationManager.Singleton.CreateNotification(privateMatchNotFoundImage, "Username empty", "The username you enter cannot be empty, please try again.", 2);
         ShakeScreen();
     }
 
     private void NotConnected()
     {
-        NotificationManager.QueNotification(privateMatchNotFoundImage, "No Connection", "You are not connected to the Mythrail servers.", 2);
+        NotificationManager.Singleton.CreateNotification(privateMatchNotFoundImage, "No Connection", "You are not connected to the Mythrail servers.", 2);
         ShakeScreen();
     }
 
@@ -160,7 +168,7 @@ public class MenuUIManager : MonoBehaviour
     public void InvalidUsername()
     {
         usernameField.text = "";
-        NotificationManager.QueNotification(privateMatchNotFoundImage, "Can't use that name", "A user on this server is already using that name, please try again with a different name", 2);
+        NotificationManager.Singleton.CreateNotification(privateMatchNotFoundImage, "Can't use that name", "A user on this server is already using that name, please try again with a different name", 2);
     }
 
     public void RefreshConnection()

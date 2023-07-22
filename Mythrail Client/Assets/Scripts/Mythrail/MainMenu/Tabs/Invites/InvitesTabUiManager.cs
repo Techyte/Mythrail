@@ -44,7 +44,7 @@ namespace Mythrail.MainMenu.Tabs.Invites
 
         public void InvitedBy(string name, ushort port)
         {
-            Notification notification = NotificationManager.QueNotification(multiplayerImage,
+            Notification notification = NotificationManager.Singleton.CreateNotification(multiplayerImage,
                 $"Invited by {name}", "Click here to join", 5);
 
             notification.Clicked += (o, e) =>

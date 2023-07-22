@@ -16,8 +16,8 @@ namespace Mythrail_Game_Server
     {
         matches = 100,
         createMatchSuccess,
-        joinedPrivateMatch,
-        privateMatchNotFound,
+        joinedMatch,
+        matchNotFound,
         invalidName,
         playersResult,
         invite,
@@ -29,7 +29,7 @@ namespace Mythrail_Game_Server
         updateUsername,
         requestMatches,
         createMatch,
-        joinPrivateMatch,
+        joinMatch,
         getPlayers,
         invites,
     }
@@ -129,7 +129,7 @@ namespace Mythrail_Game_Server
         
          private void PrivateMatchFound(ushort toClientId, ushort port)
          {
-             Message message = Message.Create(MessageSendMode.Reliable, GameServerToClientId.joinedPrivateMatch);
+             Message message = Message.Create(MessageSendMode.Reliable, GameServerToClientId.joinedMatch);
              message.AddUShort(port);
              Server.Send(message, toClientId);
          }
@@ -220,13 +220,33 @@ namespace Mythrail_Game_Server
              Process matchProcess = new Process();
              matchProcess.EnableRaisingEvents = true;
 
-             string dir = Directory.GetCurrentDirectory() + "/Match Application/Mythrail Server.x86_64";
+             string dir = Directory.GetCurrentDirectory();
+             if(IsLinux())
+             {
+                 dir += "/Match Application/Mythrail Server.x86_64";
+             }
+             else
+             {
+                 dir += "/Match Application/Windows/Mythrail Server.exe";
+             }
+             
+             Console.WriteLine(dir);
              matchProcess.StartInfo.FileName = dir;
         
              ushort port = FreeTcpPort();
              string code = GenerateGameCode();
-             matchProcess.StartInfo.Arguments =
-                 $"-batchmode -nographics port:{port.ToString()} maxPlayers:{maxPlayers.ToString()} minPlayers:{minPlayers.ToString()} isPrivate:{isPrivate.ToString()} code:{code}";
+             
+             if (IsLinux())
+             {
+                 matchProcess.StartInfo.Arguments = "-batchmode -nographics";
+             }
+             else
+             {
+                 matchProcess.StartInfo.Arguments = "";
+             }
+             
+             matchProcess.StartInfo.Arguments +=
+                 $" port:{port.ToString()} maxPlayers:{maxPlayers.ToString()} minPlayers:{minPlayers.ToString()} isPrivate:{isPrivate.ToString()} code:{code}";
              
              matchProcess.Start();
         
@@ -236,6 +256,12 @@ namespace Mythrail_Game_Server
              matchProcess.Exited += (sender, eventArgs) => { MatchEnded(newMatch); };
         
              return new MatchCreationInfo(port, code);
+         }
+         
+         private bool IsLinux()
+         {
+             int p = (int) Environment.OSVersion.Platform;
+             return p == 4 || p == 6 || p == 128;
          }
         
          #region Message Handlers
@@ -293,7 +319,7 @@ namespace Mythrail_Game_Server
              }
          }
         
-         [MessageHandler((ushort)ClientToGameServerId.joinPrivateMatch)]
+         [MessageHandler((ushort)ClientToGameServerId.joinMatch)]
          private static void JoinPrivateMatch(ushort fromClientId, Message message)
          {
              string codeKey = message.GetString();
@@ -306,7 +332,7 @@ namespace Mythrail_Game_Server
                  }
              }
         
-             Message failedMessage = Message.Create(MessageSendMode.Reliable, GameServerToClientId.privateMatchNotFound);
+             Message failedMessage = Message.Create(MessageSendMode.Reliable, GameServerToClientId.matchNotFound);
              Server.Send(failedMessage, fromClientId);
          }
         

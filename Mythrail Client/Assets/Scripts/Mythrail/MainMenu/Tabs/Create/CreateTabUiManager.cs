@@ -111,7 +111,7 @@ namespace Mythrail.MainMenu.Tabs.Create
         {
             if (string.IsNullOrEmpty(matchName.text))
             {
-                NotificationManager.QueNotification(privateMatchNotFoundImage, "Name empty", "The match name you enter cannot be empty, please try again.", 2);
+                NotificationManager.Singleton.CreateNotification(privateMatchNotFoundImage, "Name empty", "The match name you enter cannot be empty, please try again.", 2);
                 MenuUIManager.instance.ShakeScreen();
                 return;
             }

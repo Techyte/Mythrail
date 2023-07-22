@@ -8,70 +8,46 @@ namespace Mythrail.Notifications
 {
     public class Notification : MonoBehaviour
     {
-        public Image logo;
-        public TextMeshProUGUI title;
-        public TextMeshProUGUI content;
-        [SerializeField] private bool hasReachedResting;
-        [SerializeField] private bool timeToGoBack;
-        [SerializeField] private bool hasStartedCountdown;
+        public Image Logo => logo;
+        public TextMeshProUGUI Title => title;
+        public TextMeshProUGUI Content => content;
+        
+        [SerializeField] private Image logo;
+        [SerializeField] private TextMeshProUGUI title;
+        [SerializeField] private TextMeshProUGUI content;
+        [SerializeField] private Animator animator;
+        [SerializeField] private Button button;
+        [SerializeField] private Transform startPos;
 
         public event EventHandler Clicked;
 
         public float stayTime = 2;
 
-        private bool _enabled;
+        [SerializeField] private bool hasStayed = false;
 
         private void Start()
         {
-            GetComponent<Button>().onClick.AddListener(delegate
+            button.onClick.AddListener(delegate
             {
-                Clicked?.Invoke(gameObject, EventArgs.Empty);   
+                Clicked?.Invoke(gameObject, EventArgs.Empty);
             });
+
+            StartCoroutine(Wait());
         }
 
-        public void Enable()
+        private IEnumerator Wait()
         {
-            _enabled = true;
+            yield return new WaitForSeconds(stayTime);
+            hasStayed = true;
+            animator.SetTrigger("TimeElapsed");
         }
 
         private void Update()
         {
-            if(_enabled)
+            if (button.transform.position.x == startPos.position.x && hasStayed)
             {
-                if (!hasReachedResting)
-                {
-                    transform.position = Vector3.Lerp(transform.position,
-                        NotificationManager.Singleton.endPosObj.transform.position,
-                        NotificationManager.Singleton.NotificationAnimationTime * Time.deltaTime);
-                }
-
-                if (transform.position.x <= NotificationManager.Singleton.endPosObj.transform.position.x + 1 &&
-                    !hasStartedCountdown)
-                {
-                    hasStartedCountdown = true;
-                    hasReachedResting = true;
-                    StartCoroutine(WaitTimer());
-                }
-
-
-                if (timeToGoBack)
-                {
-                    transform.position = Vector3.Lerp(transform.position,
-                        NotificationManager.Singleton.startPosObj.transform.position,
-                        NotificationManager.Singleton.NotificationAnimationTime * Time.deltaTime);
-                }
-
-                if (transform.position.x >= NotificationManager.Singleton.startPosObj.transform.position.x - 1)
-                {
-                    Destroy(gameObject);
-                }
+                Destroy(gameObject);
             }
-        }
-        
-        private IEnumerator WaitTimer()
-        {
-            yield return new WaitForSeconds(stayTime);
-            timeToGoBack = true;
         }
     }
    

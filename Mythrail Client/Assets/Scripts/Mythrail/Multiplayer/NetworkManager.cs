@@ -188,7 +188,7 @@ namespace Mythrail.Multiplayer
         {
             Cursor.lockState = CursorLockMode.None;
             Player.list.Clear();
-            NotificationManager.QueNotification(xImage, "Could not connect", "The match does not exist or something went wrong.", 2);
+            NotificationManager.Singleton.CreateNotification(xImage, "Could not connect", "The match does not exist or something went wrong.", 2);
             ObjectLoaderManager.LoadMainMenu();
         }
 

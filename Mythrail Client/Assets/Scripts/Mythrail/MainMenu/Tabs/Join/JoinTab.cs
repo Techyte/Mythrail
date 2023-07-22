@@ -15,13 +15,13 @@ namespace Mythrail.MainMenu.Tabs.Join
             instance = this;
         }
 
-        [MessageHandler((ushort)GameServerToClientId.joinedPrivateMatch)]
+        [MessageHandler((ushort)GameServerToClientId.joinedMatch)]
         private static void PrivateMatchJoinSuccess(Message message)
         {
             instance.OnMatchFound?.Invoke(instance, message.GetUShort());
         }
 
-        [MessageHandler((ushort)GameServerToClientId.privateMatchNotFound)]
+        [MessageHandler((ushort)GameServerToClientId.matchNotFound)]
         private static void PrivateMatchNotFound(Message message)
         {
             instance.OnMatchNotFound.Invoke(instance, EventArgs.Empty);
