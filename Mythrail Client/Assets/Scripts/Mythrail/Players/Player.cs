@@ -242,6 +242,18 @@ namespace Mythrail.Players
             Debug.Log($"{username} took damage");
         }
 
+        private void SendDevMessage(int id)
+        {
+            Message message = Message.Create(MessageSendMode.Reliable, ClientToServerId.clientDevMessage);
+            message.AddInt(id); // kill
+            NetworkManager.Singleton.Client.Send(message);
+        }
+
+        public void SendKillDevMessage()
+        {
+            SendDevMessage(0); // id for kil
+        }
+
         [MessageHandler((ushort)ServerToClientId.playerSpawned)]
         private static void SpawnPlayer(Message message)
         {

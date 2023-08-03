@@ -1,5 +1,6 @@
 using System;
 using Mythrail.General;
+using Mythrail.Multiplayer;
 using UnityEngine;
 using Riptide;
 using Riptide.Utils;
@@ -88,6 +89,8 @@ namespace Mythrail.MainMenu
 
         private void Start()
         {
+            DestroyGameNetworkManager();
+            
             LoadUsername();
             
             Cursor.visible = true;
@@ -104,6 +107,14 @@ namespace Mythrail.MainMenu
             RichPresenseManager.UpdateStatus("In Main Menu", "Idling", false);
         }
 
+        private void DestroyGameNetworkManager()
+        {
+            if (NetworkManager.Singleton)
+            {
+                Destroy(NetworkManager.Singleton.gameObject);
+            }
+        }
+        
         public void Connect()
         {
             Singleton.Client.Connect($"{ip}:{port}");

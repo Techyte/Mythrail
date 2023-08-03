@@ -47,6 +47,7 @@ namespace Mythrail.Multiplayer
         ready,
         isInGameRequest,
         playerWantsToRespawn,
+        clientDevMessage,
     }
     
     public class NetworkManager : MonoBehaviour
@@ -61,7 +62,7 @@ namespace Mythrail.Multiplayer
                     _singleton = value;
                 else if (_singleton != value)
                 {
-                    Destroy(value);
+                    Destroy(value.gameObject);
                 }
             }
         }
@@ -91,6 +92,7 @@ namespace Mythrail.Multiplayer
         }
 
         [SerializeField] private string ip;
+        [SerializeField] private bool local;
         [SerializeField] private ushort port;
         [SerializeField] private string username;
         [Space(10)]
@@ -116,10 +118,10 @@ namespace Mythrail.Multiplayer
 
         private void Awake()
         {
+            Debug.Log(Singleton);
             Singleton = this;
-
+            
             SceneManager.sceneLoaded += CheckForMainMenu;
-            DontDestroyOnLoad(gameObject);
         }
 
         public void Disconnect()
@@ -135,13 +137,10 @@ namespace Mythrail.Multiplayer
             }
         }
 
-        public void SelfDestruct()
-        {
-            Destroy(gameObject);
-        }
-
         private void Start()
         {
+            DontDestroyOnLoad(gameObject);
+            
             LoadingScreen.SetActive(true);
 
             RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
@@ -189,15 +188,17 @@ namespace Mythrail.Multiplayer
             Cursor.lockState = CursorLockMode.None;
             Player.list.Clear();
             NotificationManager.Singleton.CreateNotification(xImage, "Could not connect", "The match does not exist or something went wrong.", 2);
-            ObjectLoaderManager.LoadMainMenu();
+            SceneManager.LoadScene("MainMenu");
         }
 
         private void Connect()
         {
             port = JoinMatchInfo.port != 0 ? JoinMatchInfo.port : port;
             JoinMatchInfo.port = 0;
+
+            string trueIp = local ? "127.0.0.1" : ip;
             
-            Client.Connect($"{ip}:{port}");
+            Client.Connect($"{trueIp}:{port}");
         }
 
         private void DidConnect(object sender, EventArgs e)
@@ -240,7 +241,7 @@ namespace Mythrail.Multiplayer
             
             Cursor.lockState = CursorLockMode.None;
             Player.list.Clear();
-            ObjectLoaderManager.LoadMainMenu();
+            SceneManager.LoadScene("MainMenu");
         }
         
         public static bool hasBeenReadyOnce;
@@ -273,7 +274,7 @@ namespace Mythrail.Multiplayer
             Message message = Message.Create(MessageSendMode.Reliable, ClientToServerId.ready);
             Client.Send(message);
             Debug.Log("Ready");
-                UIManager.Singleton.LoadingStatusDisplay.text = "WAITING";
+            UIManager.Singleton.LoadingStatusDisplay.text = "WAITING";
         }
 
         [MessageHandler((ushort)LobbyServerToClient.sync)]
@@ -311,9 +312,12 @@ namespace Mythrail.Multiplayer
             Singleton.maxClientCount = message.GetUShort();
             string code = message.GetString();
             Singleton.code = code;
-            Singleton.gameObject.GetComponent<UIManager>().SetCode();
+            Debug.Log(Singleton);
+            Debug.Log(Singleton.GetComponent<UIManager>());
+            Singleton.GetComponent<UIManager>().SetCode();
             if (isInGame)
             {
+                Debug.Log("Game has started, loading battlefeild");
                 Singleton.LoadGame();
                 if(!Singleton.isPrivate)
                 {
@@ -328,6 +332,7 @@ namespace Mythrail.Multiplayer
             }
             else
             {
+                Debug.Log("Game has not started, loading lobby");
                 Singleton.SendName();
                 if(!Singleton.isPrivate)
                 {
@@ -367,6 +372,8 @@ namespace Mythrail.Multiplayer
         [MessageHandler((ushort)ServerToClientId.LobbyCountdown)]
         private static void LobbyCountdown(Message message)
         {
+            Debug.Log(Singleton);
+            Debug.Log(Singleton.GetComponent<GameObject>());
             Singleton.GetComponent<UIManager>().SetStartingText((int.Parse(message.GetString())+1).ToString());
         }
     }

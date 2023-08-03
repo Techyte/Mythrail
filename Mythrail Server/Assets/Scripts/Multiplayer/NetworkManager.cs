@@ -5,7 +5,6 @@ using Riptide;
 using System.Net;
 using System.Net.Sockets;
 using Riptide.Utils;
-using TMPro;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
@@ -37,6 +36,7 @@ public enum ClientToServerId : ushort
     ready,
     isInGameRequest,
     playerWantsToRespawn,
+    clientDevMessage,
 }
 
 public enum LobbyServerToClient : ushort
@@ -77,9 +77,6 @@ public class NetworkManager : MonoBehaviour
     [SerializeField] private ushort maxClientCount;
     [SerializeField] private ushort minPlayerCount;
 
-    [SerializeField] private TextMeshProUGUI portText;
-    [SerializeField] private TextMeshProUGUI readyPlayersText;
-    [SerializeField] private TextMeshProUGUI totalPlayersText;
     [Space]
     [SerializeField] private float readyCountdown;
     [SerializeField] private float currentReadCountdown;
@@ -140,7 +137,6 @@ public class NetworkManager : MonoBehaviour
         Server = new Server();
         Server.Start(port, maxClientCount);
         Server.ClientDisconnected += PlayerLeft;
-        if(portText) portText.text = port.ToString();
 
         SceneManager.sceneLoaded += UpdateReferences;
     }
@@ -154,14 +150,6 @@ public class NetworkManager : MonoBehaviour
 
     private void UpdateReferences(Scene scene, LoadSceneMode loadSceneMode)
     {
-        if (scene.buildIndex == 1)
-        {
-            portText = GameObject.Find("PortText").GetComponent<TextMeshProUGUI>();
-            portText.text = port.ToString();
-            readyPlayersText = GameObject.Find("ReadyPlayers").GetComponent<TextMeshProUGUI>();
-            totalPlayersText = GameObject.Find("TotalPlayers").GetComponent<TextMeshProUGUI>();
-        }
-        
         spawnPoints = new List<Transform>();
         foreach (Transform spawnPoint in GameObject.Find("SpawnPoints").transform)
         {
@@ -171,12 +159,6 @@ public class NetworkManager : MonoBehaviour
 
     private void Update()
     {
-        if (readyPlayersText)
-        {
-            readyPlayersText.text = GameLogic.Singleton.readyPlayers.ToString();
-            totalPlayersText.text = Server.ClientCount.ToString();
-        }
-
         if (Server.ClientCount == 0)
         {
             emptyLobbyTimerCurrent -= Time.deltaTime;
@@ -274,9 +256,9 @@ public class NetworkManager : MonoBehaviour
     {
         if (Player.list.TryGetValue(e.Client.Id, out Player player))
         {
-            if (SceneManager.GetActiveScene().buildIndex == 1 && !player.isGameReady)
+            if (GameLogic.Singleton.gameHasStarted)
             {
-                GameLogic.Singleton.PlayerLeftWhileLoading();
+                player.isGameReady = false;
             }
             
             Destroy(player.gameObject);
@@ -308,6 +290,19 @@ public class NetworkManager : MonoBehaviour
         Server.SendToAll(message);
     }
 
+    private void HandClientDevMessage(int id, object[] otherInfo)
+    {
+        switch (id)
+        {
+            case 0:
+                if (Player.list.TryGetValue((ushort)otherInfo[0], out Player player))
+                {
+                    player.TakeEditorDamage(int.MaxValue);
+                }
+                break;
+        }
+    }
+
     private void SendLobbySync()
     {
         Message message = Message.Create(MessageSendMode.Unreliable, LobbyServerToClient.sync);
@@ -326,5 +321,12 @@ public class NetworkManager : MonoBehaviour
         resaultMessage.AddUShort(Singleton.Server.MaxClientCount);
         resaultMessage.AddString(Singleton.code);
         Singleton.Server.Send(resaultMessage, fromClientId);
+    }
+
+    [MessageHandler((ushort)ClientToServerId.clientDevMessage)]
+    private static void ClientDevMessage(ushort fromClientId, Message message)
+    {
+        int id = message.GetInt();
+        Singleton.HandClientDevMessage(id, new object[] { fromClientId });
     }
 }

@@ -25,24 +25,37 @@ public class GameLogic : MonoBehaviour
     [Header("Prefabs")]
     [SerializeField] private GameObject playerPrefab;
 
-    public int readyPlayers;
+    public int ReadyPlayers => GetReadyPlayers();
 
     public bool gameHasStarted;
+    private bool AllPlayersReady => ReadyPlayers == Player.list.Count && Player.list.Count > 0;
+    private bool GameCanStart => AllPlayersReady && !gameHasStarted && SceneManager.GetActiveScene().name != "Lobby";
 
     private void Awake()
     {
         Singleton = this;
     }
 
-    public void PlayerLeftWhileLoading()
+    public int GetReadyPlayers()
     {
-        readyPlayers--;
+        int readyPlayers = 0;
+
+        foreach (Player player in Player.list.Values)
+        {
+            if (player.isGameReady)
+            {
+                readyPlayers++;
+            }
+        }
+        
+        return readyPlayers;
     }
 
     private void FixedUpdate()
     {
-        if (readyPlayers >= NetworkManager.Singleton.Server.ClientCount && SceneManager.GetActiveScene().buildIndex != 0 && NetworkManager.Singleton.Server.ClientCount > 0 && !gameHasStarted)
+        if (GameCanStart)
         {
+            Debug.Log("starting");
             SendReady();
             gameHasStarted = true;
         }
@@ -50,6 +63,7 @@ public class GameLogic : MonoBehaviour
 
     private void SendReady()
     {
+        Debug.Log(NetworkManager.Singleton.Server.ClientCount);
         Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.gameStarted);
         NetworkManager.Singleton.Server.SendToAll(message);
     }
@@ -59,14 +73,7 @@ public class GameLogic : MonoBehaviour
     {
         if (Player.list.TryGetValue(fromClientId, out Player player))
         {
-            Singleton.readyPlayers++;
             player.isGameReady = true;
-
-            if (Singleton.gameHasStarted)
-            {
-                Message readyMessage = Message.Create(MessageSendMode.Reliable, ServerToClientId.gameStarted);
-                NetworkManager.Singleton.Server.Send(readyMessage, fromClientId);
-            }
         }
     }
 }

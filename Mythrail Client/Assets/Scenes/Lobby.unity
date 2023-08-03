@@ -6688,6 +6688,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ip: 168.138.8.154
+  local: 0
   port: 35065
   username: Guest
   TickDivergenceTolerance: 1
@@ -6748,7 +6749,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIHealthBar: {fileID: 0}
-  loadingScreen: {fileID: 0}
+  loadingScreen: {fileID: 738323054}
   KillsText: {fileID: 0}
   DeathsText: {fileID: 0}
   HUDUsernameDisplay: {fileID: 0}

@@ -7,7 +7,7 @@ namespace Mythrail.General
     {
         [SerializeField] private GameObject[] dontDestroyOnLoadObjects;
 
-        private void Awake()
+        private void Start()
         {
             foreach (var obj in dontDestroyOnLoadObjects)
             {

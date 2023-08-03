@@ -1,3 +1,4 @@
+using Mythrail.Settings;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,10 @@ namespace Mythrail.MainMenu.Tabs.Settings
         [SerializeField] private Toggle askToInvite;
         [SerializeField] private Toggle alwaysInvite;
 
+        [SerializeField] private bool defaultFullscreen;
+        [SerializeField] private bool defaultAskToInvite;
+        [SerializeField] private bool defaultAlwaysInvite;
+
         private void Awake()
         {
             instance = this;
@@ -23,8 +28,6 @@ namespace Mythrail.MainMenu.Tabs.Settings
 
         private void Start()
         {
-            LoadSettings();
-            
             fullscreenToggle.onValueChanged.AddListener(delegate(bool arg0)
             {
                 ToggleFullscreen(arg0);
@@ -44,32 +47,62 @@ namespace Mythrail.MainMenu.Tabs.Settings
             {
                 ToggleAlwaysInvite(arg0);
             });
+            
+            LoadSettings();
         }
 
         private void LoadSettings()
         {
+            if (!PlayerPrefs.HasKey("Fullscreen"))
+            {
+                PlayerPrefs.SetString("Fullscreen", defaultFullscreen.ToString());
+            }
+            if (!PlayerPrefs.HasKey("AskToInvite"))
+            {
+                PlayerPrefs.SetString("AskToInvite", defaultAskToInvite.ToString());
+            }
+            if (!PlayerPrefs.HasKey("AlwaysInvite"))
+            {
+                PlayerPrefs.SetString("AlwaysInvite", defaultAlwaysInvite.ToString());
+            }
             
+            bool fullscreen = bool.Parse(PlayerPrefs.GetString("Fullscreen"));
+            bool askToInvite = bool.Parse(PlayerPrefs.GetString("AskToInvite"));
+            bool alwaysInvite = bool.Parse(PlayerPrefs.GetString("AlwaysInvite"));
+
+            fullscreenToggle.isOn = fullscreen;
+            this.askToInvite.isOn = askToInvite;
+            this.alwaysInvite.isOn = alwaysInvite;
         }
 
-        private void ToggleFullscreen(bool value)
+        public void ToggleFullscreen(bool value)
         {
             _SettingsTab.Fullscreen(value);
         }
 
-        private void VolumeChanged(float value)
+        public void VolumeChanged(float value)
         {
             _SettingsTab.Volume(value);
         }
 
-        private void ToggleAskToInvite(bool value)
+        public void ToggleAskToInvite(bool value)
         {
             _SettingsTab.AskToInvite(value);
-            alwaysInvite.interactable = !value;
+            
+            if(value)
+                alwaysInvite.isOn = false;
+
+            MythrailSettings.AlwaysInvite = false;
         }
 
-        private void ToggleAlwaysInvite(bool value)
+        public void ToggleAlwaysInvite(bool value)
         {
             _SettingsTab.ToggleAlwaysInvite(value);
+
+            if(value)
+                askToInvite.isOn = false;
+            
+            Debug.Log("always invite toggled");
         }
     }   
 }

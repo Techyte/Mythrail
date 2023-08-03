@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Mythrail.MainMenu.Tabs.Invites;
 using Mythrail.Multiplayer;
 using Mythrail.Notifications;
+using Mythrail.Settings;
 using Riptide;
 using TMPro;
 using UnityEngine;
@@ -155,8 +156,22 @@ namespace Mythrail.MainMenu.Tabs.Create
         // Continue from match info
         public void OpenInviteQuestionScreen()
         {
-            inviteScreen.SetActive(false);
-            invitePlayersQuestionPopup.SetActive(true);
+            if (MythrailSettings.AskToInvite)
+            {
+                inviteScreen.SetActive(false);
+                invitePlayersQuestionPopup.SetActive(true);
+            }
+            else
+            {
+                if(MythrailSettings.AlwaysInvite)
+                {
+                    GetCurrentPlayers();
+                }
+                else
+                {
+                    _createTab.JoinCreatedMatch();   
+                }
+            }
         }
         
         // Confirm invite players question
