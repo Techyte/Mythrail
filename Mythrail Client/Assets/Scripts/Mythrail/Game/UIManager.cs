@@ -59,6 +59,7 @@ namespace Mythrail.Game
             SetPingText();
             if(scene.name == "BattleFeild")
             {
+                SetCode();
                 UIHealthBar = GameObject.Find("Health").GetComponentsInChildren<Image>()[1].transform;
                 loadingScreen = GameObject.Find("Loading");
                 KillsText = GameObject.Find("KillCounter").GetComponent<TextMeshProUGUI>();
@@ -72,7 +73,6 @@ namespace Mythrail.Game
                 RespawnButton = GameObject.Find("RespawnButton").GetComponent<Button>();
                 RespawnButton.onClick.AddListener(Respawn);
                 RespawningScreen.SetActive(false);
-                SetCode();
             }
         }
 

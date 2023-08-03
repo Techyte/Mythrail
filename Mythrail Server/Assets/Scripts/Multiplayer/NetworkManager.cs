@@ -30,7 +30,7 @@ public enum ServerToClientId : ushort
 
 public enum ClientToServerId : ushort
 {
-    name = 1,
+    register = 1,
     movementInput,
     weaponInput,
     ready,

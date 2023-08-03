@@ -41,7 +41,7 @@ namespace Mythrail.Multiplayer
 
     public enum ClientToServerId : ushort
     {
-        name = 1,
+        register = 1,
         movementInput,
         weaponInput,
         ready,
@@ -62,6 +62,7 @@ namespace Mythrail.Multiplayer
                     _singleton = value;
                 else if (_singleton != value)
                 {
+                    Debug.Log("networkmanager already existed");
                     Destroy(value.gameObject);
                 }
             }
@@ -121,7 +122,7 @@ namespace Mythrail.Multiplayer
             Debug.Log(Singleton);
             Singleton = this;
             
-            SceneManager.sceneLoaded += CheckForMainMenu;
+            SceneManager.sceneLoaded += NewScene;
         }
 
         public void Disconnect()
@@ -129,10 +130,11 @@ namespace Mythrail.Multiplayer
             Client.Disconnect();
         }
 
-        private void CheckForMainMenu(Scene scene, LoadSceneMode loadSceneMode)
+        private void NewScene(Scene scene, LoadSceneMode loadSceneMode)
         {
             if (scene.name == "BattleFeild")
             {
+                Singleton.StartSettingUpPlayer();
                 BufferCamera = GameObject.Find("Buffer Camera");
             }
         }
@@ -213,9 +215,14 @@ namespace Mythrail.Multiplayer
             Client.Send(message);
         }
 
+        private void StartSettingUpPlayer()
+        {
+            SendName();
+        }
+
         private void SendName()
         {
-            Message message = Message.Create(MessageSendMode.Reliable, ClientToServerId.name);
+            Message message = Message.Create(MessageSendMode.Reliable, ClientToServerId.register);
 
             username = !string.IsNullOrEmpty(JoinMatchInfo.username)? JoinMatchInfo.username : username;
             message.AddString(username);
@@ -333,7 +340,7 @@ namespace Mythrail.Multiplayer
             else
             {
                 Debug.Log("Game has not started, loading lobby");
-                Singleton.SendName();
+                Singleton.StartSettingUpPlayer();
                 if(!Singleton.isPrivate)
                 {
                     RichPresenseManager.UpdateStatus("In Lobby",
@@ -350,8 +357,6 @@ namespace Mythrail.Multiplayer
         private void LoadGame()
         {
             SceneManager.LoadScene("BattleFeild");
-            Player.list.Clear();
-            Singleton.SendName();
         }
 
         [MessageHandler((ushort)ServerToClientId.sync)]
@@ -373,7 +378,7 @@ namespace Mythrail.Multiplayer
         private static void LobbyCountdown(Message message)
         {
             Debug.Log(Singleton);
-            Debug.Log(Singleton.GetComponent<GameObject>());
+            Debug.Log(Singleton.gameObject);
             Singleton.GetComponent<UIManager>().SetStartingText((int.Parse(message.GetString())+1).ToString());
         }
     }

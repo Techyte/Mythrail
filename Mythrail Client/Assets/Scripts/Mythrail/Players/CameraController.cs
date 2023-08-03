@@ -104,8 +104,11 @@ namespace Mythrail.Players
             Cursor.lockState = CursorLockMode.None;
             pauseScreen.SetActive(true);
             Player.list.Clear();
+            Debug.Log("player hit exit");
             NetworkManager.Singleton.Disconnect();
+            Debug.Log("player hit exit and we disconnected");
             SceneManager.LoadScene("MainMenu");
+            Debug.Log("loaded main menu");
         }
     }
 

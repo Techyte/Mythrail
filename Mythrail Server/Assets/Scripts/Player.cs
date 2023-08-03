@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Riptide;
 using System.Collections.Generic;
@@ -35,16 +36,22 @@ public class Player : MonoBehaviour
     public static void Spawn(ushort id, string username)
     {
         Player player = Instantiate(GameLogic.Singleton.PlayerPrefab, new Vector3(0f, 10f, 0f), Quaternion.identity).GetComponent<Player>();
-        player.name = $"Player {id} ({(string.IsNullOrEmpty(username) ? "Guest" : username)})";
+        
+        // making sure that the players username is not empty
+        string finalUsername = string.IsNullOrEmpty(username) ? $"Guest {id}" : username;
+        
+        player.name = $"Player {id}: {finalUsername}";
         player.Id = id;
-        player.Username = string.IsNullOrEmpty(username) ? $"Guest {id}" : username;
+        player.Username = finalUsername;
 
         player.currentHealth = player.maxHealth;
 
         Vector3 spawnPoint = NetworkManager.Singleton.GetRandomSpawnPoint();
         player.transform.position = spawnPoint;
+
+        bool lobby = SceneManager.GetActiveScene().name == "Lobby";
         
-        if (SceneManager.GetActiveScene().buildIndex == 0)
+        if (lobby)
         {
             player.SendLobbySpawned();
             foreach (Player otherPlayer in list.Values)
@@ -52,7 +59,7 @@ public class Player : MonoBehaviour
                 otherPlayer.SendLobbyProxyPlayerSpawnInfo(id);
             }
         }
-        else
+        else // Loaded into the actual game
         {
             player.SendSpawned();
             foreach (Player otherPlayer in list.Values)
@@ -63,8 +70,14 @@ public class Player : MonoBehaviour
         list.Add(id, player);
     }
 
-    private void SendSpawned()
+    private void SendSpawned(bool local, bool lobby)
     {
+        Message message = null;
+        
+        if (lobby && local)
+        {
+            AddSpawnData(Message.Create(MessageSendMode.Reliable, LobbyServerToClient.playerSpawned)
+        }
         NetworkManager.Singleton.Server.SendToAll(AddSpawnData(Message.Create(MessageSendMode.Reliable, ServerToClientId.playerSpawned)));
     }
 
@@ -195,7 +208,7 @@ public class Player : MonoBehaviour
         NetworkManager.Singleton.Server.SendToAll(message);
     }
 
-    [MessageHandler((ushort)ClientToServerId.name)]
+    [MessageHandler((ushort)ClientToServerId.register)]
     private static void Name(ushort fromClientId, Message message)
     {
         Spawn(fromClientId, message.GetString());
