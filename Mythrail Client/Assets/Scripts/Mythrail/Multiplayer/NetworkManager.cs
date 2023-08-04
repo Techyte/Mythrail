@@ -281,6 +281,8 @@ namespace Mythrail.Multiplayer
             Message message = Message.Create(MessageSendMode.Reliable, ClientToServerId.ready);
             Client.Send(message);
             Debug.Log("Ready");
+            Debug.Log(UIManager.Singleton);
+            Debug.Log(UIManager.Singleton.LoadingStatusDisplay);
             UIManager.Singleton.LoadingStatusDisplay.text = "WAITING";
         }
 
@@ -369,6 +371,8 @@ namespace Mythrail.Multiplayer
         public static void GameStarted(Message message)
         {
             Debug.Log("Everyone is ready");
+            Debug.Log(Singleton);
+            Debug.Log(Singleton.BufferCamera);
             Singleton.BufferCamera.SetActive(false);
             Player.LocalPlayer.playerController.canMove = true;
             UIManager.Singleton.loadingScreen.SetActive(false);
@@ -377,8 +381,6 @@ namespace Mythrail.Multiplayer
         [MessageHandler((ushort)ServerToClientId.LobbyCountdown)]
         private static void LobbyCountdown(Message message)
         {
-            Debug.Log(Singleton);
-            Debug.Log(Singleton.gameObject);
             Singleton.GetComponent<UIManager>().SetStartingText((int.Parse(message.GetString())+1).ToString());
         }
     }

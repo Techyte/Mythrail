@@ -67,12 +67,23 @@ public class GameLogic : MonoBehaviour
         Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.gameStarted);
         NetworkManager.Singleton.Server.SendToAll(message);
     }
+    
+    private void SendReady(ushort id)
+    {
+        Debug.Log(NetworkManager.Singleton.Server.ClientCount);
+        Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.gameStarted);
+        NetworkManager.Singleton.Server.Send(message, id);
+    }
 
     [MessageHandler((ushort)ClientToServerId.ready)]
     private static void Ready(ushort fromClientId, Message message)
     {
         if (Player.list.TryGetValue(fromClientId, out Player player))
         {
+            if (Singleton.gameHasStarted)
+            {
+                Singleton.SendReady(fromClientId);
+            }
             player.isGameReady = true;
         }
     }

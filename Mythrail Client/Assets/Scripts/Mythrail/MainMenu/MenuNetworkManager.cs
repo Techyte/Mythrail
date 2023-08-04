@@ -73,6 +73,7 @@ namespace Mythrail.MainMenu
         }
 
         [SerializeField] private string ip;
+        [SerializeField] private bool local;
         [SerializeField] private ushort port;
         public static string username = "Guest";
 
@@ -117,7 +118,9 @@ namespace Mythrail.MainMenu
         
         public void Connect()
         {
-            Singleton.Client.Connect($"{ip}:{port}");
+            string newIp = local ? "127.0.0.1" : ip;
+            
+            Singleton.Client.Connect($"{newIp}:{port}");
             uiManager.Connecting();
         }
 

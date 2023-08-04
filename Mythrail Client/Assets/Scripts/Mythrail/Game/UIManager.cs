@@ -27,8 +27,7 @@ namespace Mythrail.Game
             }
         }
 
-        [Header("Connect")]
-        [SerializeField] private Transform UIHealthBar;
+        public Transform UIHealthBar;
 
         public GameObject loadingScreen;
         
@@ -60,19 +59,6 @@ namespace Mythrail.Game
             if(scene.name == "BattleFeild")
             {
                 SetCode();
-                UIHealthBar = GameObject.Find("Health").GetComponentsInChildren<Image>()[1].transform;
-                loadingScreen = GameObject.Find("Loading");
-                KillsText = GameObject.Find("KillCounter").GetComponent<TextMeshProUGUI>();
-                DeathsText = GameObject.Find("DeathCounter").GetComponent<TextMeshProUGUI>();
-                HUDUsernameDisplay = GameObject.Find("UsernameText").GetComponent<TextMeshProUGUI>();
-                LoadingStatusDisplay = GameObject.Find("LoadingText").GetComponent<TextMeshProUGUI>();
-                GunName = GameObject.Find("GunName").GetComponent<TextMeshProUGUI>();
-                RespawningScreen = GameObject.Find("RespawnScreen");
-                PlayScreen = GameObject.Find("PlayScreen");
-                CountdownText = GameObject.Find("CountdownText").GetComponent<TextMeshProUGUI>();
-                RespawnButton = GameObject.Find("RespawnButton").GetComponent<Button>();
-                RespawnButton.onClick.AddListener(Respawn);
-                RespawningScreen.SetActive(false);
             }
         }
 
@@ -204,6 +190,7 @@ namespace Mythrail.Game
         void RefreshHealthBar()
         {
             float healthRatio = (float)Player.LocalPlayer.currentHealth / Player.LocalPlayer.maxHealth;
+            Debug.Log(UIHealthBar);
             UIHealthBar.localScale = Vector3.Lerp(UIHealthBar.localScale, new Vector3(healthRatio, 1, 1), Time.deltaTime * 8f);
 
             UIHealthBar.GetComponent<Image>().color = Player.LocalPlayer.currentHealth <= 10 ? Color.red : Color.green;
