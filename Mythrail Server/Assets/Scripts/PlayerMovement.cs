@@ -174,7 +174,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            Message message = Message.Create(MessageSendMode.Unreliable, LobbyServerToClient.playerMovement);
+            Message message = Message.Create(MessageSendMode.Unreliable, LobbyServerToClientId.playerMovement);
             message.AddUShort(player.Id);
             message.AddUInt(NetworkManager.Singleton.CurrentTick);
             message.AddBool(didTeleport);

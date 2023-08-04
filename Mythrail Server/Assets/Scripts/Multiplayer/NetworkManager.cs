@@ -39,7 +39,7 @@ public enum ClientToServerId : ushort
     clientDevMessage,
 }
 
-public enum LobbyServerToClient : ushort
+public enum LobbyServerToClientId : ushort
 {
     sync = 200,
     ready,
@@ -239,7 +239,7 @@ public class NetworkManager : MonoBehaviour
 
     private void SendLobbyReady()
     {
-        Message message = Message.Create(MessageSendMode.Reliable, LobbyServerToClient.ready);
+        Message message = Message.Create(MessageSendMode.Reliable, LobbyServerToClientId.ready);
         message.AddBool(Singleton.isPrivate);
         message.AddUShort((ushort)Server.ClientCount);
         message.AddUShort(Server.MaxClientCount);
@@ -305,7 +305,7 @@ public class NetworkManager : MonoBehaviour
 
     private void SendLobbySync()
     {
-        Message message = Message.Create(MessageSendMode.Unreliable, LobbyServerToClient.sync);
+        Message message = Message.Create(MessageSendMode.Unreliable, LobbyServerToClientId.sync);
         message.AddUInt(CurrentTick);
 
         Server.SendToAll(message);
