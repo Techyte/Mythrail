@@ -70,14 +70,8 @@ public class Player : MonoBehaviour
         list.Add(id, player);
     }
 
-    private void SendSpawned(bool local, bool lobby)
+    private void SendSpawned()
     {
-        Message message = null;
-        
-        if (lobby && local)
-        {
-            AddSpawnData(Message.Create(MessageSendMode.Reliable, LobbyServerToClient.playerSpawned)
-        }
         NetworkManager.Singleton.Server.SendToAll(AddSpawnData(Message.Create(MessageSendMode.Reliable, ServerToClientId.playerSpawned)));
     }
 
