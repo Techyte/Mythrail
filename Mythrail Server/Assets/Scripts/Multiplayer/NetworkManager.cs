@@ -155,6 +155,8 @@ public class NetworkManager : MonoBehaviour
         {
             spawnPoints.Add(spawnPoint);
         }
+        
+        Debug.Log(Player.list.Count);
     }
 
     private void Update()
@@ -224,14 +226,14 @@ public class NetworkManager : MonoBehaviour
 
         if (CurrentTick % 200 == 0)
         {
-            if(SceneManager.GetActiveScene().buildIndex != 0)
+            if(SceneManager.GetActiveScene().name == "Lobby")
             {
-                SendSync();
+                SendLobbySync();
             }
             else
             {
-                SendLobbySync();
-            }   
+                SendSync();
+            }
         }
 
         CurrentTick++;
@@ -244,7 +246,9 @@ public class NetworkManager : MonoBehaviour
         message.AddUShort((ushort)Server.ClientCount);
         message.AddUShort(Server.MaxClientCount);
         Singleton.Server.SendToAll(message);
+        Debug.Log(Player.list.Count);
         SceneManager.LoadScene(1);
+        Debug.Log(Player.list.Count);
     }
 
     private void OnApplicationQuit()

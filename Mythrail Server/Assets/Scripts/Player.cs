@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Riptide;
 using System.Collections.Generic;
@@ -27,6 +26,8 @@ public class Player : MonoBehaviour
     [SerializeField] private int respawnDelay = 5;
 
     public bool isGameReady;
+    
+    private Vector3 telePos = Vector3.zero;
 
     private void OnDestroy()
     {
@@ -154,15 +155,18 @@ public class Player : MonoBehaviour
     private void Respawn()
     {
         Vector3 spawnPoint = NetworkManager.Singleton.GetRandomSpawnPoint();
-        telePos = spawnPoint;
+        SetTeleport(spawnPoint);
         currentHealth = maxHealth;
         movement.canMove = true;
         respawning = false;
         SendRegularCam();
         SendHealth();
     }
-    
-    Vector3 telePos = Vector3.zero;
+
+    public void SetTeleport(Vector3 teleportPos)
+    {
+        telePos = teleportPos;
+    }
 
     private void LateUpdate()
     {
@@ -170,7 +174,7 @@ public class Player : MonoBehaviour
         
         if (telePos != Vector3.zero)
         {
-            transform.position = new Vector3(telePos.x, telePos.y, telePos.z);
+            transform.position = telePos;
             telePos = Vector3.zero;
         }
 

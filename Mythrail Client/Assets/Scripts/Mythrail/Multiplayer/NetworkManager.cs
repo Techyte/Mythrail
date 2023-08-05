@@ -106,8 +106,6 @@ namespace Mythrail.Multiplayer
         [SerializeField] private GameObject BufferCamera;
 
         [SerializeField] private bool PlayerReady;
-        [Space] 
-        [SerializeField] private Sprite kickedImage;
 
         [SerializeField] private Sprite xImage;
 
@@ -134,7 +132,7 @@ namespace Mythrail.Multiplayer
         {
             if (scene.name == "BattleFeild")
             {
-                Singleton.StartSettingUpPlayer();
+                Singleton.StartSettingUpPlayer(); // called when we load into the lobby or game
                 BufferCamera = GameObject.Find("Buffer Camera");
             }
         }
@@ -254,6 +252,7 @@ namespace Mythrail.Multiplayer
         public static bool hasBeenReadyOnce;
         private void SetTick(ushort serverTick)
         {
+            Debug.Log("received a set tick");
             if (Mathf.Abs(ServerTick - serverTick) > TickDivergenceTolerance)
             {
                 Debug.Log("Setting tick");
@@ -296,7 +295,7 @@ namespace Mythrail.Multiplayer
         private static void LobbyReady(Message message)
         {
             Singleton.LoadGame();
-            Singleton.isPrivate = message.GetBool();
+            Singleton.isPrivate = message.GetBool(); // TODO: remove all of these values because they have already been set by this point
             ushort clientCount = message.GetUShort();
             Singleton.maxClientCount = message.GetUShort();
             

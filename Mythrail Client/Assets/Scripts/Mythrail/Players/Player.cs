@@ -99,6 +99,8 @@ namespace Mythrail.Players
 
         private void Move(uint tick, bool didTeleport, Vector3 newPosition, Vector3 forward, bool isCrouching)
         {
+            Debug.Log(newPosition);
+            Debug.Log(didTeleport);
             interpolator.NewUpdate(tick, didTeleport, newPosition);
 
             if (!IsLocal)
@@ -183,10 +185,7 @@ namespace Mythrail.Players
             
             if(player.IsLocal && LocalPlayer)
             {
-                if (NetworkManager.hasBeenReadyOnce)
-                {
-                    NetworkManager.Singleton.Ready();
-                }
+                NetworkManager.Singleton.Ready();
                 UIManager.Singleton.HUDUsernameDisplay.text = LocalPlayer.username;
                 foreach (Player bufferPlayer in usernameBufferPlayers)
                 {
@@ -263,8 +262,12 @@ namespace Mythrail.Players
         [MessageHandler((ushort)ServerToClientId.playerMovement)]
         private static void PlayerMovement(Message message)
         {
+            Debug.Log("received movement");
             if (list.TryGetValue(message.GetUShort(), out Player player))
-                player.Move(message.GetUInt(), message.GetBool(), message.GetVector3(), message.GetVector3(), message.GetBool());
+            {
+                player.Move(message.GetUInt(), message.GetBool(), message.GetVector3(), message.GetVector3(),
+                    message.GetBool());
+            }
         }
 
         [MessageHandler((ushort)ServerToClientId.playerTookDamage)]

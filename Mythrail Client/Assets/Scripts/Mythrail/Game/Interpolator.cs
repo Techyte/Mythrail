@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Mythrail.Game
 {
+    // NOT MY OWN CODE!!!!!! Credit to Tom Weiland: https://github.com/RiptideNetworking/SampleFPS/blob/main/Client/Assets/Scripts/Interpolator.cs
     public class Interpolator : MonoBehaviour
     {
         [SerializeField] private float timeElapsed = 0f;
@@ -28,6 +29,7 @@ namespace Mythrail.Game
         {
             for (int i = 0; i < futureTransformUpdates.Count; i++)
             {
+                // if the update we are handling is supposed to have happened
                 if (NetworkManager.Singleton.ServerTick >= futureTransformUpdates[i].Tick)
                 {
                     if (futureTransformUpdates[i].IsTeliport)
@@ -43,7 +45,7 @@ namespace Mythrail.Game
                         to = futureTransformUpdates[i];
                         from = new TransformUpdate(NetworkManager.Singleton.InterpolationTick, false, transform.position);
                     }
-
+                    
                     futureTransformUpdates.RemoveAt(i);
                     i--;
                     timeElapsed = 0f;
@@ -51,14 +53,19 @@ namespace Mythrail.Game
                     if (ticksToReach == 0f) ticksToReach = 1f;
                     timeToReachTarget = ticksToReach * Time.fixedDeltaTime;
                 }
+                else
+                {
+                    //Debug.Log($"{NetworkManager.Singleton.ServerTick} {futureTransformUpdates[i].Tick}");
+                }
             }
-
+            
             timeElapsed += Time.deltaTime;
             InterpolatePosition(timeElapsed / timeToReachTarget);
         }
 
         private void InterpolatePosition(float lerpAmount)
         {
+            // if the distance we are going to move is too small to be handled by a lerpUnclamped
             if ((to.Position - previous.Position).sqrMagnitude < squareMovementThreshold)
             {
                 if (to.Position != from.Position)
@@ -82,10 +89,14 @@ namespace Mythrail.Game
         public void NewUpdate(uint tick, bool isTeliport, Vector3 position)
         {
             if (IsInfinite(position))
+            {
                 return;
+            }
             
             if (tick <= NetworkManager.Singleton.InterpolationTick)
-                return; 
+            {
+                return;
+            }
 
             for (int i = 0; i < futureTransformUpdates.Count; i++)
             {
