@@ -59,7 +59,12 @@ namespace Mythrail.Multiplayer
             private set
             {
                 if (_singleton == null)
+                {
                     _singleton = value;
+                }else if (value == null)
+                {
+                    _singleton = value;
+                }
                 else if (_singleton != value)
                 {
                     Debug.Log("networkmanager already existed");
@@ -119,8 +124,6 @@ namespace Mythrail.Multiplayer
         {
             Debug.Log(Singleton);
             Singleton = this;
-            
-            SceneManager.sceneLoaded += NewScene;
         }
 
         public void Disconnect()
@@ -128,13 +131,11 @@ namespace Mythrail.Multiplayer
             Client.Disconnect();
         }
 
-        private void NewScene(Scene scene, LoadSceneMode loadSceneMode)
+        public void LoadedBattle()
         {
-            if (scene.name == "BattleFeild")
-            {
-                Singleton.StartSettingUpPlayer(); // called when we load into the lobby or game
-                BufferCamera = GameObject.Find("Buffer Camera");
-            }
+            Debug.Log("battle loaded");
+            Singleton.StartSettingUpPlayer(); // called when we load into the lobby or game
+            BufferCamera = GameObject.Find("Buffer Camera");
         }
 
         private void Start()
@@ -186,9 +187,9 @@ namespace Mythrail.Multiplayer
         private void FailedToConnect(object sender, EventArgs e)
         {
             Cursor.lockState = CursorLockMode.None;
-            Player.list.Clear();
-            NotificationManager.Singleton.CreateNotification(xImage, "Could not connect", "The match does not exist or something went wrong.", 2);
-            SceneManager.LoadScene("MainMenu");
+            NotificationManager.Singleton.CreateNotification(xImage, "Could not connect",
+                "The match does not exist or something went wrong.", 2);
+            LoadMenu();
         }
 
         private void Connect()
@@ -199,10 +200,12 @@ namespace Mythrail.Multiplayer
             string trueIp = local ? "127.0.0.1" : ip;
             
             Client.Connect($"{trueIp}:{port}");
+            Debug.Log("Sent connection request");
         }
 
         private void DidConnect(object sender, EventArgs e)
         {
+            Debug.Log("Connected");
             GetIsInGameStatus();
             LobbyLoadingScreen.SetActive(false);
         }
@@ -245,7 +248,13 @@ namespace Mythrail.Multiplayer
             }
             
             Cursor.lockState = CursorLockMode.None;
-            Player.list.Clear();
+            LoadMenu();
+        }
+
+        private static void LoadMenu()
+        {
+            Destroy(Singleton.gameObject);
+            Singleton = null;
             SceneManager.LoadScene("MainMenu");
         }
         
@@ -257,7 +266,7 @@ namespace Mythrail.Multiplayer
             {
                 Debug.Log("Setting tick");
                 ServerTick = serverTick;
-                if (SceneManager.GetActiveScene().buildIndex == 2)
+                if (SceneManager.GetActiveScene().name == "BattleField")
                 {
                     if (!PlayerReady)
                     {
@@ -357,6 +366,7 @@ namespace Mythrail.Multiplayer
 
         private void LoadGame()
         {
+            Player.list.Clear();
             SceneManager.LoadScene("BattleFeild");
         }
 

@@ -36,6 +36,7 @@ public class Player : MonoBehaviour
 
     public static void Spawn(ushort id, string username)
     {
+        Debug.LogError("spawning player");
         Player player = Instantiate(GameLogic.Singleton.PlayerPrefab, new Vector3(0f, 10f, 0f), Quaternion.identity).GetComponent<Player>();
         
         // making sure that the players username is not empty

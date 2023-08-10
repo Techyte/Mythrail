@@ -1,3 +1,4 @@
+using Mythrail.Multiplayer;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,23 +9,25 @@ namespace Mythrail.Game
     {
         private void Awake()
         {
-            UIManager manager = UIManager.Singleton;
+            UIManager uiManager = UIManager.Singleton;
+            NetworkManager networkManager = NetworkManager.Singleton;
 
-            manager.SetCode();
+            uiManager.SetCode();
             
-            manager.UIHealthBar = GameObject.Find("Health").GetComponentsInChildren<Image>()[1].transform;
-            manager.loadingScreen = GameObject.Find("Loading");
-            manager.KillsText = GameObject.Find("KillCounter").GetComponent<TextMeshProUGUI>();
-            manager.DeathsText = GameObject.Find("DeathCounter").GetComponent<TextMeshProUGUI>();
-            manager.HUDUsernameDisplay = GameObject.Find("UsernameText").GetComponent<TextMeshProUGUI>();
-            manager.LoadingStatusDisplay = GameObject.Find("LoadingText").GetComponent<TextMeshProUGUI>();
-            manager.GunName = GameObject.Find("GunName").GetComponent<TextMeshProUGUI>();
-            manager.RespawningScreen = GameObject.Find("RespawnScreen");
-            manager.PlayScreen = GameObject.Find("PlayScreen");
-            manager.CountdownText = GameObject.Find("CountdownText").GetComponent<TextMeshProUGUI>();
-            manager.RespawnButton = GameObject.Find("RespawnButton").GetComponent<Button>();
-            manager.RespawnButton.onClick.AddListener(manager.Respawn);
-            manager.RespawningScreen.SetActive(false);
+            uiManager.UIHealthBar = GameObject.Find("Health").GetComponentsInChildren<Image>()[1].transform;
+            uiManager.loadingScreen = GameObject.Find("Loading");
+            uiManager.KillsText = GameObject.Find("KillCounter").GetComponent<TextMeshProUGUI>();
+            uiManager.DeathsText = GameObject.Find("DeathCounter").GetComponent<TextMeshProUGUI>();
+            uiManager.HUDUsernameDisplay = GameObject.Find("UsernameText").GetComponent<TextMeshProUGUI>();
+            uiManager.LoadingStatusDisplay = GameObject.Find("LoadingText").GetComponent<TextMeshProUGUI>();
+            uiManager.GunName = GameObject.Find("GunName").GetComponent<TextMeshProUGUI>();
+            uiManager.RespawningScreen = GameObject.Find("RespawnScreen");
+            uiManager.PlayScreen = GameObject.Find("PlayScreen");
+            uiManager.CountdownText = GameObject.Find("CountdownText").GetComponent<TextMeshProUGUI>();
+            uiManager.RespawnButton = GameObject.Find("RespawnButton").GetComponent<Button>();
+            uiManager.RespawnButton.onClick.AddListener(uiManager.Respawn);
+            uiManager.RespawningScreen.SetActive(false);
+            networkManager.LoadedBattle();
         }
     }   
 }

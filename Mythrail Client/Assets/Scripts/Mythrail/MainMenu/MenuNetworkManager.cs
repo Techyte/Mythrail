@@ -197,6 +197,7 @@ namespace Mythrail.MainMenu
             JoinMatchInfo.port = port;
             JoinMatchInfo.username = username;
             
+            Debug.Log(NetworkManager.Singleton);
             SceneManager.LoadScene("Lobby");
         }
     }
