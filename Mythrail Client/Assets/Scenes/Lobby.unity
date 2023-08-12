@@ -6686,7 +6686,6 @@ MonoBehaviour:
   LoadingScreen: {fileID: 738323054}
   BufferCamera: {fileID: 0}
   PlayerReady: 0
-  kickedImage: {fileID: 21300000, guid: e8a80c16f89523f45b265cfcb4ef1632, type: 3}
   xImage: {fileID: 21300000, guid: b2a6dc8998799474381415fb9d5a693a, type: 3}
   code: 
 --- !u!114 &1860707044
@@ -6738,20 +6737,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5e0360ad3021074a9059c8dfbd138be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UIHealthBar: {fileID: 0}
+  uiHealthBar: {fileID: 0}
   loadingScreen: {fileID: 738323054}
-  KillsText: {fileID: 0}
-  DeathsText: {fileID: 0}
-  HUDUsernameDisplay: {fileID: 0}
-  LoadingStatusDisplay: {fileID: 0}
-  GunName: {fileID: 0}
-  CodeDisplay: {fileID: 0}
-  RespawningScreen: {fileID: 0}
-  PlayScreen: {fileID: 0}
-  CountdownText: {fileID: 0}
-  RespawnButton: {fileID: 0}
-  PingText: {fileID: 0}
-  StartingText: {fileID: 315070048}
+  killsText: {fileID: 0}
+  deathsText: {fileID: 0}
+  hudUsernameDisplay: {fileID: 0}
+  loadingStatusDisplay: {fileID: 0}
+  gunName: {fileID: 0}
+  codeDisplay: {fileID: 0}
+  respawningScreen: {fileID: 0}
+  playScreen: {fileID: 0}
+  countdownText: {fileID: 0}
+  respawnButton: {fileID: 0}
+  latencyText: {fileID: 0}
+  startingText: {fileID: 315070048}
 --- !u!1 &1865213740
 GameObject:
   m_ObjectHideFlags: 0

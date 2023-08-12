@@ -1,3 +1,4 @@
+using Mythrail.General;
 using UnityEngine;
 using Mythrail.Settings;
 
@@ -28,6 +29,13 @@ namespace Mythrail.MainMenu.Tabs.Settings
         {
             PlayerPrefs.SetString("AlwaysInvite", value.ToString());
             MythrailSettings.AlwaysInvite = value;
+        }
+
+        public void ToggleShowDeveloperConsole(bool value)
+        {
+            PlayerPrefs.SetString("ShowDeveloperConsole", value.ToString());
+            MythrailSettings.ShowDeveloperConsole = value;
+            InGameConsoleManager.Instance.SetShowConsole(value);
         }
     }
 }

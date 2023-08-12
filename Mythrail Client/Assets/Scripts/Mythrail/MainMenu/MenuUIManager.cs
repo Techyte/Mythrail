@@ -14,7 +14,7 @@ public class MenuUIManager : MonoBehaviour
     
     [Header("Persistant")]
     [SerializeField] private TextMeshProUGUI connectionStatusText;
-    [SerializeField] private TextMeshProUGUI pingText;
+    [SerializeField] private TextMeshProUGUI latencyText;
     [Space]
     
     [Header("Prefabs")]
@@ -48,7 +48,7 @@ public class MenuUIManager : MonoBehaviour
 
     private void SetPingText()
     {
-        pingText.text = "Ping: " + MenuNetworkManager.Singleton.Client.Connection.RTT;
+        latencyText.text = "Latency: " + MenuNetworkManager.Singleton.Client.Connection.RTT;
     }
 
     public void Connecting()

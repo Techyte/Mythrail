@@ -253,12 +253,20 @@ namespace Mythrail.Multiplayer
 
         private static void LoadMenu()
         {
+            DestroyPlayers();
             Destroy(Singleton.gameObject);
             Singleton = null;
             SceneManager.LoadScene("MainMenu");
         }
+
+        private static void DestroyPlayers()
+        {
+            foreach (Player player in Player.list.Values)
+            {
+                Destroy(player.gameObject);
+            }
+        }
         
-        public static bool hasBeenReadyOnce;
         private void SetTick(ushort serverTick)
         {
             Debug.Log("received a set tick");
@@ -274,10 +282,6 @@ namespace Mythrail.Multiplayer
                         {
                             Debug.Log("Ready");
                         }
-                        else
-                        {
-                            hasBeenReadyOnce = true;
-                        }
                     }
                 }
             }
@@ -290,8 +294,7 @@ namespace Mythrail.Multiplayer
             Client.Send(message);
             Debug.Log("Ready");
             Debug.Log(UIManager.Singleton);
-            Debug.Log(UIManager.Singleton.LoadingStatusDisplay);
-            UIManager.Singleton.LoadingStatusDisplay.text = "WAITING";
+            UIManager.Singleton.loadingStatusDisplay.text = "WAITING";
         }
 
         [MessageHandler((ushort)LobbyServerToClient.sync)]
@@ -390,7 +393,17 @@ namespace Mythrail.Multiplayer
         [MessageHandler((ushort)ServerToClientId.LobbyCountdown)]
         private static void LobbyCountdown(Message message)
         {
-            Singleton.GetComponent<UIManager>().SetStartingText((int.Parse(message.GetString())+1).ToString());
+            string countdownMessage = message.GetString();
+
+            if (int.TryParse(countdownMessage, out int result))
+            {
+                result++;
+                UIManager.Singleton.SetStartingText(result.ToString());
+            }
+            else
+            {
+                UIManager.Singleton.SetStartingText(countdownMessage);
+            }
         }
     }
 }

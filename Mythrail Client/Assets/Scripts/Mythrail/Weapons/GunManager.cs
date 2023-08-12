@@ -119,7 +119,7 @@ namespace Mythrail.Weapons
             if (Player.LocalPlayer.gunManager.weaponModels[newWeaponIndex])
             {
                 ChangePlayerGunModel(Player.LocalPlayer.gunManager.weaponModels[loadoutIndex[newWeaponIndex]]);
-                UIManager.Singleton.GunName.text = Player.LocalPlayer.gunManager.weaponModels[newWeaponIndex].name.ToUpper();
+                UIManager.Singleton.gunName.text = Player.LocalPlayer.gunManager.weaponModels[newWeaponIndex].name.ToUpper();
             }
         }
 

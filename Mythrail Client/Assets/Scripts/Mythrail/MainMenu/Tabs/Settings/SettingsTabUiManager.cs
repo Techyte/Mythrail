@@ -14,10 +14,12 @@ namespace Mythrail.MainMenu.Tabs.Settings
         [SerializeField] private Slider volumeSlider;
         [SerializeField] private Toggle askToInvite;
         [SerializeField] private Toggle alwaysInvite;
+        [SerializeField] private Toggle showDeveloperConsole;
 
         [SerializeField] private bool defaultFullscreen;
         [SerializeField] private bool defaultAskToInvite;
         [SerializeField] private bool defaultAlwaysInvite;
+        [SerializeField] private bool defaultShowDeveloperConsole;
 
         private void Awake()
         {
@@ -48,6 +50,11 @@ namespace Mythrail.MainMenu.Tabs.Settings
                 ToggleAlwaysInvite(arg0);
             });
             
+            showDeveloperConsole.onValueChanged.AddListener(delegate(bool arg0)
+            {
+                ToggleShowDeveloperConsole(arg0);
+            });
+            
             LoadSettings();
         }
 
@@ -65,14 +72,20 @@ namespace Mythrail.MainMenu.Tabs.Settings
             {
                 PlayerPrefs.SetString("AlwaysInvite", defaultAlwaysInvite.ToString());
             }
+            if (!PlayerPrefs.HasKey("ShowDeveloperConsole"))
+            {
+                PlayerPrefs.SetString("ShowDeveloperConsole", defaultShowDeveloperConsole.ToString());
+            }
             
             bool fullscreen = bool.Parse(PlayerPrefs.GetString("Fullscreen"));
             bool askToInvite = bool.Parse(PlayerPrefs.GetString("AskToInvite"));
             bool alwaysInvite = bool.Parse(PlayerPrefs.GetString("AlwaysInvite"));
+            bool showDeveloperConsole = bool.Parse(PlayerPrefs.GetString("ShowDeveloperConsole"));
 
             fullscreenToggle.isOn = fullscreen;
             this.askToInvite.isOn = askToInvite;
             this.alwaysInvite.isOn = alwaysInvite;
+            this.showDeveloperConsole.isOn = showDeveloperConsole;
         }
 
         public void ToggleFullscreen(bool value)
@@ -103,6 +116,11 @@ namespace Mythrail.MainMenu.Tabs.Settings
                 askToInvite.isOn = false;
             
             Debug.Log("always invite toggled");
+        }
+
+        public void ToggleShowDeveloperConsole(bool value)
+        {
+            _SettingsTab.ToggleShowDeveloperConsole(value);
         }
     }   
 }

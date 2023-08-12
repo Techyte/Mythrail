@@ -27,54 +27,43 @@ namespace Mythrail.Game
             }
         }
 
-        public Transform UIHealthBar;
+        public Transform uiHealthBar;
 
         public GameObject loadingScreen;
         
-        public TextMeshProUGUI KillsText;
-        public TextMeshProUGUI DeathsText;
-        public TextMeshProUGUI HUDUsernameDisplay;
-        public TextMeshProUGUI LoadingStatusDisplay;
-        public TextMeshProUGUI GunName;
-        public Button CodeDisplay;
-        public GameObject RespawningScreen;
-        public GameObject PlayScreen;
-        public TextMeshProUGUI CountdownText;
-        public Button RespawnButton;
-        public TextMeshProUGUI PingText;
-        public TextMeshProUGUI StartingText;
+        public TextMeshProUGUI killsText;
+        public TextMeshProUGUI deathsText;
+        public TextMeshProUGUI hudUsernameDisplay;
+        public TextMeshProUGUI loadingStatusDisplay;
+        public TextMeshProUGUI gunName;
+        public Button codeDisplay;
+        public GameObject respawningScreen;
+        public GameObject playScreen;
+        public TextMeshProUGUI countdownText;
+        public Button respawnButton;
+        public TextMeshProUGUI latencyText;
+        public TextMeshProUGUI startingText;
 
-        private int countdown;
+        private int _countdown;
 
         private void Awake()
         {
             Singleton = this;
-            
-            SceneManager.sceneLoaded += LoadedGame;
-        }
-
-        private void LoadedGame(Scene scene, LoadSceneMode loadSceneMode)
-        {
-            SetPingText();
-            if(scene.name == "BattleFeild")
-            {
-                SetCode();
-            }
         }
 
         public void SetCode()
         {
             if (SceneManager.GetActiveScene().name != "MainMenu")
             {
-                CodeDisplay = GameObject.Find("CodeDisplay").GetComponent<Button>();
-                CodeDisplay.GetComponentInChildren<TextMeshProUGUI>().text = NetworkManager.Singleton.code;
-                CodeDisplay.onClick.AddListener(CopyCode);   
+                codeDisplay = GameObject.Find("CodeDisplay").GetComponent<Button>();
+                codeDisplay.GetComponentInChildren<TextMeshProUGUI>().text = NetworkManager.Singleton.code;
+                codeDisplay.onClick.AddListener(CopyCode);   
             }
         }
 
         public void SetStartingText(string text)
         {
-            StartingText.text = text;
+            startingText.text = text;
         }
 
         private void FixedUpdate()
@@ -84,11 +73,11 @@ namespace Mythrail.Game
 
         private void SetPingText()
         {
-            if (PingText)
+            if (latencyText)
             {
-                if(PingText.isActiveAndEnabled)
+                if(latencyText.isActiveAndEnabled)
                 {
-                    PingText.text = "Ping: " + NetworkManager.Singleton.Client.Connection.RTT;
+                    latencyText.text = "Latency: " + NetworkManager.Singleton.Client.Connection.RTT;
                     return;
                 }
             }
@@ -99,7 +88,7 @@ namespace Mythrail.Game
                 {
                     if(Cursor.lockState != CursorLockMode.Locked)
                     {
-                        PingText = GameObject.Find("PingText").GetComponent<TextMeshProUGUI>();
+                        latencyText = GameObject.Find("LatencyText").GetComponent<TextMeshProUGUI>();
                     }
                 }
             }
@@ -109,7 +98,7 @@ namespace Mythrail.Game
                 {
                     if(Cursor.lockState != CursorLockMode.Locked)
                     {
-                        PingText = GameObject.Find("PingText").GetComponent<TextMeshProUGUI>();
+                        latencyText = GameObject.Find("LatencyText").GetComponent<TextMeshProUGUI>();
                     }
                 }   
             }
@@ -119,8 +108,8 @@ namespace Mythrail.Game
 
         public void CanRespawn()
         {
-            RespawnButton.interactable = true;
-            CountdownText.text = "CAN RESPAWN";
+            respawnButton.interactable = true;
+            countdownText.text = "CAN RESPAWN";
             serverSaidWeCanRespawn = true;
             Debug.Log("Can respawn, server said so");
         }
@@ -129,8 +118,8 @@ namespace Mythrail.Game
         {
             Player.LocalPlayer._cameraController.canPause = true;
             Player.LocalPlayer._cameraController.ToggleCursorMode();
-            RespawningScreen.SetActive(false);
-            PlayScreen.SetActive(true);
+            respawningScreen.SetActive(false);
+            playScreen.SetActive(true);
         }
 
         public void OpenRespawnScreen(int countdownTime)
@@ -141,30 +130,27 @@ namespace Mythrail.Game
             Cursor.visible = true;
             Player.LocalPlayer._cameraController.canPause = false;
             
-            PlayScreen.SetActive(false);
-            RespawningScreen.SetActive(true);
-            RespawnButton.interactable = false;
+            playScreen.SetActive(false);
+            respawningScreen.SetActive(true);
+            respawnButton.interactable = false;
 
             serverSaidWeCanRespawn = false;
             
-            CountdownText.text = $"RESPAWNING IN {countdownTime}";
-            countdown = countdownTime;
+            countdownText.text = $"RESPAWNING IN {countdownTime}";
+            _countdown = countdownTime;
             StartCoroutine(CountDown());
         }
 
         private IEnumerator CountDown()
         {
-            int initialCountdown = countdown;
-            
-            Debug.Log(initialCountdown);
-            Debug.Log(countdown);
+            int initialCountdown = _countdown;
             
             for (int i = initialCountdown-1; i > 0; i--)
             {
                 if(!serverSaidWeCanRespawn){
                     yield return new WaitForSeconds(1);
                     Debug.Log(i);
-                    CountdownText.text = $"RESPAWNING IN {i}";
+                    countdownText.text = $"RESPAWNING IN {i}";
                 }
                 else
                 {
@@ -190,9 +176,9 @@ namespace Mythrail.Game
         void RefreshHealthBar()
         {
             float healthRatio = (float)Player.LocalPlayer.currentHealth / Player.LocalPlayer.maxHealth;
-            UIHealthBar.localScale = Vector3.Lerp(UIHealthBar.localScale, new Vector3(healthRatio, 1, 1), Time.deltaTime * 8f);
+            uiHealthBar.localScale = Vector3.Lerp(uiHealthBar.localScale, new Vector3(healthRatio, 1, 1), Time.deltaTime * 8f);
 
-            UIHealthBar.GetComponent<Image>().color = Player.LocalPlayer.currentHealth <= 10 ? Color.red : Color.green;
+            uiHealthBar.GetComponent<Image>().color = Player.LocalPlayer.currentHealth <= 10 ? Color.red : Color.green;
         }
 
         public void CopyCode()
