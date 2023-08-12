@@ -69,4 +69,7 @@ sysinfo.txt
 */[Aa]ssets/[Ss]treamingAssets/aa.meta
 */[Aa]ssets/[Ss]treamingAssets/aa/*
 
+
 *MGS/Mythrail Game Server/Match Application
+*MGS/Mythrail Game Server/bin
+*MGS/Mythrail Game Server/obj
