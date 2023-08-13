@@ -1,7 +1,24 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using Riptide;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
+public struct PlayerMovementState
+{
+    public Vector3 position;
+    public PlayerInput inputUsed;
+    public bool didTeleport;
+    public uint tick;
+}
+
+public struct PlayerInput
+{
+    public bool[] inputs;
+    public Vector3 forward;
+    public uint tick;
+}
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
@@ -35,7 +52,18 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private bool[] inputs = new bool[6];
 
-    private bool didTeleport;
+    public bool didTeleport;
+
+    private const int BUFFER_SIZE = 1024;
+
+    private PlayerMovementState[] _stateBuffer;
+
+    private Queue<PlayerInput> inputQueue = new Queue<PlayerInput>();
+
+    private void Awake()
+    {
+        _stateBuffer = new PlayerMovementState[BUFFER_SIZE];
+    }
 
     private void Start()
     {
@@ -44,59 +72,87 @@ public class PlayerMovement : MonoBehaviour
         _controller = GetComponent<CharacterController>();
     }
 
-    private void FixedUpdate()
+    public void HandleTick()
     {
-        Vector2 inputDirection = Vector2.zero;
-        if (inputs[0])
-            inputDirection.y += 1;
+        uint bufferIndex = BUFFER_SIZE+1;
 
-        if (inputs[1])
-            inputDirection.y -= 1;
+        while (inputQueue.Count > 0)
+        {
+            PlayerInput currentInput = inputQueue.Dequeue();
 
-        if (inputs[2])
-            inputDirection.x -= 1;
+            bufferIndex = currentInput.tick % BUFFER_SIZE;
 
-        if (inputs[3])
-            inputDirection.x += 1;
+            Vector2 inputDirection = Vector2.zero;
+            if (currentInput.inputs[0])
+                inputDirection.y += 1;
 
-        Move(inputDirection, inputs[4], inputs[5], inputs[6]);
+            if (currentInput.inputs[1])
+                inputDirection.y -= 1;
+
+            if (currentInput.inputs[2])
+                inputDirection.x -= 1;
+
+            if (currentInput.inputs[3])
+                inputDirection.x += 1;
+
+            Move(inputDirection, currentInput);
+
+            PlayerMovementState state = new PlayerMovementState();
+            state.position = transform.position;
+            state.tick = currentInput.tick;
+            state.didTeleport = false;
+            state.inputUsed = currentInput;
+
+            _stateBuffer[bufferIndex] = state;
+        }
+
+        if (bufferIndex != BUFFER_SIZE + 1)
+        {
+            SendNewState(_stateBuffer[bufferIndex]);
+        }
     }
 
-    private void Move(Vector2 inputDirection, bool jump, bool sprint, bool isCrouching)
+    private void Move(Vector3 inputDirection, PlayerInput input)
     {
         if(canMove && !player.respawning)
         {
             inputDirection.Normalize();
+
+            camProxy.forward = input.forward;
             transform.rotation = FlattenQuaternion(camProxy.rotation);
 
             _forwardVelocity = inputDirection.y * movementSpeed;
             _sidewaysVelocity = inputDirection.x * movementSpeed;
 
-            if (sprint && !isCrouching)
+            if (input.inputs[4] && !input.inputs[6])
             {
                 _forwardVelocity *= runMultiplier;
                 _sidewaysVelocity *= runMultiplier;
             }
 
-            if (isCrouching)
+            if (SceneManager.GetActiveScene().name != "Lobby")
             {
-                _forwardVelocity *= crouchMultiplier;
-                _sidewaysVelocity *= crouchMultiplier;
-                camProxy.position = crouchingCameraPos.position;
-                defaultModel.SetActive(false);
-                crouchingModel.SetActive(true);
-            }
-            else
-            {
-                camProxy.position = defaultCameraPos.position;
-                defaultModel.SetActive(true);
-                crouchingModel.SetActive(false);
+                if (input.inputs[6])
+                {
+                    _forwardVelocity *= crouchMultiplier;
+                    _sidewaysVelocity *= crouchMultiplier;
+                    camProxy.position = crouchingCameraPos.position;
+                    defaultModel.SetActive(false);
+                    crouchingModel.SetActive(true);
+                }
+                else
+                {
+                    camProxy.position = defaultCameraPos.position;
+                    defaultModel.SetActive(true);
+                    crouchingModel.SetActive(false);
+                }
+                
             }
 
             Vector3 direction = new Vector3(_sidewaysVelocity, 0, _forwardVelocity);
             direction = Vector3.ClampMagnitude(direction, movementSpeed);
 
-            if (_controller.isGrounded && jump && canJump)
+            if (_controller.isGrounded && input.inputs[5] && canJump)
             {
                 _verticalVelocity = jumpHeight;
             }
@@ -112,8 +168,6 @@ public class PlayerMovement : MonoBehaviour
             {
                 player.Died();
             }
-
-            SendMovement();
         }
     }
 
@@ -151,23 +205,18 @@ public class PlayerMovement : MonoBehaviour
         return quaternion;
     }
 
-    public void SetInputs(bool[] inputs, Vector3 forward)
+    public void SetInputs(PlayerInput input)
     {
-        this.inputs = inputs;
-        camProxy.forward = forward;
+        inputQueue.Enqueue(input);
     }
 
-    private void SendMovement()
+    private void SendNewState(PlayerMovementState state)
     {
-        if (SceneManager.GetActiveScene().buildIndex != 0)
+        if (SceneManager.GetActiveScene().name != "Lobby")
         {
             Message message = Message.Create(MessageSendMode.Unreliable, ServerToClientId.playerMovement);
             message.AddUShort(player.Id);
-            message.AddUInt(NetworkManager.Singleton.CurrentTick);
-            message.AddBool(didTeleport);
-            message.AddVector3(transform.position);
-            message.AddVector3(camProxy.forward);
-            message.AddBool(inputs[6]);
+            message.AddPlayerState(state);
             NetworkManager.Singleton.Server.SendToAll(message);
 
             didTeleport = false;   
@@ -176,10 +225,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Message message = Message.Create(MessageSendMode.Unreliable, LobbyServerToClientId.playerMovement);
             message.AddUShort(player.Id);
-            message.AddUInt(NetworkManager.Singleton.CurrentTick);
-            message.AddBool(didTeleport);
-            message.AddVector3(transform.position);
-            message.AddVector3(camProxy.forward);
+            message.AddPlayerState(state);
             NetworkManager.Singleton.Server.SendToAll(message);
 
             didTeleport = false;

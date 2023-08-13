@@ -74,4 +74,48 @@ public static class MessageExtensions
         return new Quaternion(message.GetFloat(), message.GetFloat(), message.GetFloat(), message.GetFloat());
     }
     #endregion
+    
+    #region PlayerStatesAndInputs
+
+    public static Message AddPlayerInput(this Message message, PlayerInput value) => Add(message, value);
+
+    public static Message Add(this Message message, PlayerInput value)
+    {
+        message.AddBools(value.inputs);
+        message.AddVector3(value.forward);
+        message.AddUInt(value.tick);
+        return message;
+    }
+
+    public static PlayerInput GetPlayerInput(this Message message)
+    {
+        PlayerInput input = new PlayerInput();
+        input.inputs = message.GetBools();
+        input.forward = message.GetVector3();
+        input.tick = message.GetUInt();
+        return input;
+    }
+
+    public static Message AddPlayerState(this Message message, PlayerMovementState value) => Add(message, value);
+
+    public static Message Add(this Message message, PlayerMovementState value)
+    {
+        message.AddVector3(value.position);
+        message.AddPlayerInput(value.inputUsed);
+        message.AddBool(value.didTeleport);
+        message.AddUInt(value.tick);
+        return message;
+    }
+
+    public static PlayerMovementState GetPlayerState(this Message message)
+    {
+        PlayerMovementState state = new PlayerMovementState();
+        state.position = message.GetVector3();
+        state.inputUsed = message.GetPlayerInput();
+        state.didTeleport = message.GetBool();
+        state.tick = message.GetUInt();
+        return state;
+    }
+
+    #endregion
 }

@@ -36,7 +36,6 @@ public class Player : MonoBehaviour
 
     public static void Spawn(ushort id, string username)
     {
-        Debug.LogError("spawning player");
         Player player = Instantiate(GameLogic.Singleton.PlayerPrefab, new Vector3(0f, 10f, 0f), Quaternion.identity).GetComponent<Player>();
         
         // making sure that the players username is not empty
@@ -167,6 +166,7 @@ public class Player : MonoBehaviour
     public void SetTeleport(Vector3 teleportPos)
     {
         telePos = teleportPos;
+        movement.didTeleport = true;
     }
 
     private void LateUpdate()
@@ -208,7 +208,7 @@ public class Player : MonoBehaviour
     {
         if (list.TryGetValue(fromClientId, out Player player))
         {
-            player.Movement.SetInputs(message.GetBools(7), message.GetVector3());
+            player.Movement.SetInputs(message.GetPlayerInput());
         }
     }
 
@@ -217,7 +217,7 @@ public class Player : MonoBehaviour
     {
         if (list.TryGetValue(fromClientId, out Player player))
         {
-            player.Movement.SetInputs(message.GetBools(7), message.GetVector3());
+            player.Movement.SetInputs(message.GetPlayerInput());
         }
     }
 

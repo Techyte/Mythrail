@@ -57,8 +57,14 @@ namespace Mythrail.Players
 
         private void Look()
         {
+            Debug.Log("Looking");
             float mouseVertical = -Input.GetAxis("Mouse Y");
             float mouseHorizontal = Input.GetAxis("Mouse X");
+
+            if (MythrailSettings.MouseSensitivity == 0)
+            {
+                MythrailSettings.MouseSensitivity = 4;
+            }
 
             verticalRotation += mouseVertical * (MythrailSettings.MouseSensitivity * 100) * Time.deltaTime;
             horizontalRotation += mouseHorizontal * (MythrailSettings.MouseSensitivity * 100) * Time.deltaTime;

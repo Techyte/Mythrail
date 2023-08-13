@@ -63,7 +63,6 @@ public class GameLogic : MonoBehaviour
 
     private void SendReady()
     {
-        Debug.Log(NetworkManager.Singleton.Server.ClientCount);
         Message message = Message.Create(MessageSendMode.Reliable, ServerToClientId.gameStarted);
         NetworkManager.Singleton.Server.SendToAll(message);
     }

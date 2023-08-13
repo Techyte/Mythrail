@@ -50,6 +50,11 @@ namespace Mythrail.Multiplayer
         clientDevMessage,
     }
     
+    public enum ClientToLobbyServer : ushort
+    {
+        movementInput = 100,
+    }
+    
     public class NetworkManager : MonoBehaviour
     {
         private static NetworkManager _singleton;
@@ -114,15 +119,14 @@ namespace Mythrail.Multiplayer
 
         [SerializeField] private Sprite xImage;
 
-        private bool isPrivate;
         private ushort maxClientCount;
         private ushort clientCount;
 
         public string code;
+        private bool isPrivate;
 
         private void Awake()
         {
-            Debug.Log(Singleton);
             Singleton = this;
         }
 
@@ -177,6 +181,19 @@ namespace Mythrail.Multiplayer
         {
             Client.Update();
             ServerTick++;
+            HandleTick();
+        }
+
+        private void HandleTick()
+        {
+            if(Player.LocalPlayer)
+            {
+                Player.LocalPlayer.playerController.HandleTick();
+            }
+            else if (LobbyPlayer.LocalPlayer)
+            {
+                LobbyPlayer.LocalPlayer.playerController.HandleTick();
+            }
         }
 
         private void OnApplicationQuit()

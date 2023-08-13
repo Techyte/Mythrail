@@ -17,6 +17,7 @@ namespace Mythrail.Players
 
         [SerializeField] private Transform camTransform;
         [SerializeField] private Interpolator interpolator;
+        [SerializeField] private Transform serverDisplay;
         public PlayerController playerController;
 
         [SerializeField] private TextMeshPro usernameText;
@@ -53,14 +54,19 @@ namespace Mythrail.Players
             list.Remove(Id);
         }
 
-        private void Move(uint tick, bool didTeleport, Vector3 newPosition, Vector3 forward)
+        private void Move(PlayerMovementState state)
         {
-            interpolator.NewUpdate(tick, didTeleport, newPosition);
-
             if (!IsLocal)
             {
-                camTransform.forward = forward;
+                camTransform.forward = state.inputUsed.forward;
                 camTransform.rotation = FlattenQuaternion(camTransform.rotation);
+                transform.position = state.position;
+            }
+            else
+            {
+                serverDisplay.position = state.position;
+            
+                playerController.ReceivedServerMovementState(state);
             }
         }
         
@@ -128,7 +134,7 @@ namespace Mythrail.Players
         private static void PlayerMovement(Message message)
         {
             if (list.TryGetValue(message.GetUShort(), out LobbyPlayer player))
-                player.Move(message.GetUInt(), message.GetBool(), message.GetVector3(), message.GetVector3());
+                player.Move(message.GetPlayerState());
         }
     }
 }

@@ -155,8 +155,6 @@ public class NetworkManager : MonoBehaviour
         {
             spawnPoints.Add(spawnPoint);
         }
-        
-        Debug.Log(Player.list.Count);
     }
 
     private void Update()
@@ -237,6 +235,15 @@ public class NetworkManager : MonoBehaviour
         }
 
         CurrentTick++;
+        HandleTick();
+    }
+
+    private void HandleTick()
+    {
+        foreach (var player in Player.list.Values)
+        {
+            player.Movement.HandleTick();
+        }
     }
 
     private void SendLobbyReady()
@@ -246,9 +253,7 @@ public class NetworkManager : MonoBehaviour
         message.AddUShort((ushort)Server.ClientCount);
         message.AddUShort(Server.MaxClientCount);
         Singleton.Server.SendToAll(message);
-        Debug.Log(Player.list.Count);
         SceneManager.LoadScene(1);
-        Debug.Log(Player.list.Count);
     }
 
     private void OnApplicationQuit()

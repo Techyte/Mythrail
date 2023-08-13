@@ -18,6 +18,7 @@ namespace Mythrail.Players
 
         [SerializeField] private Transform camTransform;
         [SerializeField] private Interpolator interpolator;
+        [SerializeField] private Transform serverDisplay;
         public GunManager gunManager;
 
         [SerializeField] private TextMeshPro usernameText;
@@ -52,9 +53,6 @@ namespace Mythrail.Players
         [SerializeField] private GameObject defaultModel;
 
         public CameraController _cameraController => GetComponentInChildren<CameraController>();
-
-        [SerializeField] private Transform crouchingCameraPos;
-        [SerializeField] private Transform defaultCameraPos;
 
         private void Start()
         {
@@ -97,34 +95,31 @@ namespace Mythrail.Players
             list.Remove(Id);
         }
 
-        private void Move(uint tick, bool didTeleport, Vector3 newPosition, Vector3 forward, bool isCrouching)
+        public void Move(PlayerMovementState state)
         {
-            Debug.Log(newPosition);
-            interpolator.NewUpdate(tick, didTeleport, newPosition);
-
             if (!IsLocal)
-            { 
-                transform.forward = forward;
-                transform.rotation = FlattenQuaternion(transform.rotation);
+            {
+                transform.position = state.position;
+                
+                serverDisplay.forward = state.inputUsed.forward;
+                serverDisplay.rotation = FlattenQuaternion(serverDisplay.rotation);
+            }
+            else
+            {
+                serverDisplay.position = state.position;
+            
+                playerController.ReceivedServerMovementState(state);
             }
             
-            if (isCrouching)
+            if (state.inputUsed.inputs[6])
             {
                 crouchingModel.SetActive(true);
                 defaultModel.SetActive(false);
-                if(IsLocal)
-                {
-                    camTransform.position = crouchingCameraPos.position;
-                }
             }
             else
             {
                 crouchingModel.SetActive(false);
                 defaultModel.SetActive(true);
-                if(IsLocal)
-                {
-                    camTransform.position = defaultCameraPos.position;
-                }
             }
         }
         
@@ -263,8 +258,7 @@ namespace Mythrail.Players
         {
             if (list.TryGetValue(message.GetUShort(), out Player player))
             {
-                player.Move(message.GetUInt(), message.GetBool(), message.GetVector3(), message.GetVector3(),
-                    message.GetBool());
+                player.Move(message.GetPlayerState());
             }
         }
 
