@@ -14,6 +14,12 @@ namespace Mythrail.MainMenu.Tabs.Settings
             MythrailSettings.Fullscreen = value;
         }
 
+        public void ChangeSensitivity(int value)
+        {
+            PlayerPrefs.SetFloat("Sensitivity", value);
+            MythrailSettings.MouseSensitivity = value;
+        }
+
         public void Volume(float value)
         {
             //TODO: volume slider stuff
@@ -36,6 +42,13 @@ namespace Mythrail.MainMenu.Tabs.Settings
             PlayerPrefs.SetString("ShowDeveloperConsole", value.ToString());
             MythrailSettings.ShowDeveloperConsole = value;
             InGameConsoleManager.Instance.SetShowConsole(value);
+        }
+
+        public void ToggleCompressDeveloperConsole(bool value)
+        {
+            PlayerPrefs.SetString("CompressDeveloperConsole", value.ToString());
+            MythrailSettings.CompressDeveloperConsole = value;
+            InGameConsoleManager.Instance.RecalculateCurrentCompression();
         }
     }
 }

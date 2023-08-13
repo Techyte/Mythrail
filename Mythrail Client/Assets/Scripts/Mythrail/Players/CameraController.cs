@@ -1,5 +1,6 @@
 using Mythrail.General;
 using Mythrail.Multiplayer;
+using Mythrail.Settings;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,7 +9,6 @@ namespace Mythrail.Players
     public class CameraController : MonoBehaviour
     {
         [SerializeField] private Transform player;
-        [SerializeField] private float sensitivity = 100f;
         [SerializeField] private float clampAngle = 85f;
 
         public bool canPause = true;
@@ -60,8 +60,8 @@ namespace Mythrail.Players
             float mouseVertical = -Input.GetAxis("Mouse Y");
             float mouseHorizontal = Input.GetAxis("Mouse X");
 
-            verticalRotation += mouseVertical * sensitivity * Time.deltaTime;
-            horizontalRotation += mouseHorizontal * sensitivity * Time.deltaTime;
+            verticalRotation += mouseVertical * (MythrailSettings.MouseSensitivity * 100) * Time.deltaTime;
+            horizontalRotation += mouseHorizontal * (MythrailSettings.MouseSensitivity * 100) * Time.deltaTime;
 
             verticalRotation = Mathf.Clamp(verticalRotation, -clampAngle, clampAngle);
 

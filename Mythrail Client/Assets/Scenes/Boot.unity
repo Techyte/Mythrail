@@ -1194,6 +1194,7 @@ GameObject:
   - component: {fileID: 1380713725}
   - component: {fileID: 1380713728}
   - component: {fileID: 1380713727}
+  - component: {fileID: 1380713729}
   m_Layer: 0
   m_Name: Backgriound
   m_TagString: Untagged
@@ -1217,7 +1218,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 978.102, y: -25.960323}
+  m_AnchoredPosition: {x: 978.125, y: -25.96875}
   m_SizeDelta: {x: -1024.102, y: -628.5349}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1380713727
@@ -1258,6 +1259,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1380713724}
   m_CullTransparentMesh: 1
+--- !u!225 &1380713729
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1380713724}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1001 &1389974580
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1439,10 +1452,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7893015b353dd594387aaa7075fc8f5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parent: {fileID: 1608062268}
   disableableParent: {fileID: 1710820724}
-  logObjPrefab: {fileID: 3820031772381406345, guid: 34e81ce57bb0e724cbd8f7f2dd0deeca,
-    type: 3}
   displays:
   - {fileID: 1584808314}
   - {fileID: 309992637}
@@ -1601,6 +1611,7 @@ GameObject:
   - component: {fileID: 1608062268}
   - component: {fileID: 1608062269}
   - component: {fileID: 1608062270}
+  - component: {fileID: 1608062271}
   m_Layer: 0
   m_Name: Content
   m_TagString: Untagged
@@ -1634,7 +1645,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 978.1019, y: -25.960205}
+  m_AnchoredPosition: {x: 978.125, y: -25.96875}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1608062269
@@ -1677,6 +1688,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 1
   m_VerticalFit: 1
+--- !u!225 &1608062271
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1608062267}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &1710820724
 GameObject:
   m_ObjectHideFlags: 0
@@ -2405,10 +2428,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3

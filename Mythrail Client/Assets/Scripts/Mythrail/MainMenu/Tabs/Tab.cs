@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,9 +7,11 @@ namespace Mythrail.MainMenu.Tabs
     {
         public GameObject TabObject => tabObject;
         public Button TabButton => tabButton;
+        public bool RequiresCanMoveMenu => requiresCanMoveMenu;
     
         [SerializeField] private GameObject tabObject;
         [SerializeField] private Button tabButton;
+        [SerializeField] private bool requiresCanMoveMenu = true;
 
         private void Start()
         {

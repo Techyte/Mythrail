@@ -99,6 +99,7 @@ namespace Mythrail.Players
 
         private void Move(uint tick, bool didTeleport, Vector3 newPosition, Vector3 forward, bool isCrouching)
         {
+            Debug.Log(newPosition);
             interpolator.NewUpdate(tick, didTeleport, newPosition);
 
             if (!IsLocal)

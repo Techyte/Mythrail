@@ -11,15 +11,21 @@ namespace Mythrail.MainMenu.Tabs.Settings
         private SettingsTab _SettingsTab;
 
         [SerializeField] private Toggle fullscreenToggle;
+        [SerializeField] private Slider sensitivitySlider;
         [SerializeField] private Slider volumeSlider;
         [SerializeField] private Toggle askToInvite;
         [SerializeField] private Toggle alwaysInvite;
         [SerializeField] private Toggle showDeveloperConsole;
+        [SerializeField] private Toggle compressDeveloperConsole;
 
+        [Space]
+        
         [SerializeField] private bool defaultFullscreen;
+        [SerializeField] [Range(0, 10)] private float defaultSensitivity;
         [SerializeField] private bool defaultAskToInvite;
         [SerializeField] private bool defaultAlwaysInvite;
         [SerializeField] private bool defaultShowDeveloperConsole;
+        [SerializeField] private bool defaultCompressDeveloperConsole;
 
         private void Awake()
         {
@@ -33,6 +39,11 @@ namespace Mythrail.MainMenu.Tabs.Settings
             fullscreenToggle.onValueChanged.AddListener(delegate(bool arg0)
             {
                 ToggleFullscreen(arg0);
+            });
+            
+            sensitivitySlider.onValueChanged.AddListener(delegate(float arg0)
+            {
+                ChangeSensitivity((int)arg0);
             });
             
             volumeSlider.onValueChanged.AddListener(delegate(float arg0)
@@ -55,6 +66,11 @@ namespace Mythrail.MainMenu.Tabs.Settings
                 ToggleShowDeveloperConsole(arg0);
             });
             
+            compressDeveloperConsole.onValueChanged.AddListener(delegate(bool arg0)
+            {
+                ToggleCompressDeveloperConsole(arg0);
+            });
+            
             LoadSettings();
         }
 
@@ -63,6 +79,10 @@ namespace Mythrail.MainMenu.Tabs.Settings
             if (!PlayerPrefs.HasKey("Fullscreen"))
             {
                 PlayerPrefs.SetString("Fullscreen", defaultFullscreen.ToString());
+            }
+            if (!PlayerPrefs.HasKey("Sensitivity"))
+            {
+                PlayerPrefs.SetFloat("Sensitivity", defaultSensitivity);
             }
             if (!PlayerPrefs.HasKey("AskToInvite"))
             {
@@ -76,21 +96,34 @@ namespace Mythrail.MainMenu.Tabs.Settings
             {
                 PlayerPrefs.SetString("ShowDeveloperConsole", defaultShowDeveloperConsole.ToString());
             }
+            if (!PlayerPrefs.HasKey("CompressDeveloperConsole"))
+            {
+                PlayerPrefs.SetString("CompressDeveloperConsole", defaultCompressDeveloperConsole.ToString());
+            }
             
             bool fullscreen = bool.Parse(PlayerPrefs.GetString("Fullscreen"));
+            float sensitivity = PlayerPrefs.GetFloat("Sensitivity");
             bool askToInvite = bool.Parse(PlayerPrefs.GetString("AskToInvite"));
             bool alwaysInvite = bool.Parse(PlayerPrefs.GetString("AlwaysInvite"));
             bool showDeveloperConsole = bool.Parse(PlayerPrefs.GetString("ShowDeveloperConsole"));
+            bool compressDeveloperConsole = bool.Parse(PlayerPrefs.GetString("CompressDeveloperConsole"));
 
             fullscreenToggle.isOn = fullscreen;
+            sensitivitySlider.value = sensitivity;
             this.askToInvite.isOn = askToInvite;
             this.alwaysInvite.isOn = alwaysInvite;
             this.showDeveloperConsole.isOn = showDeveloperConsole;
+            this.compressDeveloperConsole.isOn = compressDeveloperConsole;
         }
 
         public void ToggleFullscreen(bool value)
         {
             _SettingsTab.Fullscreen(value);
+        }
+
+        public void ChangeSensitivity(int value)
+        {
+            _SettingsTab.ChangeSensitivity(value);
         }
 
         public void VolumeChanged(float value)
@@ -121,6 +154,11 @@ namespace Mythrail.MainMenu.Tabs.Settings
         public void ToggleShowDeveloperConsole(bool value)
         {
             _SettingsTab.ToggleShowDeveloperConsole(value);
+        }
+
+        public void ToggleCompressDeveloperConsole(bool value)
+        {
+            _SettingsTab.ToggleCompressDeveloperConsole(value);
         }
     }   
 }

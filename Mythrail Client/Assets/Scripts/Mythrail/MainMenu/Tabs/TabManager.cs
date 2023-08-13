@@ -51,8 +51,11 @@ public class TabManager : MonoBehaviour
 
     public void OpenTab(int index)
     {
-        if(!MenuNetworkManager.Singleton.UiManager.CanMoveMenu())
-            return;
+        if(tabs[index].RequiresCanMoveMenu)
+        {
+            if (!MenuNetworkManager.Singleton.UiManager.CanMoveMenu())
+                return;
+        }
         
         PlaySound();
         

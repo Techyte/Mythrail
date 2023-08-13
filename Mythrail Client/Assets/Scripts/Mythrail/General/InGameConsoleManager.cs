@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mythrail.Settings;
 using TMPro;
 using UnityEngine;
 
@@ -9,9 +10,7 @@ namespace Mythrail.General
     {
         public static InGameConsoleManager Instance;
         
-        [SerializeField] private Transform parent;
         [SerializeField] private GameObject disableableParent;
-        [SerializeField] private TextMeshProUGUI logObjPrefab;
         [SerializeField] private List<TextMeshProUGUI> displays;
 
         private bool _isOn;
@@ -45,11 +44,6 @@ namespace Mythrail.General
 
         private void HijackLogMessage(string condition, string stackTrace, LogType type)
         {
-            if (_currentMessages.Count >= displays.Count)
-            {
-                ClearOldestAndMoveUp();
-            }
-            
             Color colour = Color.green;
             
             switch (type)
@@ -67,9 +61,57 @@ namespace Mythrail.General
                     colour = Color.red;
                     break;
             }
+            
+            if(MythrailSettings.CompressDeveloperConsole)
+            {
+                for (int i = 0; i < _currentMessages.Count; i++)
+                {
+                    if (stackTrace == _currentMessages[i].stackTrace)
+                    {
+                        _currentMessages[i].calls++;
+                        return;
+                    }
+                }
+            }
+            
+            if (_currentMessages.Count >= displays.Count)
+            {
+                ClearOldestAndMoveUp();
+            }
 
-            MythrailConsoleMessage message = new MythrailConsoleMessage(condition, colour);
+            MythrailConsoleMessage message = new MythrailConsoleMessage(condition, colour, stackTrace);
             _currentMessages.Add(message);
+        }
+
+        public void RecalculateCurrentCompression()
+        {
+            if(MythrailSettings.CompressDeveloperConsole)
+            {
+                List<MythrailConsoleMessage> consoleMessages = new List<MythrailConsoleMessage>(_currentMessages);
+                List<MythrailConsoleMessage> revisedConsoleMessages = new List<MythrailConsoleMessage>();
+
+                _currentMessages.Clear();
+                
+                Debug.Log(consoleMessages.Count);
+
+                for (int i = 0; i < consoleMessages.Count; i++)
+                {
+                    bool valid = true;
+                    for (int j = 0; j < revisedConsoleMessages.Count; j++)
+                    {
+                        if (revisedConsoleMessages[j].stackTrace == consoleMessages[i].stackTrace)
+                        {
+                            valid = false;
+                        }
+                    }
+                    if(valid)
+                    {
+                        revisedConsoleMessages.Add(consoleMessages[i]);
+                    }
+                }
+
+                _currentMessages = revisedConsoleMessages;
+            }
         }
 
         private void ClearOldestAndMoveUp()
@@ -78,20 +120,24 @@ namespace Mythrail.General
             
             string lastMessage = String.Empty;
             Color lastMessageColour = Color.green;
+            string lastStackTrace = String.Empty;
 
             for (int i = _currentMessages.Count-1; i >= 0; i--)
             {
                 string currentMessage = _currentMessages[i].message;
                 Color currentMessageColour = _currentMessages[i].colour;
+                string currentStackTrace = _currentMessages[i].stackTrace;
 
                 if (i != _currentMessages.Count-1)
                 {
                     _currentMessages[i].message = lastMessage;
                     _currentMessages[i].colour = lastMessageColour;
+                    _currentMessages[i].stackTrace = lastStackTrace;
                 }
 
                 lastMessage = currentMessage;
                 lastMessageColour = currentMessageColour;
+                lastStackTrace = currentStackTrace;
             }
 
             _currentMessages.RemoveAt(_currentMessages.Count-1);
@@ -99,10 +145,7 @@ namespace Mythrail.General
 
         public void Clear()
         {
-            for (int i = 0; i < _currentMessages.Count; i++)
-            {
-                _currentMessages[i].message = null;
-            }
+            _currentMessages.Clear();
         }
 
         public void SetShowConsole(bool value)
@@ -121,11 +164,14 @@ namespace Mythrail.General
     {
         public string message;
         public Color colour;
+        public string stackTrace;
+        public int calls = 0;
 
-        public MythrailConsoleMessage(string message, Color colour)
+        public MythrailConsoleMessage(string message, Color colour, string stackTrace)
         {
             this.message = message;
             this.colour = colour;
+            this.stackTrace = stackTrace;
         }
     }
 }
