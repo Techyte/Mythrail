@@ -110,7 +110,7 @@ public class PlayerMovement : MonoBehaviour
             
             Debug.Log(currentInput.inputs[0]);
 
-            RollbackManager.Instance.RollbackOtherPlayerStatesTo(currentInput.tick, player.Id);
+            //RollbackManager.Instance.RollbackOtherPlayerStatesTo(currentInput.tick, player.Id);
 
             bufferIndex = currentInput.tick % BUFFER_SIZE;
 
@@ -143,7 +143,7 @@ public class PlayerMovement : MonoBehaviour
             SendNewState(_stateBuffer[bufferIndex]);
         }
         
-        RollbackManager.Instance.ResetAllPlayersToPresentPosition(player.Id);
+        //RollbackManager.Instance.ResetAllPlayersToPresentPosition(player.Id);
     }
 
     private void Move(Vector3 inputDirection, PlayerInput input)
@@ -180,7 +180,6 @@ public class PlayerMovement : MonoBehaviour
                     defaultModel.SetActive(true);
                     crouchingModel.SetActive(false);
                 }
-                
             }
 
             Vector3 direction = new Vector3(_sidewaysVelocity, 0, _forwardVelocity);

@@ -97,18 +97,18 @@ namespace Mythrail.Players
 
         public void Move(PlayerMovementState state)
         {
-            if (!IsLocal)
-            {
-                transform.position = state.position;
-                
-                serverDisplay.forward = state.inputUsed.forward;
-                serverDisplay.rotation = FlattenQuaternion(serverDisplay.rotation);
-            }
-            else
+            if (IsLocal)
             {
                 serverDisplay.position = state.position;
             
                 playerController.ReceivedServerMovementState(state);
+            }
+            else
+            {
+                transform.position = state.position;
+                
+                transform.forward = state.inputUsed.forward;
+                transform.rotation = FlattenQuaternion(camTransform.rotation);
             }
             
             if (state.inputUsed.inputs[6])

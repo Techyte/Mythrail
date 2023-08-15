@@ -115,8 +115,6 @@ namespace Mythrail.Multiplayer
 
         [SerializeField] private GameObject BufferCamera;
 
-        [SerializeField] private bool PlayerReady;
-
         [SerializeField] private Sprite xImage;
 
         private ushort maxClientCount;
@@ -293,7 +291,6 @@ namespace Mythrail.Multiplayer
 
         public void Ready()
         {
-            PlayerReady = true;
             Message message = Message.Create(MessageSendMode.Reliable, ClientToServerId.ready);
             Client.Send(message);
             UIManager.Singleton.loadingStatusDisplay.text = "WAITING";

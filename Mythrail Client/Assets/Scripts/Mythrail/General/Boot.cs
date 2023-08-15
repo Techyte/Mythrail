@@ -5,6 +5,7 @@ namespace Mythrail.General
 {
     public class Boot : MonoBehaviour
     {
+        [SerializeField] private string sceneToLoadName = "MainMenu";
         [SerializeField] private GameObject[] dontDestroyOnLoadObjects;
 
         private void Start()
@@ -14,7 +15,7 @@ namespace Mythrail.General
                 DontDestroyOnLoad(obj);
             }
 
-            SceneManager.LoadScene("MainMenu");
+            SceneManager.LoadScene(sceneToLoadName);
         }
     }   
 }

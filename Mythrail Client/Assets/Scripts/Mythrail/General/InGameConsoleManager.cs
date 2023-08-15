@@ -91,8 +91,6 @@ namespace Mythrail.General
                 List<MythrailConsoleMessage> revisedConsoleMessages = new List<MythrailConsoleMessage>();
 
                 _currentMessages.Clear();
-                
-                Debug.Log(consoleMessages.Count);
 
                 for (int i = 0; i < consoleMessages.Count; i++)
                 {
@@ -116,8 +114,6 @@ namespace Mythrail.General
 
         private void ClearOldestAndMoveUp()
         {
-            Debug.Log("clearing and moving up");
-            
             string lastMessage = String.Empty;
             Color lastMessageColour = Color.green;
             string lastStackTrace = String.Empty;
