@@ -107,8 +107,10 @@ public class PlayerMovement : MonoBehaviour
         while (inputQueue.Count > 0)
         {
             PlayerInput currentInput = inputQueue.Dequeue();
+            
+            Debug.Log(currentInput.inputs[0]);
 
-            RollbackManager.Instance.RollbackAllPlayerStatesTo(currentInput.tick);
+            RollbackManager.Instance.RollbackOtherPlayerStatesTo(currentInput.tick, player.Id);
 
             bufferIndex = currentInput.tick % BUFFER_SIZE;
 
@@ -156,7 +158,7 @@ public class PlayerMovement : MonoBehaviour
             _forwardVelocity = inputDirection.y * movementSpeed;
             _sidewaysVelocity = inputDirection.x * movementSpeed;
 
-            if (input.inputs[4] && !input.inputs[6])
+            if (input.inputs[5] && !input.inputs[6])
             {
                 _forwardVelocity *= runMultiplier;
                 _sidewaysVelocity *= runMultiplier;
@@ -184,7 +186,7 @@ public class PlayerMovement : MonoBehaviour
             Vector3 direction = new Vector3(_sidewaysVelocity, 0, _forwardVelocity);
             direction = Vector3.ClampMagnitude(direction, movementSpeed);
 
-            if (_controller.isGrounded && input.inputs[5] && canJump)
+            if (_controller.isGrounded && input.inputs[4] && canJump)
             {
                 _verticalVelocity = jumpHeight;
             }

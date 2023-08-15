@@ -11,14 +11,16 @@ namespace Multiplayer.Rollback
             Instance = this;
         }
 
-        public void RollbackAllPlayerStatesTo(uint tick)
+        public void RollbackOtherPlayerStatesTo(uint tick, ushort exception)
         {
-            Debug.Log("rolling back");
             uint bufferIndex = tick % PlayerMovement.BUFFER_SIZE;
 
             foreach (var playerToRollback in Player.list.Values)
             {
-                playerToRollback.Movement.AssertStateFromBufferIndex(bufferIndex);
+                if(playerToRollback.Id != exception)
+                {
+                    playerToRollback.Movement.AssertStateFromBufferIndex(bufferIndex);
+                }
             }
         }
 

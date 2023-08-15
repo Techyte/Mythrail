@@ -1,4 +1,3 @@
-using System;
 using Mythrail.General;
 using Mythrail.Multiplayer;
 using Riptide;
@@ -82,6 +81,7 @@ namespace Mythrail.Players
             PlayerInput input = new PlayerInput();
 
             input.inputs = movementInputs.Copy();
+            Debug.Log(input.inputs[0]);
             input.forward = camTransform.forward;
             input.tick = tick;
 
@@ -108,6 +108,7 @@ namespace Mythrail.Players
             
             if (positionError > 0.001f)
             {
+                Debug.Log("need to reconcile");
                 _controller.enabled = false;
                 transform.position = _lastServerState.position;
                 _controller.enabled = true;
@@ -143,6 +144,8 @@ namespace Mythrail.Players
 
         private void Update()
         {
+            for (int i = 0; i < movementInputs.Length; i++)
+                movementInputs[i] = false;
             if (canMove)
             {
                 if (Input.GetKey(KeyCode.W))
@@ -161,9 +164,6 @@ namespace Mythrail.Players
                     movementInputs[4] = true;
                 if (Input.GetKey(KeyCode.LeftControl))
                     movementInputs[6] = true;
-                
-                for (int i = 0; i < movementInputs.Length; i++)
-                    movementInputs[i] = false;
             }
         }
 
