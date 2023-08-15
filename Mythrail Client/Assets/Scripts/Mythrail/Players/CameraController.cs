@@ -57,7 +57,6 @@ namespace Mythrail.Players
 
         private void Look()
         {
-            Debug.Log("Looking");
             float mouseVertical = -Input.GetAxis("Mouse Y");
             float mouseHorizontal = Input.GetAxis("Mouse X");
 

@@ -1,4 +1,5 @@
 using System;
+using Mythrail.General;
 using Mythrail.Multiplayer;
 using Riptide;
 using UnityEngine;
@@ -80,9 +81,8 @@ namespace Mythrail.Players
 
             PlayerInput input = new PlayerInput();
 
-            input.inputs = new bool[movementInputs.Length];
-            Array.Copy(movementInputs, 0 , input.inputs, 0, movementInputs.Length);
-            input.forward = transform.forward;
+            input.inputs = movementInputs.Copy();
+            input.forward = camTransform.forward;
             input.tick = tick;
 
             _inputBuffer[bufferIndex] = input;
@@ -105,13 +105,9 @@ namespace Mythrail.Players
             uint serverStateBufferIndex = _lastServerState.tick % BUFFER_SIZE;
             float positionError =
                 Vector3.Distance(_lastServerState.position, _stateBuffer[serverStateBufferIndex].position);
-
-            Debug.Log(_lastServerState.tick == _stateBuffer[serverStateBufferIndex].tick);
             
             if (positionError > 0.001f)
             {
-                Debug.Log("reconciling");
-
                 _controller.enabled = false;
                 transform.position = _lastServerState.position;
                 _controller.enabled = true;
@@ -129,6 +125,7 @@ namespace Mythrail.Players
 
                     PlayerInput input = _inputBuffer[bufferIndex];
                     
+                    Debug.Log(input.inputs[0]);
                     Movement(input);
 
                     PlayerMovementState recalculatedState = new PlayerMovementState();
@@ -164,6 +161,9 @@ namespace Mythrail.Players
                     movementInputs[4] = true;
                 if (Input.GetKey(KeyCode.LeftControl))
                     movementInputs[6] = true;
+                
+                for (int i = 0; i < movementInputs.Length; i++)
+                    movementInputs[i] = false;
             }
         }
 
@@ -183,9 +183,6 @@ namespace Mythrail.Players
                 inputDirection.x += 1;
 
             Move(inputDirection, input.inputs[4], input.inputs[5], input.inputs[6]);
-
-            for (int i = 0; i < movementInputs.Length; i++)
-                movementInputs[i] = false;
         }
         
         private void Move(Vector2 inputDirection, bool jump, bool sprint, bool isCrouching)

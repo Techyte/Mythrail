@@ -291,6 +291,11 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
+    public void SyncAllClientTicks()
+    {
+        SendSync();
+    }
+
     private void SendSync()
     {
         Message message = Message.Create(MessageSendMode.Unreliable, ServerToClientId.sync);

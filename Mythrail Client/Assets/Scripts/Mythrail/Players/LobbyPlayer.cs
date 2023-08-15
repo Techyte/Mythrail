@@ -26,12 +26,10 @@ namespace Mythrail.Players
         [SerializeField] private float runningFOV;
         [SerializeField] private float regularFOV;
 
-        private float movementCounter;
-        private float idleCounter;
-
         private string username;
         
         public static List<LobbyPlayer> usernameBufferPlayers = new List<LobbyPlayer>();
+        
         private void Start()
         {
             if (!IsLocal) return;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Multiplayer.Rollback;
 using Riptide;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -54,7 +55,7 @@ public class PlayerMovement : MonoBehaviour
 
     public bool didTeleport;
 
-    private const int BUFFER_SIZE = 1024;
+    public const int BUFFER_SIZE = 1024;
 
     private PlayerMovementState[] _stateBuffer;
 
@@ -63,13 +64,40 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         _stateBuffer = new PlayerMovementState[BUFFER_SIZE];
-    }
-
-    private void Start()
-    {
         if (player == null)
             player = GetComponent<Player>();
         _controller = GetComponent<CharacterController>();
+    }
+
+    public PlayerMovementState GetMostRecentState()
+    {
+        return _stateBuffer[NetworkManager.Singleton.CurrentTick];
+    }
+
+    public void AssertStateFromBufferIndex(uint index)
+    {
+        PlayerMovementState state = _stateBuffer[index];
+
+        _controller.enabled = false;
+        
+        transform.position = state.position;
+        camProxy.forward = state.inputUsed.forward;
+        
+        _controller.enabled = true;
+    }
+
+    public void ResetToPresentPosition()
+    {
+        uint bufferIndex = NetworkManager.Singleton.CurrentTick % BUFFER_SIZE;
+        
+        PlayerMovementState state = _stateBuffer[bufferIndex];
+
+        _controller.enabled = false;
+        
+        transform.position = state.position;
+        camProxy.forward = state.inputUsed.forward;
+        
+        _controller.enabled = true;
     }
 
     public void HandleTick()
@@ -79,6 +107,8 @@ public class PlayerMovement : MonoBehaviour
         while (inputQueue.Count > 0)
         {
             PlayerInput currentInput = inputQueue.Dequeue();
+
+            RollbackManager.Instance.RollbackAllPlayerStatesTo(currentInput.tick);
 
             bufferIndex = currentInput.tick % BUFFER_SIZE;
 
@@ -110,6 +140,8 @@ public class PlayerMovement : MonoBehaviour
         {
             SendNewState(_stateBuffer[bufferIndex]);
         }
+        
+        RollbackManager.Instance.ResetAllPlayersToPresentPosition(player.Id);
     }
 
     private void Move(Vector3 inputDirection, PlayerInput input)

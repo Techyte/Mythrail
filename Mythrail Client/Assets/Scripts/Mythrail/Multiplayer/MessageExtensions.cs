@@ -1,4 +1,3 @@
-using Mythrail.MainMenu;
 using Mythrail.MainMenu.Tabs.Invites;
 using Mythrail.Players;
 using Riptide;

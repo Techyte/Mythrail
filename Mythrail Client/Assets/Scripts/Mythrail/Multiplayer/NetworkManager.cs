@@ -137,7 +137,6 @@ namespace Mythrail.Multiplayer
 
         public void LoadedBattle()
         {
-            Debug.Log("battle loaded");
             Singleton.StartSettingUpPlayer(); // called when we load into the lobby or game
             BufferCamera = GameObject.Find("Buffer Camera");
         }
@@ -217,12 +216,10 @@ namespace Mythrail.Multiplayer
             string trueIp = local ? "127.0.0.1" : ip;
             
             Client.Connect($"{trueIp}:{port}");
-            Debug.Log("Sent connection request");
         }
 
         private void DidConnect(object sender, EventArgs e)
         {
-            Debug.Log("Connected");
             GetIsInGameStatus();
             LobbyLoadingScreen.SetActive(false);
         }
@@ -291,16 +288,6 @@ namespace Mythrail.Multiplayer
             {
                 Debug.Log("Setting tick");
                 ServerTick = serverTick;
-                if (SceneManager.GetActiveScene().name == "BattleField")
-                {
-                    if (!PlayerReady)
-                    {
-                        if(Player.LocalPlayer)
-                        {
-                            Debug.Log("Ready");
-                        }
-                    }
-                }
             }
         }
 
@@ -309,8 +296,6 @@ namespace Mythrail.Multiplayer
             PlayerReady = true;
             Message message = Message.Create(MessageSendMode.Reliable, ClientToServerId.ready);
             Client.Send(message);
-            Debug.Log("Ready");
-            Debug.Log(UIManager.Singleton);
             UIManager.Singleton.loadingStatusDisplay.text = "WAITING";
         }
 
@@ -349,12 +334,9 @@ namespace Mythrail.Multiplayer
             Singleton.maxClientCount = message.GetUShort();
             string code = message.GetString();
             Singleton.code = code;
-            Debug.Log(Singleton);
-            Debug.Log(Singleton.GetComponent<UIManager>());
             Singleton.GetComponent<UIManager>().SetCode();
             if (isInGame)
             {
-                Debug.Log("Game has started, loading battlefeild");
                 Singleton.LoadGame();
                 if(!Singleton.isPrivate)
                 {
@@ -369,7 +351,6 @@ namespace Mythrail.Multiplayer
             }
             else
             {
-                Debug.Log("Game has not started, loading lobby");
                 Singleton.StartSettingUpPlayer();
                 if(!Singleton.isPrivate)
                 {
@@ -399,9 +380,6 @@ namespace Mythrail.Multiplayer
         [MessageHandler((ushort)ServerToClientId.gameStarted)]
         public static void GameStarted(Message message)
         {
-            Debug.Log("Everyone is ready");
-            Debug.Log(Singleton);
-            Debug.Log(Singleton.BufferCamera);
             Singleton.BufferCamera.SetActive(false);
             Player.LocalPlayer.playerController.canMove = true;
             UIManager.Singleton.loadingScreen.SetActive(false);

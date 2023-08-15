@@ -60,7 +60,10 @@ public class Player : MonoBehaviour
             // each other player sends a message to the spawning player with the other players info so they can be displayed on the spawning player
             otherPlayer.SendProxyPlayerSpawnInfo(id, lobby);
         }
+        
         list.Add(id, player);
+        
+        NetworkManager.Singleton.SyncAllClientTicks();
     }
 
     private void SendSpawned(bool lobby)
