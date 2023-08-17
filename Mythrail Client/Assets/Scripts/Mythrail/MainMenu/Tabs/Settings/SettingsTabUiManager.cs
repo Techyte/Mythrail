@@ -22,6 +22,7 @@ namespace Mythrail.MainMenu.Tabs.Settings
         
         [SerializeField] private bool defaultFullscreen;
         [SerializeField] [Range(0, 10)] private float defaultSensitivity;
+        [SerializeField] private float defaultVolume = 2;
         [SerializeField] private bool defaultAskToInvite;
         [SerializeField] private bool defaultAlwaysInvite;
         [SerializeField] private bool defaultShowDeveloperConsole;
@@ -83,6 +84,10 @@ namespace Mythrail.MainMenu.Tabs.Settings
             if (!PlayerPrefs.HasKey("Sensitivity"))
             {
                 PlayerPrefs.SetFloat("Sensitivity", defaultSensitivity);
+            }
+            if (!PlayerPrefs.HasKey("Volume"))
+            {
+                PlayerPrefs.SetFloat("Volume", defaultVolume);
             }
             if (!PlayerPrefs.HasKey("AskToInvite"))
             {

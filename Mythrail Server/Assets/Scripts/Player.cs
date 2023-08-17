@@ -64,6 +64,16 @@ public class Player : MonoBehaviour
         list.Add(id, player);
         
         NetworkManager.Singleton.SyncAllClientTicks();
+
+        PlayerMovementState state = new PlayerMovementState();
+        state.position = spawnPoint;
+        state.inputUsed = new PlayerInput();
+        state.didTeleport = false;
+        state.tick = NetworkManager.Singleton.CurrentTick;
+        state.inputUsed.forward = player.movement.camProxy.forward;
+        state.inputUsed.tick = NetworkManager.Singleton.CurrentTick;
+
+        player.movement.SetStateAtTick(NetworkManager.Singleton.CurrentTick, state);
     }
 
     private void SendSpawned(bool lobby)

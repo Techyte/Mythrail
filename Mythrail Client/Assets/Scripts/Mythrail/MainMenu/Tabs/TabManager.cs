@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mythrail.Audio;
 using UnityEngine;
 
 namespace Mythrail.MainMenu.Tabs
@@ -22,8 +23,6 @@ public class TabManager : MonoBehaviour
     }
     
     [SerializeField] private List<Tab> tabs;
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip pressedClip;
 
     public List<Tab> Tabs => tabs;
 
@@ -84,7 +83,7 @@ public class TabManager : MonoBehaviour
 
     private void PlaySound()
     {
-        audioSource.PlayOneShot(pressedClip);
+        AudioManager.instance.Play("Button");
     }
 
     private void DisableAllTabs()

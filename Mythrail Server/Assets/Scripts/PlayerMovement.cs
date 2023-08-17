@@ -51,15 +51,16 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool canJump = true;
     public bool canMove = true;
 
-    [SerializeField] private bool[] inputs = new bool[6];
-
-    public bool didTeleport;
+    public bool didTeleport; //TODO: did teleport apparently is not being used
 
     public const int BUFFER_SIZE = 1024;
 
     private PlayerMovementState[] _stateBuffer;
 
     private Queue<PlayerInput> inputQueue = new Queue<PlayerInput>();
+    private PlayerInput lastInputAddedToQueue = new PlayerInput();
+
+    private PlayerMovementState lastRecordedState = new PlayerMovementState();
 
     private void Awake()
     {
@@ -69,14 +70,23 @@ public class PlayerMovement : MonoBehaviour
         _controller = GetComponent<CharacterController>();
     }
 
-    public PlayerMovementState GetMostRecentState()
+    private PlayerMovementState GetMostRecentState()
     {
-        return _stateBuffer[NetworkManager.Singleton.CurrentTick];
+        uint bufferIndex = NetworkManager.Singleton.CurrentTick % BUFFER_SIZE;
+
+        PlayerMovementState state = _stateBuffer[bufferIndex];
+
+        return !state.Equals(default(PlayerMovementState)) ? state : lastRecordedState;
     }
 
     public void AssertStateFromBufferIndex(uint index)
     {
         PlayerMovementState state = _stateBuffer[index];
+
+        if (state.Equals(default(PlayerMovementState)))
+        {
+            state = GetMostRecentState();
+        }
 
         _controller.enabled = false;
         
@@ -88,9 +98,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void ResetToPresentPosition()
     {
-        uint bufferIndex = NetworkManager.Singleton.CurrentTick % BUFFER_SIZE;
-        
-        PlayerMovementState state = _stateBuffer[bufferIndex];
+        PlayerMovementState state = GetMostRecentState();
 
         _controller.enabled = false;
         
@@ -100,17 +108,33 @@ public class PlayerMovement : MonoBehaviour
         _controller.enabled = true;
     }
 
+    public void SetStateAtTick(uint tick, PlayerMovementState state)
+    {
+        uint bufferIndex = tick % BUFFER_SIZE;
+
+        SetStateAt(bufferIndex, state);
+    }
+
+    public void SetStateAt(uint bufferIndex, PlayerMovementState state)
+    {
+        lastRecordedState = state;
+        _stateBuffer[bufferIndex] = state;
+    }
+
     public void HandleTick()
     {
         uint bufferIndex = BUFFER_SIZE+1;
+        
+        // in case it is not set this tick
+        SetCurrentStateBuffer();
 
         while (inputQueue.Count > 0)
         {
-            PlayerInput currentInput = inputQueue.Dequeue();
+            Debug.Log("inputs to handle");
             
-            Debug.Log(currentInput.inputs[0]);
+            PlayerInput currentInput = inputQueue.Dequeue();
 
-            //RollbackManager.Instance.RollbackOtherPlayerStatesTo(currentInput.tick, player.Id);
+            RollbackManager.Instance.RollbackOtherPlayerStatesTo(currentInput.tick, player.Id);
 
             bufferIndex = currentInput.tick % BUFFER_SIZE;
 
@@ -135,7 +159,7 @@ public class PlayerMovement : MonoBehaviour
             state.didTeleport = false;
             state.inputUsed = currentInput;
 
-            _stateBuffer[bufferIndex] = state;
+            SetStateAt(bufferIndex, state);
         }
 
         if (bufferIndex != BUFFER_SIZE + 1)
@@ -143,7 +167,22 @@ public class PlayerMovement : MonoBehaviour
             SendNewState(_stateBuffer[bufferIndex]);
         }
         
-        //RollbackManager.Instance.ResetAllPlayersToPresentPosition(player.Id);
+        RollbackManager.Instance.ResetAllPlayersToPresentPosition(player.Id);
+    }
+
+    private void SetCurrentStateBuffer()
+    {
+        uint bufferIndex = NetworkManager.Singleton.CurrentTick % BUFFER_SIZE;
+        
+        PlayerMovementState predictedState = new PlayerMovementState();
+        predictedState.position = transform.position;
+        predictedState.tick = NetworkManager.Singleton.CurrentTick;
+        predictedState.didTeleport = false;
+        predictedState.inputUsed = new PlayerInput();
+        predictedState.inputUsed.forward = camProxy.forward;
+        predictedState.inputUsed.tick = NetworkManager.Singleton.CurrentTick;
+        
+        _stateBuffer[bufferIndex] = predictedState;
     }
 
     private void Move(Vector3 inputDirection, PlayerInput input)
@@ -240,7 +279,23 @@ public class PlayerMovement : MonoBehaviour
 
     public void SetInputs(PlayerInput input)
     {
-        inputQueue.Enqueue(input);
+        bool foundOneValidInput = false;
+        
+        for (int i = 0; i < input.inputs.Length; i++)
+        {
+            if (input.inputs[i])
+            {
+                foundOneValidInput = true;
+            }else if (input.forward != lastInputAddedToQueue.forward)
+            {
+                foundOneValidInput = true;
+            }
+        }
+        
+        if(foundOneValidInput)
+        {
+            inputQueue.Enqueue(input);
+        }
     }
 
     private void SendNewState(PlayerMovementState state)

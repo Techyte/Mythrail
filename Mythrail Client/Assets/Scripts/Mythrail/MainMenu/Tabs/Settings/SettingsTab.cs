@@ -1,3 +1,4 @@
+using Mythrail.Audio;
 using Mythrail.General;
 using UnityEngine;
 using Mythrail.Settings;
@@ -22,7 +23,8 @@ namespace Mythrail.MainMenu.Tabs.Settings
 
         public void Volume(float value)
         {
-            //TODO: volume slider stuff
+            PlayerPrefs.SetFloat("Volume", value);
+            AudioManager.instance.ChangeVolume(value);
         }
 
         public void AskToInvite(bool value)
