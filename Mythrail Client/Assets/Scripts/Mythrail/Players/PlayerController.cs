@@ -39,11 +39,16 @@ namespace Mythrail.Players
         [SerializeField] private GameObject crouchingModel;
         [SerializeField] private GameObject defaultModel;
 
+        [SerializeField] private Transform groundDetector;
+        [SerializeField] private float groundDistanceAllowed;
+        [SerializeField] private LayerMask groundLayer;
+
         private bool canJump = true;
+        private bool grounded = true;
         public bool canMove = true;
 
         private Player _player;
-        private CharacterController _controller;
+        private Rigidbody _rb;
         
         // client prediction
 
@@ -61,7 +66,7 @@ namespace Mythrail.Players
         private void Awake()
         {
             _player = GetComponent<Player>();
-            _controller = GetComponent<CharacterController>();
+            _rb = GetComponent<Rigidbody>();
 
             _inputBuffer = new PlayerInput[BUFFER_SIZE];
             _stateBuffer = new PlayerMovementState[BUFFER_SIZE];
@@ -81,7 +86,6 @@ namespace Mythrail.Players
             PlayerInput input = new PlayerInput();
 
             input.inputs = movementInputs.Copy();
-            Debug.Log(input.inputs[0]);
             input.forward = camTransform.forward;
             input.tick = tick;
 
@@ -100,34 +104,38 @@ namespace Mythrail.Players
 
         private void Reconcile()
         {
+            Debug.Log("reconcile function");
             _lastProcessedState = _lastServerState;
 
             uint serverStateBufferIndex = _lastServerState.tick % BUFFER_SIZE;
             float positionError =
                 Vector3.Distance(_lastServerState.position, _stateBuffer[serverStateBufferIndex].position);
+            Debug.Log($"server says at {_lastServerState.tick} we were at {_lastServerState.position}");
+            Debug.Log($"we say at {_stateBuffer[serverStateBufferIndex].tick} we were at {_stateBuffer[serverStateBufferIndex].position}");
             
             if (positionError > 0.001f)
             {
                 Debug.Log("need to reconcile");
-                _controller.enabled = false;
-                transform.position = _lastServerState.position;
-                _controller.enabled = true;
-                transform.forward = _lastServerState.inputUsed.forward;
 
                 _stateBuffer[serverStateBufferIndex] = _lastServerState;
 
                 uint tickToProcess = _lastServerState.tick + 1;
 
-                while (tickToProcess < tick)
+                while (tickToProcess <= tick)
                 {
                     Debug.Log("correcting");
                     
                     uint bufferIndex = tickToProcess % BUFFER_SIZE;
-
-                    PlayerInput input = _inputBuffer[bufferIndex];
+                    uint previousBufferIndex = (tickToProcess - 1) % BUFFER_SIZE;
                     
-                    Debug.Log(input.inputs[0]);
+                    transform.position = _stateBuffer[previousBufferIndex].position;
+                    transform.forward = _stateBuffer[previousBufferIndex].inputUsed.forward;
+
+                    PlayerInput input = _inputBuffer[previousBufferIndex];
+                    
+                    Debug.Log(transform.position);
                     Movement(input);
+                    Debug.Log(transform.position);
 
                     PlayerMovementState recalculatedState = new PlayerMovementState();
                     recalculatedState.position = transform.position;
@@ -222,15 +230,23 @@ namespace Mythrail.Players
                     }
                 }
 
+                // handle checking if we are on the ground
+                RaycastHit hit = new RaycastHit();
+
+                if (Physics.Raycast(groundDetector.position, Vector3.down, out hit, groundDistanceAllowed, groundLayer))
+                {
+                    grounded = true;
+                }
+
                 Vector3 direction = new Vector3(_sidewaysVelocity, 0, _forwardVelocity);
                 direction = Vector3.ClampMagnitude(direction, movementSpeed);
 
-                if (_controller.isGrounded && jump && canJump)
+                if (grounded && jump && canJump)
                 {
                     _verticalVelocity = jumpHeight;
                 }
 
-                _verticalVelocity -= gravity * Time.deltaTime;
+                _verticalVelocity -= gravity * Time.fixedDeltaTime;
                 direction.y = _verticalVelocity;
 
                 direction = transform.TransformDirection(direction);
@@ -250,7 +266,7 @@ namespace Mythrail.Players
         {
             if (direction.magnitude > 0)
             {
-                _controller.Move(direction * Time.deltaTime);
+                _rb.velocity = direction * Time.deltaTime;
             }
         }
 

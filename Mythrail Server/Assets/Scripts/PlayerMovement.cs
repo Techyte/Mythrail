@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using Multiplayer.Rollback;
 using Riptide;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -21,12 +19,11 @@ public struct PlayerInput
     public uint tick;
 }
 
-[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private Player player;
 
-    [SerializeField] private LayerMask ground;
     public Transform camProxy;
     [SerializeField] private float movementSpeed = 5f;
     [SerializeField] private float runMultiplier = 1.3f;
@@ -38,9 +35,13 @@ public class PlayerMovement : MonoBehaviour
 
     private float _forwardVelocity, _sidewaysVelocity, _verticalVelocity;
 
-    public CharacterController Controller => _controller;
+    public Rigidbody Rb => _rb;
     
-    private CharacterController _controller;
+    private Rigidbody _rb;
+
+    [SerializeField] private Transform groundDetector;
+    [SerializeField] private float groundDistanceAllowed;
+    [SerializeField] private LayerMask groundLayer;
 
     [SerializeField] private GameObject crouchingModel;
     [SerializeField] private GameObject defaultModel;
@@ -48,6 +49,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform crouchingCameraPos;
     [SerializeField] private Transform defaultCameraPos;
 
+    [SerializeField] private bool grounded = true;
     [SerializeField] private bool canJump = true;
     public bool canMove = true;
 
@@ -67,7 +69,7 @@ public class PlayerMovement : MonoBehaviour
         _stateBuffer = new PlayerMovementState[BUFFER_SIZE];
         if (player == null)
             player = GetComponent<Player>();
-        _controller = GetComponent<CharacterController>();
+        _rb = GetComponent<Rigidbody>();
     }
 
     private PlayerMovementState GetMostRecentState()
@@ -87,25 +89,9 @@ public class PlayerMovement : MonoBehaviour
         {
             state = GetMostRecentState();
         }
-
-        _controller.enabled = false;
         
         transform.position = state.position;
         camProxy.forward = state.inputUsed.forward;
-        
-        _controller.enabled = true;
-    }
-
-    public void ResetToPresentPosition()
-    {
-        PlayerMovementState state = GetMostRecentState();
-
-        _controller.enabled = false;
-        
-        transform.position = state.position;
-        camProxy.forward = state.inputUsed.forward;
-        
-        _controller.enabled = true;
     }
 
     public void SetStateAtTick(uint tick, PlayerMovementState state)
@@ -124,17 +110,10 @@ public class PlayerMovement : MonoBehaviour
     public void HandleTick()
     {
         uint bufferIndex = BUFFER_SIZE+1;
-        
-        // in case it is not set this tick
-        SetCurrentStateBuffer();
 
         while (inputQueue.Count > 0)
         {
-            Debug.Log("inputs to handle");
-            
             PlayerInput currentInput = inputQueue.Dequeue();
-
-            RollbackManager.Instance.RollbackOtherPlayerStatesTo(currentInput.tick, player.Id);
 
             bufferIndex = currentInput.tick % BUFFER_SIZE;
 
@@ -151,6 +130,13 @@ public class PlayerMovement : MonoBehaviour
             if (currentInput.inputs[3])
                 inputDirection.x += 1;
 
+            // so we arnt rolling back when this is the first tick
+            if(currentInput.tick != 0)
+            {
+                // so we are simulating from the right point
+                RollbackToTick(currentInput.tick - 1);
+            }
+            
             Move(inputDirection, currentInput);
 
             PlayerMovementState state = new PlayerMovementState();
@@ -162,15 +148,28 @@ public class PlayerMovement : MonoBehaviour
             SetStateAt(bufferIndex, state);
         }
 
+        // if we actually handled any inputs this tick
         if (bufferIndex != BUFFER_SIZE + 1)
         {
             SendNewState(_stateBuffer[bufferIndex]);
         }
-        
-        RollbackManager.Instance.ResetAllPlayersToPresentPosition(player.Id);
+        else
+        {
+            uint currentTickBufferIndex = NetworkManager.Singleton.CurrentTick % BUFFER_SIZE;
+            SendNewState(_stateBuffer[currentTickBufferIndex]);
+        }
     }
 
-    private void SetCurrentStateBuffer()
+    private void RollbackToTick(uint tick)
+    {
+        uint bufferIndex = tick % BUFFER_SIZE;
+
+        PlayerMovementState state = _stateBuffer[bufferIndex];
+
+        transform.position = state.position;
+    }
+
+    public void SetCurrentStateBuffer()
     {
         uint bufferIndex = NetworkManager.Singleton.CurrentTick % BUFFER_SIZE;
         
@@ -221,15 +220,23 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
 
-            Vector3 direction = new Vector3(_sidewaysVelocity, 0, _forwardVelocity);
-            direction = Vector3.ClampMagnitude(direction, movementSpeed);
+            // handle checking if we are on the ground
+            RaycastHit hit = new RaycastHit();
 
-            if (_controller.isGrounded && input.inputs[4] && canJump)
+            if (Physics.Raycast(groundDetector.position, Vector3.down, out hit, groundDistanceAllowed, groundLayer))
             {
-                _verticalVelocity = jumpHeight;
+                grounded = true;
             }
 
-            _verticalVelocity -= gravity * Time.deltaTime;
+            Vector3 direction = new Vector3(_sidewaysVelocity, 0, _forwardVelocity);
+            direction = Vector3.ClampMagnitude(direction, movementSpeed);
+            
+            if (grounded && input.inputs[4] && canJump)
+            {
+                 _verticalVelocity = jumpHeight;
+            }
+
+            _verticalVelocity -= gravity * Time.fixedDeltaTime;
             direction.y = _verticalVelocity;
 
             direction = transform.TransformDirection(direction);
@@ -247,7 +254,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (direction.magnitude > 0)
         {
-            _controller.Move(direction * Time.deltaTime);   
+            _rb.velocity = direction * Time.fixedDeltaTime;
         }
     }
 
@@ -295,11 +302,13 @@ public class PlayerMovement : MonoBehaviour
         if(foundOneValidInput)
         {
             inputQueue.Enqueue(input);
+            lastInputAddedToQueue = input;
         }
     }
 
     private void SendNewState(PlayerMovementState state)
     {
+        Debug.Log("sending a new state");
         if (SceneManager.GetActiveScene().name != "Lobby")
         {
             Message message = Message.Create(MessageSendMode.Unreliable, ServerToClientId.playerMovement);

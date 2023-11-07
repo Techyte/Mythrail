@@ -184,15 +184,11 @@ public class Player : MonoBehaviour
 
     private void LateUpdate()
     {
-        movement.Controller.enabled = false;
-        
         if (telePos != Vector3.zero)
         {
             transform.position = telePos;
             telePos = Vector3.zero;
         }
-
-        movement.Controller.enabled = true;
     }
 
     private void SendRegularCam()

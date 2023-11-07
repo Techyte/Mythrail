@@ -1247,6 +1247,37 @@ MonoBehaviour:
   m_EffectColor: {r: 1, g: 0, b: 0, a: 0.5}
   m_EffectDistance: {x: 0, y: -2}
   m_UseGraphicAlpha: 1
+--- !u!1 &4335338531453778118
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 678828438250766897}
+  m_Layer: 0
+  m_Name: GroundDetector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &678828438250766897
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4335338531453778118}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6838594276799333514}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4409187752724558155
 GameObject:
   m_ObjectHideFlags: 0
@@ -1891,7 +1922,7 @@ GameObject:
   - component: {fileID: 9098606700725488433}
   - component: {fileID: 1611984573768652931}
   - component: {fileID: 8759099302497684765}
-  - component: {fileID: -3303185676535214963}
+  - component: {fileID: -1528332056226450983}
   m_Layer: 0
   m_Name: LocalPlayer
   m_TagString: Player
@@ -1919,6 +1950,7 @@ Transform:
   - {fileID: 4139606775935921681}
   - {fileID: 2949256837552444845}
   - {fileID: 6746926678869653373}
+  - {fileID: 678828438250766897}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3308837696677413284
@@ -1963,7 +1995,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camTransform: {fileID: 194929987246568948}
   movementInputs: 00000000000000
-  movementSpeed: 10
+  movementSpeed: 1000
   runMultiplier: 1.3
   crouchMultiplier: 0.5
   jumpHeight: 8
@@ -1972,6 +2004,11 @@ MonoBehaviour:
   defaultCameraPos: {fileID: 7449851526794344994}
   crouchingModel: {fileID: 863326531206087131}
   defaultModel: {fileID: 4929608989601051499}
+  groundDetector: {fileID: 678828438250766897}
+  groundDistanceAllowed: 0.15
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 512
   canMove: 1
 --- !u!114 &9098606700725488433
 MonoBehaviour:
@@ -2018,7 +2055,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8367171813486412650}
   serializedVersion: 4
-  m_Mass: 0.0000001
+  m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -2032,13 +2069,13 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 126
+  m_Constraints: 112
   m_CollisionDetection: 0
---- !u!143 &-3303185676535214963
-CharacterController:
+--- !u!136 &-1528332056226450983
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2055,11 +2092,8 @@ CharacterController:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 2
+  serializedVersion: 2
   m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
+  m_Height: 2
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}

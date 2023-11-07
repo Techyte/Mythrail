@@ -242,6 +242,11 @@ public class NetworkManager : MonoBehaviour
     {
         foreach (var player in Player.list.Values)
         {
+            player.Movement.SetCurrentStateBuffer();
+        }
+        
+        foreach (var player in Player.list.Values)
+        {
             player.Movement.HandleTick();
         }
     }

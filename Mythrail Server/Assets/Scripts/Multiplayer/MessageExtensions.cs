@@ -82,6 +82,7 @@ public static class MessageExtensions
     public static Message Add(this Message message, PlayerInput value)
     {
         message.AddBools(value.inputs);
+        Debug.Log("got past the input inserting");
         message.AddVector3(value.forward);
         message.AddUInt(value.tick);
         return message;
