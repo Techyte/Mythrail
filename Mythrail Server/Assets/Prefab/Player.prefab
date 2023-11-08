@@ -252,11 +252,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 2740904604180753793}
-  ground:
-    serializedVersion: 2
-    m_Bits: 64
   camProxy: {fileID: 2820552369008833292}
-  movementSpeed: 500
+  movementSpeed: 5
   runMultiplier: 1.3
   crouchMultiplier: 0.5
   jumpHeight: 8

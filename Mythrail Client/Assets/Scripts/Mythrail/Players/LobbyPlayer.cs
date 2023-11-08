@@ -56,7 +56,7 @@ namespace Mythrail.Players
         {
             if (!IsLocal)
             {
-                camTransform.forward = state.inputUsed.forward;
+                camTransform.forward = state.forward;
                 camTransform.rotation = FlattenQuaternion(camTransform.rotation);
                 transform.position = state.position;
             }

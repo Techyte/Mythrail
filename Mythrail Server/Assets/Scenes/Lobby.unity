@@ -208,7 +208,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   port: 35065
   maxClientCount: 10
-  minPlayerCount: 3
+  minPlayerCount: 1
   readyCountdown: 10
   currentReadCountdown: 0
   isCountingDown: 0

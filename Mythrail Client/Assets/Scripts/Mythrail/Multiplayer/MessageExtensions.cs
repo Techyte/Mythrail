@@ -138,7 +138,7 @@ namespace Mythrail.Multiplayer
         public static Message Add(this Message message, PlayerMovementState value)
         {
             message.AddVector3(value.position);
-            message.AddPlayerInput(value.inputUsed);
+            message.AddVector3(value.forward);
             message.AddBool(value.didTeleport);
             message.AddUInt(value.tick);
             return message;
@@ -148,7 +148,7 @@ namespace Mythrail.Multiplayer
         {
             PlayerMovementState state = new PlayerMovementState();
             state.position = message.GetVector3();
-            state.inputUsed = message.GetPlayerInput();
+            state.forward = message.GetVector3();
             state.didTeleport = message.GetBool();
             state.tick = message.GetUInt();
             return state;

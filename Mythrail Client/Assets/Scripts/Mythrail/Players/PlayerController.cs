@@ -9,7 +9,7 @@ namespace Mythrail.Players
     public struct PlayerMovementState
     {
         public Vector3 position;
-        public PlayerInput inputUsed;
+        public Vector3 forward;
         public bool didTeleport;
         public uint tick;
     }
@@ -94,7 +94,6 @@ namespace Mythrail.Players
             PlayerMovementState state = new PlayerMovementState();
             Movement(input);
             state.position = transform.position;
-            state.inputUsed = input;
             state.tick = tick;
 
             _stateBuffer[bufferIndex] = state;
@@ -104,42 +103,33 @@ namespace Mythrail.Players
 
         private void Reconcile()
         {
-            Debug.Log("reconcile function");
             _lastProcessedState = _lastServerState;
 
             uint serverStateBufferIndex = _lastServerState.tick % BUFFER_SIZE;
             float positionError =
                 Vector3.Distance(_lastServerState.position, _stateBuffer[serverStateBufferIndex].position);
-            Debug.Log($"server says at {_lastServerState.tick} we were at {_lastServerState.position}");
-            Debug.Log($"we say at {_stateBuffer[serverStateBufferIndex].tick} we were at {_stateBuffer[serverStateBufferIndex].position}");
             
             if (positionError > 0.001f)
             {
-                Debug.Log("need to reconcile");
-
+                Debug.Log("really shouldn't be seeing this that often");
                 _stateBuffer[serverStateBufferIndex] = _lastServerState;
 
                 uint tickToProcess = _lastServerState.tick + 1;
 
                 while (tickToProcess <= tick)
                 {
-                    Debug.Log("correcting");
-                    
                     uint bufferIndex = tickToProcess % BUFFER_SIZE;
                     uint previousBufferIndex = (tickToProcess - 1) % BUFFER_SIZE;
                     
                     transform.position = _stateBuffer[previousBufferIndex].position;
-                    transform.forward = _stateBuffer[previousBufferIndex].inputUsed.forward;
+                    transform.forward = _inputBuffer[previousBufferIndex].forward;
 
                     PlayerInput input = _inputBuffer[previousBufferIndex];
                     
-                    Debug.Log(transform.position);
                     Movement(input);
-                    Debug.Log(transform.position);
 
                     PlayerMovementState recalculatedState = new PlayerMovementState();
                     recalculatedState.position = transform.position;
-                    recalculatedState.inputUsed = input;
                     recalculatedState.didTeleport = false;
                     recalculatedState.tick = tickToProcess;
 
@@ -247,7 +237,7 @@ namespace Mythrail.Players
                 }
 
                 _verticalVelocity -= gravity * Time.fixedDeltaTime;
-                direction.y = _verticalVelocity;
+                //direction.y = _verticalVelocity;
 
                 direction = transform.TransformDirection(direction);
 
@@ -266,7 +256,7 @@ namespace Mythrail.Players
         {
             if (direction.magnitude > 0)
             {
-                _rb.velocity = direction * Time.deltaTime;
+                transform.position += movementSpeed * Time.fixedDeltaTime * direction;
             }
         }
 

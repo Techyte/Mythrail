@@ -82,7 +82,6 @@ public static class MessageExtensions
     public static Message Add(this Message message, PlayerInput value)
     {
         message.AddBools(value.inputs);
-        Debug.Log("got past the input inserting");
         message.AddVector3(value.forward);
         message.AddUInt(value.tick);
         return message;
@@ -102,7 +101,7 @@ public static class MessageExtensions
     public static Message Add(this Message message, PlayerMovementState value)
     {
         message.AddVector3(value.position);
-        message.AddPlayerInput(value.inputUsed);
+        message.AddVector3(value.forward);
         message.AddBool(value.didTeleport);
         message.AddUInt(value.tick);
         return message;
@@ -112,7 +111,7 @@ public static class MessageExtensions
     {
         PlayerMovementState state = new PlayerMovementState();
         state.position = message.GetVector3();
-        state.inputUsed = message.GetPlayerInput();
+        state.forward = message.GetVector3();
         state.didTeleport = message.GetBool();
         state.tick = message.GetUInt();
         return state;

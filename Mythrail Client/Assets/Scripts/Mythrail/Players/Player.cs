@@ -107,19 +107,8 @@ namespace Mythrail.Players
             {
                 transform.position = state.position;
                 
-                transform.forward = state.inputUsed.forward;
+                transform.forward = state.forward;
                 transform.rotation = FlattenQuaternion(camTransform.rotation);
-            }
-            
-            if (state.inputUsed.inputs[6])
-            {
-                crouchingModel.SetActive(true);
-                defaultModel.SetActive(false);
-            }
-            else
-            {
-                crouchingModel.SetActive(false);
-                defaultModel.SetActive(true);
             }
         }
         

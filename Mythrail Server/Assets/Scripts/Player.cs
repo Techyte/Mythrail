@@ -67,11 +67,9 @@ public class Player : MonoBehaviour
 
         PlayerMovementState state = new PlayerMovementState();
         state.position = spawnPoint;
-        state.inputUsed = new PlayerInput();
         state.didTeleport = false;
         state.tick = NetworkManager.Singleton.CurrentTick;
-        state.inputUsed.forward = player.movement.camProxy.forward;
-        state.inputUsed.tick = NetworkManager.Singleton.CurrentTick;
+        state.forward = player.movement.camProxy.forward;
 
         player.movement.SetStateAtTick(NetworkManager.Singleton.CurrentTick, state);
     }

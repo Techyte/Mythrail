@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public struct PlayerMovementState
 {
     public Vector3 position;
-    public PlayerInput inputUsed;
+    public Vector3 forward;
     public bool didTeleport;
     public uint tick;
 }
@@ -91,7 +91,7 @@ public class PlayerMovement : MonoBehaviour
         }
         
         transform.position = state.position;
-        camProxy.forward = state.inputUsed.forward;
+        camProxy.forward = state.forward;
     }
 
     public void SetStateAtTick(uint tick, PlayerMovementState state)
@@ -143,7 +143,6 @@ public class PlayerMovement : MonoBehaviour
             state.position = transform.position;
             state.tick = currentInput.tick;
             state.didTeleport = false;
-            state.inputUsed = currentInput;
 
             SetStateAt(bufferIndex, state);
         }
@@ -153,11 +152,11 @@ public class PlayerMovement : MonoBehaviour
         {
             SendNewState(_stateBuffer[bufferIndex]);
         }
-        else
-        {
-            uint currentTickBufferIndex = NetworkManager.Singleton.CurrentTick % BUFFER_SIZE;
-            SendNewState(_stateBuffer[currentTickBufferIndex]);
-        }
+        //else 
+        //{
+        //    uint currentTickBufferIndex = NetworkManager.Singleton.CurrentTick % BUFFER_SIZE;
+        //    SendNewState(_stateBuffer[currentTickBufferIndex]);
+        //}
     }
 
     private void RollbackToTick(uint tick)
@@ -177,9 +176,7 @@ public class PlayerMovement : MonoBehaviour
         predictedState.position = transform.position;
         predictedState.tick = NetworkManager.Singleton.CurrentTick;
         predictedState.didTeleport = false;
-        predictedState.inputUsed = new PlayerInput();
-        predictedState.inputUsed.forward = camProxy.forward;
-        predictedState.inputUsed.tick = NetworkManager.Singleton.CurrentTick;
+        predictedState.forward = camProxy.forward;
         
         _stateBuffer[bufferIndex] = predictedState;
     }
@@ -237,7 +234,7 @@ public class PlayerMovement : MonoBehaviour
             }
 
             _verticalVelocity -= gravity * Time.fixedDeltaTime;
-            direction.y = _verticalVelocity;
+            //direction.y = _verticalVelocity;
 
             direction = transform.TransformDirection(direction);
 
@@ -254,7 +251,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (direction.magnitude > 0)
         {
-            _rb.velocity = direction * Time.fixedDeltaTime;
+            transform.position += movementSpeed * Time.fixedDeltaTime * direction;
         }
     }
 
