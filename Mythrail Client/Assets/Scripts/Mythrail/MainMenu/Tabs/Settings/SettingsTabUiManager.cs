@@ -14,7 +14,6 @@ namespace Mythrail.MainMenu.Tabs.Settings
         [SerializeField] private Slider sensitivitySlider;
         [SerializeField] private Slider volumeSlider;
         [SerializeField] private Toggle askToInvite;
-        [SerializeField] private Toggle alwaysInvite;
         [SerializeField] private Toggle showDeveloperConsole;
         [SerializeField] private Toggle compressDeveloperConsole;
 
@@ -24,7 +23,6 @@ namespace Mythrail.MainMenu.Tabs.Settings
         [SerializeField] [Range(0, 10)] private float defaultSensitivity;
         [SerializeField] private float defaultVolume = 2;
         [SerializeField] private bool defaultAskToInvite;
-        [SerializeField] private bool defaultAlwaysInvite;
         [SerializeField] private bool defaultShowDeveloperConsole;
         [SerializeField] private bool defaultCompressDeveloperConsole;
 
@@ -57,11 +55,6 @@ namespace Mythrail.MainMenu.Tabs.Settings
                 ToggleAskToInvite(arg0);
             });
             
-            alwaysInvite.onValueChanged.AddListener(delegate(bool arg0)
-            {
-                ToggleAlwaysInvite(arg0);
-            });
-            
             showDeveloperConsole.onValueChanged.AddListener(delegate(bool arg0)
             {
                 ToggleShowDeveloperConsole(arg0);
@@ -77,46 +70,17 @@ namespace Mythrail.MainMenu.Tabs.Settings
 
         private void LoadSettings()
         {
-            if (!PlayerPrefs.HasKey("Fullscreen"))
-            {
-                PlayerPrefs.SetString("Fullscreen", defaultFullscreen.ToString());
-            }
-            if (!PlayerPrefs.HasKey("Sensitivity"))
-            {
-                PlayerPrefs.SetFloat("Sensitivity", defaultSensitivity);
-            }
-            if (!PlayerPrefs.HasKey("Volume"))
-            {
-                PlayerPrefs.SetFloat("Volume", defaultVolume);
-            }
-            if (!PlayerPrefs.HasKey("AskToInvite"))
-            {
-                PlayerPrefs.SetString("AskToInvite", defaultAskToInvite.ToString());
-            }
-            if (!PlayerPrefs.HasKey("AlwaysInvite"))
-            {
-                PlayerPrefs.SetString("AlwaysInvite", defaultAlwaysInvite.ToString());
-            }
-            if (!PlayerPrefs.HasKey("ShowDeveloperConsole"))
-            {
-                PlayerPrefs.SetString("ShowDeveloperConsole", defaultShowDeveloperConsole.ToString());
-            }
-            if (!PlayerPrefs.HasKey("CompressDeveloperConsole"))
-            {
-                PlayerPrefs.SetString("CompressDeveloperConsole", defaultCompressDeveloperConsole.ToString());
-            }
-            
-            bool fullscreen = bool.Parse(PlayerPrefs.GetString("Fullscreen"));
-            float sensitivity = PlayerPrefs.GetFloat("Sensitivity");
-            bool askToInvite = bool.Parse(PlayerPrefs.GetString("AskToInvite"));
-            bool alwaysInvite = bool.Parse(PlayerPrefs.GetString("AlwaysInvite"));
-            bool showDeveloperConsole = bool.Parse(PlayerPrefs.GetString("ShowDeveloperConsole"));
-            bool compressDeveloperConsole = bool.Parse(PlayerPrefs.GetString("CompressDeveloperConsole"));
+            bool fullscreen = bool.Parse(PlayerPrefs.GetString("Fullscreen", defaultFullscreen.ToString()));
+            float volume = PlayerPrefs.GetFloat("Volume", defaultVolume);
+            float sensitivity = PlayerPrefs.GetFloat("Sensitivity", defaultSensitivity);
+            bool askToInvite = bool.Parse(PlayerPrefs.GetString("AskToInvite", defaultAskToInvite.ToString()));
+            bool showDeveloperConsole = bool.Parse(PlayerPrefs.GetString("ShowDeveloperConsole", defaultShowDeveloperConsole.ToString()));
+            bool compressDeveloperConsole = bool.Parse(PlayerPrefs.GetString("CompressDeveloperConsole", defaultCompressDeveloperConsole.ToString()));
 
+            volumeSlider.value = volume;
             fullscreenToggle.isOn = fullscreen;
             sensitivitySlider.value = sensitivity;
             this.askToInvite.isOn = askToInvite;
-            this.alwaysInvite.isOn = alwaysInvite;
             this.showDeveloperConsole.isOn = showDeveloperConsole;
             this.compressDeveloperConsole.isOn = compressDeveloperConsole;
         }
@@ -139,21 +103,8 @@ namespace Mythrail.MainMenu.Tabs.Settings
         public void ToggleAskToInvite(bool value)
         {
             _SettingsTab.AskToInvite(value);
-            
-            if(value)
-                alwaysInvite.isOn = false;
 
             MythrailSettings.AlwaysInvite = false;
-        }
-
-        public void ToggleAlwaysInvite(bool value)
-        {
-            _SettingsTab.ToggleAlwaysInvite(value);
-
-            if(value)
-                askToInvite.isOn = false;
-            
-            Debug.Log("always invite toggled");
         }
 
         public void ToggleShowDeveloperConsole(bool value)

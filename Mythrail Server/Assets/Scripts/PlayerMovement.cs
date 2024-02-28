@@ -109,6 +109,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void HandleTick()
     {
+        // the buffer index that the input was sent on
         uint bufferIndex = BUFFER_SIZE+1;
 
         while (inputQueue.Count > 0)
@@ -152,11 +153,12 @@ public class PlayerMovement : MonoBehaviour
         {
             SendNewState(_stateBuffer[bufferIndex]);
         }
-        //else 
-        //{
-        //    uint currentTickBufferIndex = NetworkManager.Singleton.CurrentTick % BUFFER_SIZE;
-        //    SendNewState(_stateBuffer[currentTickBufferIndex]);
-        //}
+        // handled all inputs, nothing new to handle, so we send the current state to handle gravity and such (i think, still need to test it)
+        else 
+        {
+            uint currentTickBufferIndex = NetworkManager.Singleton.CurrentTick % BUFFER_SIZE;
+            SendNewState(_stateBuffer[currentTickBufferIndex]);
+        }
     }
 
     private void RollbackToTick(uint tick)

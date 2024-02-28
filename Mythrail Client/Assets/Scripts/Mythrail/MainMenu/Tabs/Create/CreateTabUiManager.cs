@@ -163,14 +163,7 @@ namespace Mythrail.MainMenu.Tabs.Create
             }
             else
             {
-                if(MythrailSettings.AlwaysInvite)
-                {
-                    GetCurrentPlayers();
-                }
-                else
-                {
-                    _createTab.JoinCreatedMatch();   
-                }
+                _createTab.JoinCreatedMatch();
             }
         }
         

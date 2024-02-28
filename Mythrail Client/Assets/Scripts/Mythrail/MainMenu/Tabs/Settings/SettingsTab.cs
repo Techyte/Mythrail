@@ -33,12 +33,6 @@ namespace Mythrail.MainMenu.Tabs.Settings
             MythrailSettings.AskToInvite = value;
         }
 
-        public void ToggleAlwaysInvite(bool value)
-        {
-            PlayerPrefs.SetString("AlwaysInvite", value.ToString());
-            MythrailSettings.AlwaysInvite = value;
-        }
-
         public void ToggleShowDeveloperConsole(bool value)
         {
             PlayerPrefs.SetString("ShowDeveloperConsole", value.ToString());

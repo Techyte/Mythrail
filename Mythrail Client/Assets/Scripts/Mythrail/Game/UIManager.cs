@@ -96,7 +96,7 @@ namespace Mythrail.Game
             {
                 if(Player.LocalPlayer)
                 {
-                    if(Cursor.lockState != CursorLockMode.Locked)
+                    if(Cursor.lockState != CursorLockMode.Locked && !Player.LocalPlayer.respawning)
                     {
                         latencyText = GameObject.Find("LatencyText").GetComponent<TextMeshProUGUI>();
                     }
