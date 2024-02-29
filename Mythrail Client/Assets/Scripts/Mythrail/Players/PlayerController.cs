@@ -38,6 +38,7 @@ namespace Mythrail.Players
         [SerializeField] private Transform defaultCameraPos;
         [SerializeField] private GameObject crouchingModel;
         [SerializeField] private GameObject defaultModel;
+        [SerializeField] private CapsuleCollider collider;
 
         [SerializeField] private Transform groundDetector;
         [SerializeField] private float groundDistanceAllowed;
@@ -48,139 +49,12 @@ namespace Mythrail.Players
         public bool canMove = true;
 
         private Player _player;
-        private Rigidbody _rb;
-        
-        // client prediction
-
-        private const int BUFFER_SIZE = 1024;
-        private PlayerInput[] _inputBuffer;
-        private PlayerMovementState[] _stateBuffer;
-
-        private PlayerMovementState _lastServerState;
-        private PlayerMovementState _lastProcessedState;
-
-        private uint tick => NetworkManager.Singleton.ServerTick;
 
         // end of client prediction
 
         private void Awake()
         {
             _player = GetComponent<Player>();
-            _rb = GetComponent<Rigidbody>();
-
-            _inputBuffer = new PlayerInput[BUFFER_SIZE];
-            _stateBuffer = new PlayerMovementState[BUFFER_SIZE];
-        }
-
-        public void HandleTick()
-        {
-            // if stuff wont die on us and the last server state we received is not equal to last thing we corrected
-            if (!_lastServerState.Equals(default(PlayerMovementState)) &&
-                (_lastProcessedState.Equals(default(PlayerMovementState)) || !_lastServerState.Equals(_lastProcessedState)))
-            {
-                Reconcile();
-            }
-            
-            uint bufferIndex = tick % BUFFER_SIZE;
-
-            PlayerInput input = new PlayerInput();
-
-            input.inputs = movementInputs.Copy();
-            input.forward = camTransform.forward;
-            input.tick = tick;
-
-            _inputBuffer[bufferIndex] = input;
-
-            PlayerMovementState state = new PlayerMovementState();
-            Movement(input);
-            state.position = transform.position;
-            state.tick = tick;
-
-            _stateBuffer[bufferIndex] = state;
-            
-            SendMovementInput(input);
-        }
-
-        private void Reconcile()
-        {
-            _lastProcessedState = _lastServerState;
-
-            uint serverStateBufferIndex = _lastServerState.tick % BUFFER_SIZE;
-            float positionError =
-                Vector3.Distance(_lastServerState.position, _stateBuffer[serverStateBufferIndex].position);
-            
-            if (positionError > 0.001f)
-            {
-                Debug.Log("really shouldn't be seeing this that often");
-                _stateBuffer[serverStateBufferIndex] = _lastServerState;
-
-                uint tickToProcess = _lastServerState.tick + 1;
-
-                while (tickToProcess <= tick)
-                {
-                    uint bufferIndex = tickToProcess % BUFFER_SIZE;
-                    uint previousBufferIndex = (tickToProcess - 1) % BUFFER_SIZE;
-                    
-                    transform.position = _stateBuffer[previousBufferIndex].position;
-                    transform.forward = _inputBuffer[previousBufferIndex].forward;
-
-                    PlayerInput input = _inputBuffer[previousBufferIndex];
-                    
-                    Movement(input);
-
-                    PlayerMovementState recalculatedState = new PlayerMovementState();
-                    recalculatedState.position = transform.position;
-                    recalculatedState.didTeleport = false;
-                    recalculatedState.tick = tickToProcess;
-
-                    _stateBuffer[bufferIndex] = recalculatedState;
-
-                    tickToProcess++;
-                }
-            }
-        }
-
-        private void Update()
-        {
-            for (int i = 0; i < movementInputs.Length; i++)
-                movementInputs[i] = false;
-            if (canMove)
-            {
-                if (Input.GetKey(KeyCode.W))
-                {
-                    movementInputs[0] = true;
-                    if (Input.GetKey(KeyCode.LeftShift))
-                        movementInputs[5] = true;
-                }
-                if (Input.GetKey(KeyCode.S))
-                    movementInputs[1] = true;
-                if (Input.GetKey(KeyCode.A))
-                    movementInputs[2] = true;
-                if (Input.GetKey(KeyCode.D))
-                    movementInputs[3] = true;
-                if (Input.GetKey(KeyCode.Space))
-                    movementInputs[4] = true;
-                if (Input.GetKey(KeyCode.LeftControl))
-                    movementInputs[6] = true;
-            }
-        }
-
-        private void Movement(PlayerInput input)
-        {
-            Vector2 inputDirection = Vector2.zero;
-            if (input.inputs[0])
-                inputDirection.y += 1;
-
-            if (input.inputs[1])
-                inputDirection.y -= 1;
-
-            if (input.inputs[2])
-                inputDirection.x -= 1;
-
-            if (input.inputs[3])
-                inputDirection.x += 1;
-
-            Move(inputDirection, input.inputs[4], input.inputs[5], input.inputs[6]);
         }
         
         private void Move(Vector2 inputDirection, bool jump, bool sprint, bool isCrouching)
@@ -192,33 +66,27 @@ namespace Mythrail.Players
                 inputDirection.Normalize();
                 transform.rotation = FlattenQuaternion(camTransform.rotation);
 
-                _forwardVelocity = inputDirection.y * movementSpeed;
-                _sidewaysVelocity = inputDirection.x * movementSpeed;
+                // _forwardVelocity = inputDirection.y * movementSpeed;
+                // _sidewaysVelocity = inputDirection.x * movementSpeed;
                 
-                if (sprint && !isCrouching)
-                {
-                    _forwardVelocity *= runMultiplier;
-                    _sidewaysVelocity *= runMultiplier;
-                }
+                // if (sprint && !isCrouching)
+                // {
+                //     _forwardVelocity *= runMultiplier;
+                //     _sidewaysVelocity *= runMultiplier;
+                // }
 
-                // to avoid weird errors, we cannot process crouching in the lobby
-                if(SceneManager.GetActiveScene().name != "Lobby")
-                {
-                    if (isCrouching)
-                    {
-                        _forwardVelocity *= crouchMultiplier;
-                        _sidewaysVelocity *= crouchMultiplier;
-                        camTransform.position = crouchingCameraPos.position;
-                        defaultModel.SetActive(false);
-                        crouchingModel.SetActive(true);
-                    }
-                    else
-                    {
-                        camTransform.position = defaultCameraPos.position;
-                        defaultModel.SetActive(true);
-                        crouchingModel.SetActive(false);
-                    }
-                }
+                // // to avoid weird errors, we cannot process crouching in the lobby
+                // if(SceneManager.GetActiveScene().name != "Lobby")
+                // {
+                //     if (isCrouching)
+                //     {
+                //         StartCrouching();
+                //     }
+                //     else
+                //     {
+                //         StopCrouching();
+                //     }
+                // }
 
                 // handle checking if we are on the ground
                 RaycastHit hit = new RaycastHit();
@@ -241,8 +109,24 @@ namespace Mythrail.Players
 
                 direction = transform.TransformDirection(direction);
 
-                MovePlayer(direction);
+                MovePlayer(transform.TransformDirection(new Vector3(inputDirection.x, 0, inputDirection.y)));
             }
+        }
+
+        private void StartCrouching()
+        {
+            _forwardVelocity *= crouchMultiplier;
+            _sidewaysVelocity *= crouchMultiplier;
+            camTransform.position = crouchingCameraPos.position;
+            defaultModel.SetActive(false);
+            crouchingModel.SetActive(true);
+        }
+
+        private void StopCrouching()
+        {
+            camTransform.position = defaultCameraPos.position;
+            defaultModel.SetActive(true);
+            crouchingModel.SetActive(false);
         }
     
         private Quaternion FlattenQuaternion(Quaternion quaternion)
@@ -256,29 +140,8 @@ namespace Mythrail.Players
         {
             if (direction.magnitude > 0)
             {
-                transform.position += movementSpeed * Time.fixedDeltaTime * direction;
+                transform.position += direction;
             }
-        }
-
-        private void SendMovementInput(PlayerInput input)
-        {
-            if (SceneManager.GetActiveScene().name == "Lobby")
-            {
-                Message message = Message.Create(MessageSendMode.Unreliable, ClientToLobbyServer.movementInput);
-                message.AddPlayerInput(input);
-                NetworkManager.Singleton.Client.Send(message);    
-            }
-            else
-            {
-                Message message = Message.Create(MessageSendMode.Unreliable, ClientToServerId.movementInput);
-                message.AddPlayerInput(input);
-                NetworkManager.Singleton.Client.Send(message);  
-            }
-        }
-
-        public void ReceivedServerMovementState(PlayerMovementState state)
-        {
-            _lastServerState = state;
         }
     }
 }

@@ -235,20 +235,6 @@ public class NetworkManager : MonoBehaviour
         }
 
         CurrentTick++;
-        HandleTick();
-    }
-
-    private void HandleTick()
-    {
-        foreach (var player in Player.list.Values)
-        {
-            player.Movement.SetCurrentStateBuffer();
-        }
-        
-        foreach (var player in Player.list.Values)
-        {
-            player.Movement.HandleTick();
-        }
     }
 
     private void SendLobbyReady()

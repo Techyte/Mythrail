@@ -178,19 +178,6 @@ namespace Mythrail.Multiplayer
         {
             Client.Update();
             ServerTick++;
-            HandleTick();
-        }
-
-        private void HandleTick()
-        {
-            if(Player.LocalPlayer)
-            {
-                Player.LocalPlayer.playerController.HandleTick();
-            }
-            else if (LobbyPlayer.LocalPlayer)
-            {
-                LobbyPlayer.LocalPlayer.playerController.HandleTick();
-            }
         }
 
         private void OnApplicationQuit()
@@ -281,10 +268,9 @@ namespace Mythrail.Multiplayer
         
         private void SetTick(ushort serverTick)
         {
-            Debug.Log("received a set tick");
             if (Mathf.Abs(ServerTick - serverTick) > TickDivergenceTolerance)
             {
-                Debug.Log("Setting tick");
+                Debug.Log("We were out of sync, correcting");
                 ServerTick = serverTick;
             }
         }

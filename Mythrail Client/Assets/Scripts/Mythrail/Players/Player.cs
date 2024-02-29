@@ -94,23 +94,6 @@ namespace Mythrail.Players
         {
             list.Remove(Id);
         }
-
-        public void Move(PlayerMovementState state)
-        {
-            if (IsLocal)
-            {
-                serverDisplay.position = state.position;
-            
-                playerController.ReceivedServerMovementState(state);
-            }
-            else
-            {
-                transform.position = state.position;
-                
-                transform.forward = state.forward;
-                transform.rotation = FlattenQuaternion(camTransform.rotation);
-            }
-        }
         
         private Quaternion FlattenQuaternion(Quaternion quaternion)
         {
@@ -247,7 +230,7 @@ namespace Mythrail.Players
         {
             if (list.TryGetValue(message.GetUShort(), out Player player))
             {
-                player.Move(message.GetPlayerState());
+                
             }
         }
 

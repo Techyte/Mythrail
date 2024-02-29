@@ -64,14 +64,6 @@ public class Player : MonoBehaviour
         list.Add(id, player);
         
         NetworkManager.Singleton.SyncAllClientTicks();
-
-        PlayerMovementState state = new PlayerMovementState();
-        state.position = spawnPoint;
-        state.didTeleport = false;
-        state.tick = NetworkManager.Singleton.CurrentTick;
-        state.forward = player.movement.camProxy.forward;
-
-        player.movement.SetStateAtTick(NetworkManager.Singleton.CurrentTick, state);
     }
 
     private void SendSpawned(bool lobby)
@@ -177,7 +169,6 @@ public class Player : MonoBehaviour
     public void SetTeleport(Vector3 teleportPos)
     {
         telePos = teleportPos;
-        movement.didTeleport = true;
     }
 
     private void LateUpdate()
@@ -215,7 +206,7 @@ public class Player : MonoBehaviour
     {
         if (list.TryGetValue(fromClientId, out Player player))
         {
-            player.Movement.SetInputs(message.GetPlayerInput());
+            
         }
     }
 
@@ -224,7 +215,7 @@ public class Player : MonoBehaviour
     {
         if (list.TryGetValue(fromClientId, out Player player))
         {
-            player.Movement.SetInputs(message.GetPlayerInput());
+            
         }
     }
 
