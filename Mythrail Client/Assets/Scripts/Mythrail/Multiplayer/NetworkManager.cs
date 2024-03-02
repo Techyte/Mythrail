@@ -177,7 +177,18 @@ namespace Mythrail.Multiplayer
         private void FixedUpdate()
         {
             Client.Update();
+            
+            HandleTick();
+            
             ServerTick++;
+        }
+
+        // called in the fixed update method BEFORE we add to the tick
+        private void HandleTick()
+        {
+            Debug.Log(ServerTick);
+            
+            Player.LocalPlayer.playerController.HandleTick();
         }
 
         private void OnApplicationQuit()
@@ -268,7 +279,22 @@ namespace Mythrail.Multiplayer
         
         private void SetTick(ushort serverTick)
         {
-            if (Mathf.Abs(ServerTick - serverTick) > TickDivergenceTolerance)
+            ushort pastTick = serverTick;
+            int millisecondsSinceSent = Client.RTT / 2; // milliseconds
+            double secondsSinceSent = millisecondsSinceSent / 1000;
+            
+            // get the number of ticks that would have elapsed on the server since the message was sent
+            // so something like timeSinceSent / Time.FixedDeltaTime
+
+            ushort ticksElapsed = (ushort)(secondsSinceSent / Time.fixedDeltaTime);
+            
+            //Debug.Log(ticksElapsed);
+
+            ushort recalculatedTick = (ushort)(pastTick + ticksElapsed);
+            
+            //Debug.Log(recalculatedTick);
+            
+            if (Mathf.Abs(ServerTick - recalculatedTick) > TickDivergenceTolerance)
             {
                 Debug.Log("We were out of sync, correcting");
                 ServerTick = serverTick;

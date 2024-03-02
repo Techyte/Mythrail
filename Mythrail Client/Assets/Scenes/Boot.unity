@@ -1208,7 +1208,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8510a4391475e428b7ae6666649c65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoadName: Lobby
+  sceneToLoadName: MainMenu
   dontDestroyOnLoadObjects:
   - {fileID: 1212886028825361449}
   - {fileID: 7378609414988368034}

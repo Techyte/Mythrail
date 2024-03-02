@@ -53,7 +53,7 @@ public class MenuUIManager : MonoBehaviour
 
     public void Connecting()
     {
-        connectionStatusText.text = "CONNECTING";
+        connectionStatusText.text = "CONNECTING...";
     }
 
     public void Disconnected(object o, DisconnectedEventArgs e)

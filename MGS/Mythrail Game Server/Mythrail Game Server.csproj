@@ -47,10 +47,6 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="RiptideNetworking.dll" />
-      <Content Include="RiptideNetworking.xml" />
-    </ItemGroup>
-    <ItemGroup>
       <Folder Include="Match Application\" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

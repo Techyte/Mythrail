@@ -222,6 +222,13 @@ public class NetworkManager : MonoBehaviour
     {
         Server.Update();
 
+        HandleTick();
+
+        CurrentTick++;
+    }
+
+    private void HandleTick()
+    {
         if (CurrentTick % 200 == 0)
         {
             if(SceneManager.GetActiveScene().name == "Lobby")
@@ -233,8 +240,8 @@ public class NetworkManager : MonoBehaviour
                 SendSync();
             }
         }
-
-        CurrentTick++;
+        
+        Debug.Log(CurrentTick);
     }
 
     private void SendLobbyReady()

@@ -1,3 +1,4 @@
+using System;
 using Mythrail.General;
 using Mythrail.Multiplayer;
 using Riptide;
@@ -55,6 +56,19 @@ namespace Mythrail.Players
         private void Awake()
         {
             _player = GetComponent<Player>();
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                
+            }
+        }
+
+        public void HandleTick()
+        {
+            
         }
         
         private void Move(Vector2 inputDirection, bool jump, bool sprint, bool isCrouching)
